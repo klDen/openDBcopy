@@ -191,31 +191,31 @@ public abstract class CommonResourceBundle extends ResourceBundle {
          */
         public Enumeration getKeys() {
             return new Enumeration() {
-                    Enumeration enum = null;
+                    Enumeration enumeration = null;
                     int         i = 0;
 
                     public boolean hasMoreElements() {
                         boolean b = false;
 
-                        while ((enum == null) || !(b = enum.hasMoreElements())) {
+                        while ((enumeration == null) || !(b = enumeration.hasMoreElements())) {
                             if (i >= bundles.size()) {
-                                enum = null;
+                                enumeration = null;
 
                                 return b;
                             }
 
-                            enum = ((ResourceBundle) bundles.get(i++)).getKeys();
+                            enumeration = ((ResourceBundle) bundles.get(i++)).getKeys();
                         }
 
                         return b;
                     }
 
                     public Object nextElement() {
-                        if (enum == null) {
+                        if (enumeration == null) {
                             throw new NoSuchElementException();
                         }
 
-                        return enum.nextElement();
+                        return enumeration.nextElement();
                     }
                 };
         }
