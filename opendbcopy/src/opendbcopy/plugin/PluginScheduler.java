@@ -23,17 +23,13 @@
 package opendbcopy.plugin;
 
 import opendbcopy.controller.MainController;
-
-import opendbcopy.plugin.model.*;
+import opendbcopy.plugin.model.DynamicPluginThread;
+import opendbcopy.plugin.model.Model;
 import opendbcopy.plugin.model.exception.MissingAttributeException;
-
 import org.apache.log4j.Level;
-
-import org.jdom.Element;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-
 import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Observer;
@@ -46,35 +42,34 @@ import java.util.Observer;
  * @version $Revision$
  */
 public class PluginScheduler implements Observer {
-    private static PluginScheduler     instance = null;
+    private static PluginScheduler instance = null;
     private static DynamicPluginThread currentPluginThread;
-    private static Model               currentModel;
-    private MainController             controller;
-    private PluginManager              pluginManager;
-    private LinkedList                 pluginsToExecute;
-    private boolean                    executeSinglePlugin;
+    private static Model currentModel;
+    private MainController controller;
+    private PluginManager pluginManager;
+    private LinkedList pluginsToExecute;
+    private boolean executeSinglePlugin;
 
     /**
      * Creates a new PluginExecutor object.
      *
      * @param pluginManager DOCUMENT ME!
-     * @param controller DOCUMENT ME!
+     * @param controller    DOCUMENT ME!
      */
-    private PluginScheduler(PluginManager  pluginManager,
+    private PluginScheduler(PluginManager pluginManager,
                             MainController controller) {
-        this.pluginManager     = pluginManager;
-        this.controller        = controller;
+        this.pluginManager = pluginManager;
+        this.controller = controller;
     }
 
     /**
      * Return singleton instance
      *
      * @param pluginManager DOCUMENT ME!
-     * @param controller DOCUMENT ME!
-     *
+     * @param controller    DOCUMENT ME!
      * @return DOCUMENT ME!
      */
-    public static PluginScheduler getInstance(PluginManager  pluginManager,
+    public static PluginScheduler getInstance(PluginManager pluginManager,
                                               MainController controller) {
         if (instance == null) {
             instance = new PluginScheduler(pluginManager, controller);
@@ -86,11 +81,11 @@ public class PluginScheduler implements Observer {
     /**
      * DOCUMENT ME!
      *
-     * @param o DOCUMENT ME!
+     * @param o   DOCUMENT ME!
      * @param obj DOCUMENT ME!
      */
     public final void update(Observable o,
-                             Object     obj) {
+                             Object obj) {
         // check if current plugin had errors, then do not continue
         if (!currentModel.isExceptionOccured()) {
             if (!currentModel.isInterrupted() && !currentModel.isSuspended()) {
@@ -104,7 +99,7 @@ public class PluginScheduler implements Observer {
                             // check if next plugin requires input and if so, get it from previous plugin
                             if (plugin.isInputRequired()) {
                                 if (currentModel.getOutput() != null) {
-                                    plugin.setInput((Element) currentModel.getOutput().clone());
+                                    plugin.setInput(currentModel.getOutput().clone());
                                 } else {
                                     plugin.setProgressMessage("Missing input from previous plugin!");
                                     pluginManager.setExceptionOccured(true);
@@ -112,7 +107,7 @@ public class PluginScheduler implements Observer {
                             } else {
                                 // if output of previous plugin is not null, pass it to next plugin
                                 if (currentModel.getOutput() != null) {
-                                    plugin.setInput((Element) currentModel.getOutput().clone());
+                                    plugin.setInput(currentModel.getOutput().clone());
                                 }
                             }
 
@@ -154,16 +149,15 @@ public class PluginScheduler implements Observer {
      * DOCUMENT ME!
      *
      * @param pluginsToExecute DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws ClassNotFoundException DOCUMENT ME!
+     * @throws ClassNotFoundException    DOCUMENT ME!
      * @throws InvocationTargetException DOCUMENT ME!
-     * @throws IllegalAccessException DOCUMENT ME!
-     * @throws InstantiationException DOCUMENT ME!
+     * @throws IllegalAccessException    DOCUMENT ME!
+     * @throws InstantiationException    DOCUMENT ME!
      */
     public final void executePlugins(LinkedList pluginsToExecute) throws MissingAttributeException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, InstantiationException {
-        this.pluginsToExecute     = pluginsToExecute;
-        executeSinglePlugin       = false;
+        this.pluginsToExecute = pluginsToExecute;
+        executeSinglePlugin = false;
 
         // set the first plugin to execute
         currentModel = getNextPlugin();
@@ -207,15 +201,14 @@ public class PluginScheduler implements Observer {
      * DOCUMENT ME!
      *
      * @param model DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws ClassNotFoundException DOCUMENT ME!
+     * @throws ClassNotFoundException    DOCUMENT ME!
      * @throws InvocationTargetException DOCUMENT ME!
-     * @throws IllegalAccessException DOCUMENT ME!
-     * @throws InstantiationException DOCUMENT ME!
+     * @throws IllegalAccessException    DOCUMENT ME!
+     * @throws InstantiationException    DOCUMENT ME!
      */
     protected void executeSinglePlugin(Model model) throws MissingAttributeException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, InstantiationException {
-        executeSinglePlugin     = true;
+        executeSinglePlugin = true;
 
         currentModel = model;
         currentModel.registerObserver(this);
@@ -228,15 +221,14 @@ public class PluginScheduler implements Observer {
      * DOCUMENT ME!
      *
      * @param model DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws ClassNotFoundException DOCUMENT ME!
+     * @throws ClassNotFoundException    DOCUMENT ME!
      * @throws InvocationTargetException DOCUMENT ME!
-     * @throws IllegalAccessException DOCUMENT ME!
-     * @throws InstantiationException DOCUMENT ME!
+     * @throws IllegalAccessException    DOCUMENT ME!
+     * @throws InstantiationException    DOCUMENT ME!
      */
     private void executePlugin(Model model) throws MissingAttributeException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, InstantiationException {
-        currentModel     = model;
+        currentModel = model;
 
         currentPluginThread = (DynamicPluginThread) dynamicallyLoadPlugin();
         currentPluginThread.start();
@@ -246,21 +238,20 @@ public class PluginScheduler implements Observer {
      * DOCUMENT ME!
      *
      * @return DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws ClassNotFoundException DOCUMENT ME!
+     * @throws ClassNotFoundException    DOCUMENT ME!
      * @throws InvocationTargetException DOCUMENT ME!
-     * @throws IllegalAccessException DOCUMENT ME!
-     * @throws InstantiationException DOCUMENT ME!
+     * @throws IllegalAccessException    DOCUMENT ME!
+     * @throws InstantiationException    DOCUMENT ME!
      */
     private Object dynamicallyLoadPlugin() throws MissingAttributeException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, InstantiationException {
-        Class         dynClass = Class.forName(currentModel.getThreadClassName());
+        Class dynClass = Class.forName(currentModel.getThreadClassName());
 
         Constructor[] constructors = dynClass.getConstructors();
 
-        Object[]      params = new Object[2];
-        params[0]     = controller;
-        params[1]     = currentModel;
+        Object[] params = new Object[2];
+        params[0] = controller;
+        params[1] = currentModel;
 
         // works as long there is only one constructor
         return constructors[0].newInstance(params);

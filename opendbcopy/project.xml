@@ -1,144 +1,144 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project>
-  <pomVersion>3</pomVersion>
-  <groupId>opendbcopy</groupId>
-  <currentVersion>0.51rc2</currentVersion>
-  <logo>/images/opendbcopy_logo.gif</logo>
-  <organization>
-    <name>Puzzle ITC GmbH</name>
-    <url>http://www.puzzle.ch/</url>
-    <logo>/images/puzzleitc_w2.gif</logo>
-  </organization>
+    <pomVersion>3</pomVersion>
+    <groupId>opendbcopy</groupId>
+    <currentVersion>0.51rc2</currentVersion>
+    <logo>/images/opendbcopy_logo.gif</logo>
+    <organization>
+        <name>Puzzle ITC GmbH</name>
+        <url>http://www.puzzle.ch/</url>
+        <logo>/images/puzzleitc_w2.gif</logo>
+    </organization>
 
-  <inceptionYear>2004</inceptionYear>
-  <package>opendbcopy</package>
-  
-  <shortDescription>
-	openDBcopy - an open-source database migration utility (Java)
-  </shortDescription>
-  
-  <description>
-	openDBcopy is a universal database utility to migrate data 
-	from and to any database given a JDBC driver. Standard filters 
-	are included, custom plugins can be added. 
-	Complete migration project saved as XML for easy re-use. 
-	Run with GUI or as batch.
-  </description>
-  
-  <url>http://opendbcopy.org/</url>
-  
-  <issueTrackingUrl>
-    http://sourceforge.net/tracker/?group_id=91406
-  </issueTrackingUrl>
-  
-  <repository>
-    <connection>scm:cvs:pserver:anonymous@cvs.sourceforge.net:/cvsroot/opendbcopy:${pom.groupId}</connection>
-    <url>http://cvs.sourceforge.net/viewcvs.py/opendbcopy</url>
-  </repository>
- 
-  <mailingLists/>
-  
-  <developers>
-    <developer>
-      <name>Anthony Smith</name>
-      <id>iloveopensource</id>
-      <email>smith@puzzle.ch</email>
-	  <organization>
-		<name>Puzzle ITC GmbH</name>
-		<url>http://www.puzzle.ch/</url>
-	  </organization>
-      <roles>
-      	<role>Architect and Developer Java</role>
-      </roles>
-    </developer>
-  </developers>
-  
-  <contributors/>
+    <inceptionYear>2004</inceptionYear>
+    <package>opendbcopy</package>
 
-  <licenses>
-	<license>
-		<name>GNU GENERAL PUBLIC LICENSE</name>
-		<url>http://www.gnu.org/copyleft/gpl.html</url>
-		<distribution>manual</distribution>
-	</license>
-  </licenses>
-  
-  <dependencies>
+    <shortDescription>
+        openDBcopy - an open-source database migration utility (Java)
+    </shortDescription>
+
+    <description>
+        openDBcopy is a universal database utility to migrate data
+        from and to any database given a JDBC driver. Standard filters
+        are included, custom plugins can be added.
+        Complete migration project saved as XML for easy re-use.
+        Run with GUI or as batch.
+    </description>
+
+    <url>http://opendbcopy.org/</url>
+
+    <issueTrackingUrl>
+        http://sourceforge.net/tracker/?group_id=91406
+    </issueTrackingUrl>
+
+    <repository>
+        <connection>scm:cvs:pserver:anonymous@cvs.sourceforge.net:/cvsroot/opendbcopy:${pom.groupId}</connection>
+        <url>http://cvs.sourceforge.net/viewcvs.py/opendbcopy</url>
+    </repository>
+
+    <mailingLists/>
+
+    <developers>
+        <developer>
+            <name>Anthony Smith</name>
+            <id>iloveopensource</id>
+            <email>smith@puzzle.ch</email>
+            <organization>
+                <name>Puzzle ITC GmbH</name>
+                <url>http://www.puzzle.ch/</url>
+            </organization>
+            <roles>
+                <role>Architect and Developer Java</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <contributors/>
+
+    <licenses>
+        <license>
+            <name>GNU GENERAL PUBLIC LICENSE</name>
+            <url>http://www.gnu.org/copyleft/gpl.html</url>
+            <distribution>manual</distribution>
+        </license>
+    </licenses>
+
+    <dependencies>
         <!-- xml libraries -->
         <dependency>
-           <groupId>jdom</groupId>
-           <artifactId>jdom</artifactId>
-           <version>b9</version>
-           <url>http://www.jdom.org/dist/binary/</url>
-        </dependency>
-        
-        <dependency>
-           <groupId>xerces</groupId>
-           <artifactId>xerces</artifactId>
-           <version>2.5.0</version>
-           <url>http://xml.apache.org/xerces2-j/</url>
+            <groupId>jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <version>b9</version>
+            <url>http://www.jdom.org/dist/binary/</url>
         </dependency>
 
-		<!-- logging -->
         <dependency>
-        <groupId>log4j</groupId>
-           <artifactId>log4j</artifactId>
-           <version>1.2.8</version>
-           <url>http://jakarta.apache.org/log4j/</url>
+            <groupId>xerces</groupId>
+            <artifactId>xerces</artifactId>
+            <version>2.5.0</version>
+            <url>http://xml.apache.org/xerces2-j/</url>
         </dependency>
 
-		<!-- commons -->
+        <!-- logging -->
         <dependency>
-        <groupId>commons-lang</groupId>
-           <artifactId>commons-lang</artifactId>
-           <version>2.0</version>
-           <url>http://www.apache.org/dist/commons</url>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.8</version>
+            <url>http://jakarta.apache.org/log4j/</url>
         </dependency>
 
-		<!-- TableLayout -->
+        <!-- commons -->
         <dependency>
-        <groupId>layout-manager</groupId>
-           <artifactId>TableLayout</artifactId>
-           <version>1.0</version>
-           <url>http://www.clearthought.info/software/TableLayout/</url>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.0</version>
+            <url>http://www.apache.org/dist/commons</url>
         </dependency>
 
-		<!-- Browser Runner -->
+        <!-- TableLayout -->
         <dependency>
-        <groupId>ostermillerutils</groupId>
-           <artifactId>ostermillerutils</artifactId>
-           <version>1_03_00</version>
-           <url>http://ostermiller.org/utils/</url>
+            <groupId>layout-manager</groupId>
+            <artifactId>TableLayout</artifactId>
+            <version>1.0</version>
+            <url>http://www.clearthought.info/software/TableLayout/</url>
         </dependency>
-  </dependencies>
-  
-  <build>
-    <sourceDirectory>src</sourceDirectory>
-    <unitTest/>
-    <resources>
-      <resource>
-          <directory>lib</directory>
-          <includes>
-            <include>*.*</include>
-          </includes>
-      </resource>
-    </resources>
-  </build>
 
-  <reports>
-    <!--report>maven-jdepend-plugin</report-->
-    <!--report>maven-checkstyle-plugin</report-->
-    <!--report>maven-changes-plugin</report-->
-    <!--report>maven-changelog-plugin</report-->
-    <!--report>maven-file-activity-plugin</report-->
-    <!--report>maven-developer-activity-plugin</report-->
-    <report>maven-javadoc-plugin</report>
-    <!--report>maven-jxr-plugin</report-->
-    <!--report>maven-junit-report-plugin</report-->
-    <!--report>maven-tasklist-plugin</report-->
-    <!--report>maven-pmd-plugin</report-->
-    <!--report>maven-faq-plugin</report-->
-  </reports>
+        <!-- Browser Runner -->
+        <dependency>
+            <groupId>ostermillerutils</groupId>
+            <artifactId>ostermillerutils</artifactId>
+            <version>1_03_00</version>
+            <url>http://ostermiller.org/utils/</url>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <unitTest/>
+        <resources>
+            <resource>
+                <directory>lib</directory>
+                <includes>
+                    <include>*.*</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
+
+    <reports>
+        <!--report>maven-jdepend-plugin</report-->
+        <!--report>maven-checkstyle-plugin</report-->
+        <!--report>maven-changes-plugin</report-->
+        <!--report>maven-changelog-plugin</report-->
+        <!--report>maven-file-activity-plugin</report-->
+        <!--report>maven-developer-activity-plugin</report-->
+        <report>maven-javadoc-plugin</report>
+        <!--report>maven-jxr-plugin</report-->
+        <!--report>maven-junit-report-plugin</report-->
+        <!--report>maven-tasklist-plugin</report-->
+        <!--report>maven-pmd-plugin</report-->
+        <!--report>maven-faq-plugin</report-->
+    </reports>
 
 </project>

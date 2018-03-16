@@ -22,15 +22,15 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.io;
 
+import opendbcopy.controller.MainController;
+import org.apache.log4j.Logger;
+import org.jdom2.Document;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-
-import opendbcopy.controller.MainController;
-
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.output.XMLOutputter;
 
 
 /**
@@ -45,14 +45,13 @@ public final class ExportToXML {
     /**
      * DOCUMENT ME!
      *
-     * @param doc DOCUMENT ME!
+     * @param doc      DOCUMENT ME!
      * @param fileName DOCUMENT ME!
-     *
-     * @throws IOException DOCUMENT ME!
+     * @throws IOException              DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public static final void createXML(Document doc,
-                                       String   fileName) throws IOException {
+                                       String fileName) throws IOException {
         if ((doc == null) || (fileName == null) || (fileName.length() == 0)) {
             throw new IllegalArgumentException("Missing arguments (doc or fileName) to export into XML file");
         }
@@ -60,8 +59,7 @@ public final class ExportToXML {
         // now save the document in an XML file
         OutputStreamWriter xml = new OutputStreamWriter(new FileOutputStream(fileName), MainController.getEncoding());
 
-        XMLOutputter serializer = new XMLOutputter("   ", true, MainController.getEncoding());
-        serializer.setTextTrim(true);
+        XMLOutputter serializer = new XMLOutputter(Format.getPrettyFormat()); //, MainController.getEncoding()
         serializer.output(doc, xml);
 
         xml.flush();

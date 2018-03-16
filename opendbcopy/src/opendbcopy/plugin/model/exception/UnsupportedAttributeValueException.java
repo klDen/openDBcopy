@@ -22,10 +22,9 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.plugin.model.exception;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-
-import org.jdom.Element;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.jdom2.Element;
 
 
 /**
@@ -36,18 +35,18 @@ import org.jdom.Element;
  */
 public class UnsupportedAttributeValueException extends Exception {
     private Element element;
-    private String  attributeName;
+    private String attributeName;
 
     /**
      * Creates a new UnsupportedAttributeValueException object.
      *
-     * @param element DOCUMENT ME!
+     * @param element       DOCUMENT ME!
      * @param attributeName DOCUMENT ME!
      */
     public UnsupportedAttributeValueException(Element element,
-                                              String  attributeName) {
-        this.element           = element;
-        this.attributeName     = attributeName;
+                                              String attributeName) {
+        this.element = element;
+        this.attributeName = attributeName;
     }
 
     /**

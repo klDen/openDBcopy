@@ -24,16 +24,12 @@ package opendbcopy.plugin.model.database;
 
 import opendbcopy.config.OperationType;
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.connection.DBConnection;
-
 import opendbcopy.connection.exception.CloseConnectionException;
 import opendbcopy.connection.exception.DriverNotFoundException;
 import opendbcopy.connection.exception.OpenConnectionException;
-
 import opendbcopy.controller.MainController;
-
-import opendbcopy.plugin.model.*;
+import opendbcopy.plugin.model.Model;
 import opendbcopy.plugin.model.database.beans.BeanManager;
 import opendbcopy.plugin.model.database.dependency.Dependency;
 import opendbcopy.plugin.model.database.dependency.Mapper;
@@ -41,14 +37,11 @@ import opendbcopy.plugin.model.database.exception.DependencyNotSolvableException
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.UnsupportedAttributeValueException;
-
-import org.jdom.Element;
-import org.jdom.JDOMException;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
 
 import java.io.IOException;
-
 import java.sql.SQLException;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
@@ -64,63 +57,62 @@ import java.util.Vector;
 public class DatabaseModel extends Model {
     public final int SINGLE_MODE = 1;
     public final int DUAL_MODE = 2;
+    protected boolean source_db_connection_successful = false;
+    protected boolean destination_db_connection_successful = false;
     private BeanManager sourceDbBeanManager;
     private BeanManager destinationDbBeanManager;
-    private Mapper   mapper;
-    private Element  sourceDb;
-    private Element  sourceDriver;
-    private Element  sourceMetadata;
-    private Element  sourceConnection;
-    private Element  sourceCatalog;
-    private Element  sourceSchema;
-    private Element  sourceTablePattern;
-    private Element  sourceModel;
-    private Element  destinationDb;
-    private Element  destinationDriver;
-    private Element  destinationMetadata;
-    private Element  destinationConnection;
-    private Element  destinationCatalog;
-    private Element  destinationSchema;
-    private Element  destinationTablePattern;
-    private Element  destinationModel;
-    private Element  mapping;
-    private Element  filter;
-    protected boolean  source_db_connection_successful = false;
-    protected boolean  destination_db_connection_successful = false;
+    private Mapper mapper;
+    private Element sourceDb;
+    private Element sourceDriver;
+    private Element sourceMetadata;
+    private Element sourceConnection;
+    private Element sourceCatalog;
+    private Element sourceSchema;
+    private Element sourceTablePattern;
+    private Element sourceModel;
+    private Element destinationDb;
+    private Element destinationDriver;
+    private Element destinationMetadata;
+    private Element destinationConnection;
+    private Element destinationCatalog;
+    private Element destinationSchema;
+    private Element destinationTablePattern;
+    private Element destinationModel;
+    private Element mapping;
+    private Element filter;
 
     /**
      * Creates a new DatabasePluginModel object.
      *
-     * @param controller DOCUMENT ME!
+     * @param controller    DOCUMENT ME!
      * @param pluginElement DOCUMENT ME!
-     *
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws JDOMException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
+     * @throws JDOMException                      DOCUMENT ME!
+     * @throws IOException                        DOCUMENT ME!
      */
     public DatabaseModel(MainController controller,
-                         Element        pluginElement) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, JDOMException, IOException {
+                         Element pluginElement) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, JDOMException, IOException {
         super(controller, pluginElement);
 
         loadExistingElements();
-        
+
         // load bean managers
         if (sourceModel != null) {
-        	sourceDbBeanManager = new BeanManager(this, sourceModel);
-        	
-        	if (sourceModel.getChildren(XMLTags.TABLE) != null && sourceModel.getChildren(XMLTags.TABLE).size() > 0) {
-        		sourceDbBeanManager.parseTables();
-        	}
-        }
-        
-        if (destinationModel != null) {
-        	destinationDbBeanManager = new BeanManager(this, destinationModel);
+            sourceDbBeanManager = new BeanManager(this, sourceModel);
 
-        	if (destinationModel.getChildren(XMLTags.TABLE) != null && destinationModel.getChildren(XMLTags.TABLE).size() > 0) {
-        		destinationDbBeanManager.parseTables();
-        	}
+            if (sourceModel.getChildren(XMLTags.TABLE) != null && sourceModel.getChildren(XMLTags.TABLE).size() > 0) {
+                sourceDbBeanManager.parseTables();
+            }
+        }
+
+        if (destinationModel != null) {
+            destinationDbBeanManager = new BeanManager(this, destinationModel);
+
+            if (destinationModel.getChildren(XMLTags.TABLE) != null && destinationModel.getChildren(XMLTags.TABLE).size() > 0) {
+                destinationDbBeanManager.parseTables();
+            }
         }
     }
 
@@ -128,21 +120,20 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @param operation DOCUMENT ME!
-     *
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws DriverNotFoundException DOCUMENT ME!
-     * @throws OpenConnectionException DOCUMENT ME!
-     * @throws CloseConnectionException DOCUMENT ME!
-     * @throws JDOMException DOCUMENT ME!
-     * @throws SQLException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
-     * @throws Exception DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
+     * @throws DriverNotFoundException            DOCUMENT ME!
+     * @throws OpenConnectionException            DOCUMENT ME!
+     * @throws CloseConnectionException           DOCUMENT ME!
+     * @throws JDOMException                      DOCUMENT ME!
+     * @throws SQLException                       DOCUMENT ME!
+     * @throws IOException                        DOCUMENT ME!
+     * @throws Exception                          DOCUMENT ME!
      */
     public void execute(Element operation) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, DriverNotFoundException, OpenConnectionException, CloseConnectionException, JDOMException, SQLException, IOException, Exception {
         String operationString = operation.getAttributeValue(XMLTags.NAME);
-        
+
         // test source connection
         if (operationString.compareTo(OperationType.TEST_SOURCE_CONNECTION) == 0) {
             source_db_connection_successful = DBConnection.testConnection(getSourceConnection());
@@ -213,12 +204,12 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws DriverNotFoundException DOCUMENT ME!
-     * @throws OpenConnectionException DOCUMENT ME!
-     * @throws CloseConnectionException DOCUMENT ME!
-     * @throws SQLException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
+     * @throws DriverNotFoundException            DOCUMENT ME!
+     * @throws OpenConnectionException            DOCUMENT ME!
+     * @throws CloseConnectionException           DOCUMENT ME!
+     * @throws SQLException                       DOCUMENT ME!
      */
     public void readDatabaseMetadata() throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, DriverNotFoundException, OpenConnectionException, CloseConnectionException, SQLException {
         if (getDbMode() == DUAL_MODE) {
@@ -240,7 +231,6 @@ public class DatabaseModel extends Model {
      * tries to find further mappings for given source table makes sense if mapping has been changed manually
      *
      * @param sourceTableName
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final void checkForMappings(String sourceTableName) throws MissingElementException {
@@ -251,7 +241,6 @@ public class DatabaseModel extends Model {
      * delete an existing table filter
      *
      * @param tableName (source table)
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final void deleteTableFilter(String tableName) throws MissingElementException {
@@ -266,9 +255,8 @@ public class DatabaseModel extends Model {
      * opendbcopy can be used in SINGLE or DUAL Database mode.
      *
      * @return 1 if dbMode = SINGLE_MODE, 2 if dbMode = DUAL_MODE
-     *
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
      */
     public final int getDbMode() throws MissingElementException, MissingAttributeException, UnsupportedAttributeValueException {
@@ -283,7 +271,6 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @return
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final Element getDestinationDb() throws MissingElementException {
@@ -294,8 +281,7 @@ public class DatabaseModel extends Model {
      * get destination catalog name
      *
      * @return destination catalog name
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
      * @throws MissingAttributeException DOCUMENT ME!
      */
     public final String getDestinationCatalog() throws MissingElementException, MissingAttributeException {
@@ -303,10 +289,23 @@ public class DatabaseModel extends Model {
     }
 
     /**
+     * set destination catalog name
+     *
+     * @param catalogName destination
+     * @throws MissingElementException DOCUMENT ME!
+     */
+    public final void setDestinationCatalog(String catalogName) throws MissingElementException {
+        if (catalogName == null) {
+            catalogName = "";
+        }
+
+        getElement(destinationCatalog, "destinationCatalog").setAttribute(XMLTags.VALUE, catalogName);
+    }
+
+    /**
      * It may be that the catalog separator could not be read by ModelReader. If so set it to "."
      *
      * @return DOCUMENT ME!
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public String getDestinationCatalogSeparator() throws MissingElementException {
@@ -323,12 +322,10 @@ public class DatabaseModel extends Model {
     /**
      * given a destination table and column name return column element
      *
-     * @param tableName (destination table)
+     * @param tableName  (destination table)
      * @param columnName (destination column)
-     *
      * @return destination column
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final Element getDestinationColumn(String tableName,
@@ -348,10 +345,8 @@ public class DatabaseModel extends Model {
      * gets all destination columns for a given destination table name
      *
      * @param tableName (destination table)
-     *
      * @return List of destination columns
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final List getDestinationColumns(String tableName) throws MissingElementException {
@@ -366,7 +361,6 @@ public class DatabaseModel extends Model {
      * get destination connection element
      *
      * @return destination connection element
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final Element getDestinationConnection() throws MissingElementException {
@@ -381,8 +375,7 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @return DOCUMENT ME!
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
      * @throws MissingAttributeException DOCUMENT ME!
      */
     public String getDestinationDatabaseName() throws MissingElementException, MissingAttributeException {
@@ -393,7 +386,6 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @return
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final Element getDestinationDriver() throws MissingElementException {
@@ -404,10 +396,8 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @param destinationTableName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final List getDestinationExportedKeys(String destinationTableName) throws MissingElementException {
@@ -422,10 +412,8 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @param destinationTableName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final List getDestinationImportedKeys(String destinationTableName) throws MissingElementException {
@@ -440,10 +428,8 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @param destinationTableName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final List getDestinationIndexes(String destinationTableName) throws MissingElementException {
@@ -458,7 +444,6 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @return
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public Element getDestinationMetadata() throws MissingElementException {
@@ -466,10 +451,23 @@ public class DatabaseModel extends Model {
     }
 
     /**
+     * DOCUMENT ME!
+     *
+     * @param element
+     * @throws IllegalArgumentException DOCUMENT ME!
+     */
+    public void setDestinationMetadata(Element element) {
+        if (element == null) {
+            throw new IllegalArgumentException("Missing element");
+        }
+
+        destinationMetadata = element;
+    }
+
+    /**
      * get destination model element
      *
      * @return destination model element
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final Element getDestinationModel() throws MissingElementException {
@@ -479,11 +477,28 @@ public class DatabaseModel extends Model {
     /**
      * DOCUMENT ME!
      *
+     * @param element
+     * @throws IllegalArgumentException DOCUMENT ME!
+     */
+    public final void setDestinationModel(Element element) {
+        if (element == null) {
+            throw new IllegalArgumentException("Missing element");
+        }
+
+        if (destinationDb.getChild(XMLTags.MODEL) != null) {
+            destinationDb.removeChild(XMLTags.MODEL);
+        }
+
+        destinationModel = element;
+        destinationDb.addContent(destinationModel);
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
      * @param destinationTableName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final List getDestinationPrimaryKeys(String destinationTableName) throws MissingElementException {
@@ -498,8 +513,7 @@ public class DatabaseModel extends Model {
      * get destination schema name
      *
      * @return destination schema name
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
      * @throws MissingAttributeException DOCUMENT ME!
      */
     public final String getDestinationSchema() throws MissingElementException, MissingAttributeException {
@@ -507,13 +521,25 @@ public class DatabaseModel extends Model {
     }
 
     /**
+     * set destination schema
+     *
+     * @param schemaName schema name
+     * @throws MissingElementException DOCUMENT ME!
+     */
+    public final void setDestinationSchema(String schemaName) throws MissingElementException {
+        if (schemaName == null) {
+            schemaName = "%";
+        }
+
+        getElement(destinationSchema, "destinationSchema").setAttribute(XMLTags.VALUE, schemaName);
+    }
+
+    /**
      * get destination table
      *
      * @param tableName (destination table)
-     *
      * @return destination table
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final Element getDestinationTable(String tableName) throws MissingElementException {
@@ -528,19 +554,36 @@ public class DatabaseModel extends Model {
      * get destination table pattern (may contain SQL wildcards)
      *
      * @return destination table pattern
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
      */
     public final String getDestinationTablePattern() throws MissingAttributeException, MissingElementException {
         return getAttributeValue(getElement(destinationTablePattern, "destinationTablePattern"), (XMLTags.VALUE));
     }
 
     /**
+     * set destination table pattern (may contain SQL wildcards)
+     *
+     * @param tablePattern destination table
+     * @throws MissingElementException  DOCUMENT ME!
+     * @throws IllegalArgumentException DOCUMENT ME!
+     */
+    public final void setDestinationTablePattern(String tablePattern) throws MissingElementException {
+        if (tablePattern == null) {
+            throw new IllegalArgumentException("Missing tablePattern");
+        }
+
+        if (tablePattern.length() > 0) {
+            getElement(destinationTablePattern, "destinationTablePattern").setAttribute(XMLTags.VALUE, tablePattern);
+        } else {
+            getElement(destinationTablePattern, "destinationTablePattern").setAttribute(XMLTags.VALUE, "%");
+        }
+    }
+
+    /**
      * gets all destination tables
      *
      * @return List of all destination tables
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final List getDestinationTables() throws MissingElementException {
@@ -551,11 +594,10 @@ public class DatabaseModel extends Model {
      * get destination tables to process ordered by processing order (based upon foreign keys)
      *
      * @return List of destination tables
-     *
-     * @throws DependencyNotSolvableException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
+     * @throws DependencyNotSolvableException     DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
      */
     public final List getDestinationTablesToProcessOrdered() throws DependencyNotSolvableException, MissingAttributeException, UnsupportedAttributeValueException, MissingElementException {
         return getTablesToProcessOrdered(destinationModel);
@@ -565,7 +607,6 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @return
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final Element getDestinationTypeInfo() throws MissingElementException {
@@ -576,7 +617,6 @@ public class DatabaseModel extends Model {
      * get filter element (parent of all filter elements)
      *
      * @return filter element
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final Element getFilter() throws MissingElementException {
@@ -587,7 +627,6 @@ public class DatabaseModel extends Model {
      * get mapping element
      *
      * @return mapping element
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final Element getMapping() throws MissingElementException {
@@ -598,12 +637,10 @@ public class DatabaseModel extends Model {
      * get mapping column elements to process given destination table name
      *
      * @param destinationTableName
-     *
      * @return List of mapping column elements
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
      */
     public final List getMappingColumnsToProcessByDestinationTable(String destinationTableName) throws MissingAttributeException, MissingElementException {
         if (destinationTableName == null) {
@@ -617,10 +654,8 @@ public class DatabaseModel extends Model {
      * gets a mapping table element given its source table name
      *
      * @param tableName (source table)
-     *
      * @return mapping element
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final Element getMappingSourceTable(String tableName) throws MissingElementException {
@@ -635,10 +670,8 @@ public class DatabaseModel extends Model {
      * gets a mapping table element given its destination table name
      *
      * @param tableName (destination table)
-     *
      * @return mapping element
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final Element getMappingDestinationTable(String tableName) throws MissingElementException {
@@ -653,7 +686,6 @@ public class DatabaseModel extends Model {
      * gets all mapping table elements
      *
      * @return List of mapping table elements
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final List getMappingTables() throws MissingElementException {
@@ -663,12 +695,10 @@ public class DatabaseModel extends Model {
     /**
      * get mapping column element given source table and column name
      *
-     * @param tableName source table
+     * @param tableName  source table
      * @param columnName source column
-     *
      * @return mapping column element
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final Element getMappingSourceColumn(String tableName,
@@ -683,12 +713,10 @@ public class DatabaseModel extends Model {
     /**
      * get mapping column element given destination table and column name
      *
-     * @param tableName destination table
+     * @param tableName  destination table
      * @param columnName destination column
-     *
      * @return mapping column element
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final Element getMappingDestinationColumn(String tableName,
@@ -704,10 +732,8 @@ public class DatabaseModel extends Model {
      * get all mapping columns given its source table name
      *
      * @param tableName (source table)
-     *
      * @return List of mapping column elements
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final List getMappingSourceColumns(String tableName) throws MissingElementException {
@@ -722,10 +748,8 @@ public class DatabaseModel extends Model {
      * get all mapping columns given its destination table name
      *
      * @param tableName (destination table)
-     *
      * @return List of mapping column elements
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final List getMappingDestinationColumns(String tableName) throws MissingElementException {
@@ -740,7 +764,6 @@ public class DatabaseModel extends Model {
      * returns number of source tables
      *
      * @return number of source tables
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final int getNbrSourceTables() throws MissingElementException {
@@ -751,7 +774,6 @@ public class DatabaseModel extends Model {
      * returns number of destination tables
      *
      * @return number of destination tables
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final int getNbrDestinationTables() throws MissingElementException {
@@ -762,12 +784,10 @@ public class DatabaseModel extends Model {
      * returns the qualified source table name, e.g. "catalog_name"."tableName", or "schema_name"."tableName"
      *
      * @param tableName (source table)
-     *
      * @return qualified source table name
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
      */
     public final String getQualifiedSourceTableName(String tableName) throws MissingAttributeException, MissingElementException {
         if (tableName == null) {
@@ -785,7 +805,7 @@ public class DatabaseModel extends Model {
                 }
             }
         } else {
-        	return tableName;
+            return tableName;
         }
     }
 
@@ -793,12 +813,10 @@ public class DatabaseModel extends Model {
      * returns the qualified destination table name, e.g. "catalog_name"."tableName", or "schema_name"."tableName"
      *
      * @param tableName (destination table)
-     *
      * @return qualified destination table name
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
      */
     public final String getQualifiedDestinationTableName(String tableName) throws MissingAttributeException, MissingElementException {
         if (tableName == null) {
@@ -816,7 +834,7 @@ public class DatabaseModel extends Model {
                 }
             }
         } else {
-        	return tableName;
+            return tableName;
         }
     }
 
@@ -824,7 +842,6 @@ public class DatabaseModel extends Model {
      * get root element
      *
      * @return root element
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final Element getRoot() throws MissingElementException {
@@ -835,9 +852,8 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @return DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
      */
     public String getSourceDatabaseName() throws MissingAttributeException, MissingElementException {
         return getAttributeValue(getChildElement(getElement(getSourceMetadata(), "source metadata"), XMLTags.DB_PRODUCT_NAME), XMLTags.VALUE);
@@ -847,7 +863,6 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @return
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final Element getSourceDb() throws MissingElementException {
@@ -858,7 +873,6 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @return
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final Element getSourceDriver() throws MissingElementException {
@@ -869,19 +883,31 @@ public class DatabaseModel extends Model {
      * get source catalog name
      *
      * @return source catalog name
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
      */
     public final String getSourceCatalog() throws MissingAttributeException, MissingElementException {
         return getAttributeValue(getElement(sourceCatalog, "sourceCatalog"), XMLTags.VALUE);
     }
 
     /**
+     * set source catalog name
+     *
+     * @param catalogName source
+     * @throws MissingElementException DOCUMENT ME!
+     */
+    public final void setSourceCatalog(String catalogName) throws MissingElementException {
+        if (catalogName == null) {
+            catalogName = "";
+        }
+
+        getElement(sourceCatalog, "sourceCatalog").setAttribute(XMLTags.VALUE, catalogName);
+    }
+
+    /**
      * DOCUMENT ME!
      *
      * @return DOCUMENT ME!
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public String getSourceCatalogSeparator() throws MissingElementException {
@@ -899,12 +925,10 @@ public class DatabaseModel extends Model {
      * get mapping column elements to process given source table name
      *
      * @param sourceTableName
-     *
      * @return List of mapping column elements
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
      */
     public final List getSourceColumnsToProcess(String sourceTableName) throws MissingAttributeException, MissingElementException {
         if (sourceTableName == null) {
@@ -918,7 +942,6 @@ public class DatabaseModel extends Model {
      * get source connection element
      *
      * @return source connection element
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final Element getSourceConnection() throws MissingElementException {
@@ -933,7 +956,6 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @return
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public Element getSourceMetadata() throws MissingElementException {
@@ -941,10 +963,23 @@ public class DatabaseModel extends Model {
     }
 
     /**
+     * DOCUMENT ME!
+     *
+     * @param element
+     * @throws IllegalArgumentException DOCUMENT ME!
+     */
+    public void setSourceMetadata(Element element) {
+        if (element == null) {
+            throw new IllegalArgumentException("Missing element");
+        }
+
+        sourceMetadata = element;
+    }
+
+    /**
      * get source model element
      *
      * @return source model element
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final Element getSourceModel() throws MissingElementException {
@@ -952,13 +987,25 @@ public class DatabaseModel extends Model {
     }
 
     /**
+     * DOCUMENT ME!
+     *
+     * @param element
+     * @throws IllegalArgumentException DOCUMENT ME!
+     */
+    public final void setSourceModel(Element element) {
+        if (element == null) {
+            throw new IllegalArgumentException("Missing element");
+        }
+
+        sourceModel = element;
+    }
+
+    /**
      * get source table
      *
      * @param tableName (source table)
-     *
      * @return source table if existing
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final Element getSourceTable(String tableName) throws MissingElementException {
@@ -973,19 +1020,36 @@ public class DatabaseModel extends Model {
      * get source table pattern (may contain SQL wildcards)
      *
      * @return source table pattern
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
      */
     public final String getSourceTablePattern() throws MissingAttributeException, MissingElementException {
         return getAttributeValue(getElement(sourceTablePattern, "sourceTablePattern"), XMLTags.VALUE);
     }
 
     /**
+     * set source table pattern (may contain SQL wildcards)
+     *
+     * @param tablePattern source table
+     * @throws MissingElementException  DOCUMENT ME!
+     * @throws IllegalArgumentException DOCUMENT ME!
+     */
+    public final void setSourceTablePattern(String tablePattern) throws MissingElementException {
+        if (tablePattern == null) {
+            throw new IllegalArgumentException("Missing tablePattern");
+        }
+
+        if (tablePattern.length() > 0) {
+            getElement(sourceTablePattern, "sourceTablePattern").setAttribute(XMLTags.VALUE, tablePattern);
+        } else {
+            getElement(sourceTablePattern, "sourceTablePattern").setAttribute(XMLTags.VALUE, "%");
+        }
+    }
+
+    /**
      * gets all source tables
      *
      * @return List of source tables if existing
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final List getSourceTables() throws MissingElementException {
@@ -996,7 +1060,6 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @return
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final Element getSourceTypeInfo() throws MissingElementException {
@@ -1007,10 +1070,8 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @param sourceTableName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final List getSourcePrimaryKeys(String sourceTableName) throws MissingElementException {
@@ -1025,10 +1086,8 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @param sourceTableName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final List getSourceImportedKeys(String sourceTableName) throws MissingElementException {
@@ -1043,10 +1102,8 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @param sourceTableName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final List getSourceExportedKeys(String sourceTableName) throws MissingElementException {
@@ -1061,10 +1118,8 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @param sourceTableName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final List getSourceIndexes(String sourceTableName) throws MissingElementException {
@@ -1078,12 +1133,10 @@ public class DatabaseModel extends Model {
     /**
      * given a source table and column name return column element
      *
-     * @param tableName (source table)
+     * @param tableName  (source table)
      * @param columnName (source column)
-     *
      * @return source column
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final Element getSourceColumn(String tableName,
@@ -1099,10 +1152,8 @@ public class DatabaseModel extends Model {
      * gets all source columns for a given source table name
      *
      * @param tableName (source table)
-     *
      * @return List of source columns
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final List getSourceColumns(String tableName) throws MissingElementException {
@@ -1117,23 +1168,35 @@ public class DatabaseModel extends Model {
      * get source schema name
      *
      * @return source schema name
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
      */
     public final String getSourceSchema() throws MissingAttributeException, MissingElementException {
         return getAttributeValue(getElement(sourceSchema, "sourceSchema"), XMLTags.VALUE);
     }
 
     /**
+     * set source schema
+     *
+     * @param schemaName schema name
+     * @throws MissingElementException DOCUMENT ME!
+     */
+    public final void setSourceSchema(String schemaName) throws MissingElementException {
+        if (schemaName == null) {
+            schemaName = "%";
+        }
+
+        getElement(sourceSchema, "sourceSchema").setAttribute(XMLTags.VALUE, schemaName);
+    }
+
+    /**
      * get source tables to process ordered by processing order (based upon foreign keys)
      *
      * @return List of source tables
-     *
-     * @throws DependencyNotSolvableException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
+     * @throws DependencyNotSolvableException     DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
      */
     public final List getSourceTablesToProcessOrdered() throws DependencyNotSolvableException, MissingAttributeException, UnsupportedAttributeValueException, MissingElementException {
         return getTablesToProcessOrdered(getElement(sourceModel, "sourceModel"));
@@ -1143,10 +1206,8 @@ public class DatabaseModel extends Model {
      * get string filter element
      *
      * @param filterName (see XMLTags)
-     *
      * @return string filter element
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final Element getStringFilter(String filterName) throws MissingElementException {
@@ -1161,16 +1222,15 @@ public class DatabaseModel extends Model {
      * get string filter removeIntermediateWhitespaces
      *
      * @return string filter RemoveIntermediateWhitespaces
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final Element getStringFilterRemoveIntermediateWhitespaces() throws MissingElementException {
-    	Iterator itStringFilters = getElement(filter, "filter").getChildren(XMLTags.STRING).iterator();
+        Iterator itStringFilters = getElement(filter, "filter").getChildren(XMLTags.STRING).iterator();
         while (itStringFilters.hasNext()) {
-        	Element stringFilter = (Element) itStringFilters.next();
-        	if (stringFilter.getAttributeValue(XMLTags.NAME).compareTo(XMLTags.REMOVE_INTERMEDIATE_WHITESPACES) == 0) {
-        		return stringFilter;
-        	}
+            Element stringFilter = (Element) itStringFilters.next();
+            if (stringFilter.getAttributeValue(XMLTags.NAME).compareTo(XMLTags.REMOVE_INTERMEDIATE_WHITESPACES) == 0) {
+                return stringFilter;
+            }
         }
         return null;
     }
@@ -1179,7 +1239,6 @@ public class DatabaseModel extends Model {
      * get all string filters
      *
      * @return List of string filters
-     *
      * @throws MissingElementException NullPointerException if element(s) not available
      */
     public final List getStringFilters() throws MissingElementException {
@@ -1190,16 +1249,15 @@ public class DatabaseModel extends Model {
      * get string filter setNull
      *
      * @return string filter setNull
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final Element getStringFilterSetNull() throws MissingElementException {
-    	Iterator itStringFilters = getElement(filter, "filter").getChildren(XMLTags.STRING).iterator();
+        Iterator itStringFilters = getElement(filter, "filter").getChildren(XMLTags.STRING).iterator();
         while (itStringFilters.hasNext()) {
-        	Element stringFilter = (Element) itStringFilters.next();
-        	if (stringFilter.getAttributeValue(XMLTags.NAME).compareTo(XMLTags.SET_NULL) == 0) {
-        		return stringFilter;
-        	}
+            Element stringFilter = (Element) itStringFilters.next();
+            if (stringFilter.getAttributeValue(XMLTags.NAME).compareTo(XMLTags.SET_NULL) == 0) {
+                return stringFilter;
+            }
         }
         return null;
     }
@@ -1208,16 +1266,15 @@ public class DatabaseModel extends Model {
      * get string filter trim
      *
      * @return string filter trim
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final Element getStringFilterTrim() throws MissingElementException {
-    	Iterator itStringFilters = getElement(filter, "filter").getChildren(XMLTags.STRING).iterator();
+        Iterator itStringFilters = getElement(filter, "filter").getChildren(XMLTags.STRING).iterator();
         while (itStringFilters.hasNext()) {
-        	Element stringFilter = (Element) itStringFilters.next();
-        	if (stringFilter.getAttributeValue(XMLTags.NAME).compareTo(XMLTags.TRIM) == 0) {
-        		return stringFilter;
-        	}
+            Element stringFilter = (Element) itStringFilters.next();
+            if (stringFilter.getAttributeValue(XMLTags.NAME).compareTo(XMLTags.TRIM) == 0) {
+                return stringFilter;
+            }
         }
         return null;
     }
@@ -1226,7 +1283,6 @@ public class DatabaseModel extends Model {
      * get all table filters
      *
      * @return List of table filter elements
-     *
      * @throws MissingElementException
      */
     public final List getTableFilters() throws MissingElementException {
@@ -1237,10 +1293,8 @@ public class DatabaseModel extends Model {
      * get table filter given source table name
      *
      * @param tableName (source table)
-     *
      * @return table filter element
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final Element getTableFilter(String tableName) throws MissingElementException {
@@ -1256,10 +1310,8 @@ public class DatabaseModel extends Model {
      *
      * @param dataType DOCUMENT ME!
      * @param database DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final Element getTypeInfoByDataType(String dataType,
@@ -1281,11 +1333,9 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @param localTypeName DOCUMENT ME!
-     * @param database DOCUMENT ME!
-     *
+     * @param database      DOCUMENT ME!
      * @return DOCUMENT ME!
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final Element getTypeInfoByLocalTypeName(String localTypeName,
@@ -1308,10 +1358,8 @@ public class DatabaseModel extends Model {
      *
      * @param typeName DOCUMENT ME!
      * @param database DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final Element getTypeInfoByTypeName(String typeName,
@@ -1333,10 +1381,8 @@ public class DatabaseModel extends Model {
      * Returns unmapped columns for a given table
      *
      * @param tableName to get unmapped columns for
-     *
      * @return List containing unmapped columns for this table
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final List getUnmappedColumns(String tableName) throws MissingElementException {
@@ -1355,9 +1401,8 @@ public class DatabaseModel extends Model {
      * get all source table elements which are not yet mapped
      *
      * @return List of source table elements
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
      */
     public final List getUnmappedSourceTables() throws MissingAttributeException, MissingElementException {
         return getUnmappedElements(getElement(sourceModel, "sourceModel").getChildren(XMLTags.TABLE).iterator(), XMLTags.SOURCE_DB);
@@ -1367,9 +1412,8 @@ public class DatabaseModel extends Model {
      * get all destination table elements which are not yet mapped
      *
      * @return List of destination table elements
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
      */
     public final List getUnmappedDestinationTables() throws MissingAttributeException, MissingElementException {
         return getUnmappedElements(getElement(destinationModel, "destinationModel").getChildren(XMLTags.TABLE).iterator(), XMLTags.DESTINATION_DB);
@@ -1392,7 +1436,6 @@ public class DatabaseModel extends Model {
      * checks if source model has already been captured
      *
      * @return true or false
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final boolean isSourceModelCaptured() throws MissingElementException {
@@ -1407,7 +1450,6 @@ public class DatabaseModel extends Model {
      * check if destination model has already been captured
      *
      * @return true or false
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final boolean isDestinationModelCaptured() throws MissingElementException {
@@ -1422,7 +1464,6 @@ public class DatabaseModel extends Model {
      * checks if mapping has already been setup
      *
      * @return true or false
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final boolean isMappingSetup() throws MissingElementException {
@@ -1434,112 +1475,11 @@ public class DatabaseModel extends Model {
     }
 
     /**
-     * set source schema
-     *
-     * @param schemaName schema name
-     *
-     * @throws MissingElementException DOCUMENT ME!
-     */
-    public final void setSourceSchema(String schemaName) throws MissingElementException {
-        if (schemaName == null) {
-            schemaName = "%";
-        }
-
-        getElement(sourceSchema, "sourceSchema").setAttribute(XMLTags.VALUE, schemaName);
-    }
-
-    /**
-     * set destination schema
-     *
-     * @param schemaName schema name
-     *
-     * @throws MissingElementException DOCUMENT ME!
-     */
-    public final void setDestinationSchema(String schemaName) throws MissingElementException {
-        if (schemaName == null) {
-            schemaName = "%";
-        }
-
-        getElement(destinationSchema, "destinationSchema").setAttribute(XMLTags.VALUE, schemaName);
-    }
-
-    /**
-     * set source catalog name
-     *
-     * @param catalogName source
-     *
-     * @throws MissingElementException DOCUMENT ME!
-     */
-    public final void setSourceCatalog(String catalogName) throws MissingElementException {
-        if (catalogName == null) {
-            catalogName = "";
-        }
-
-        getElement(sourceCatalog, "sourceCatalog").setAttribute(XMLTags.VALUE, catalogName);
-    }
-
-    /**
-     * set destination catalog name
-     *
-     * @param catalogName destination
-     *
-     * @throws MissingElementException DOCUMENT ME!
-     */
-    public final void setDestinationCatalog(String catalogName) throws MissingElementException {
-        if (catalogName == null) {
-            catalogName = "";
-        }
-
-        getElement(destinationCatalog, "destinationCatalog").setAttribute(XMLTags.VALUE, catalogName);
-    }
-
-    /**
-     * set source table pattern (may contain SQL wildcards)
-     *
-     * @param tablePattern source table
-     *
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
-     */
-    public final void setSourceTablePattern(String tablePattern) throws MissingElementException {
-        if (tablePattern == null) {
-            throw new IllegalArgumentException("Missing tablePattern");
-        }
-
-        if (tablePattern.length() > 0) {
-            getElement(sourceTablePattern, "sourceTablePattern").setAttribute(XMLTags.VALUE, tablePattern);
-        } else {
-            getElement(sourceTablePattern, "sourceTablePattern").setAttribute(XMLTags.VALUE, "%");
-        }
-    }
-
-    /**
-     * set destination table pattern (may contain SQL wildcards)
-     *
-     * @param tablePattern destination table
-     *
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
-     */
-    public final void setDestinationTablePattern(String tablePattern) throws MissingElementException {
-        if (tablePattern == null) {
-            throw new IllegalArgumentException("Missing tablePattern");
-        }
-
-        if (tablePattern.length() > 0) {
-            getElement(destinationTablePattern, "destinationTablePattern").setAttribute(XMLTags.VALUE, tablePattern);
-        } else {
-            getElement(destinationTablePattern, "destinationTablePattern").setAttribute(XMLTags.VALUE, "%");
-        }
-    }
-
-    /**
      * set or reset tag PROCESS given an element
      *
      * @param element to set or reset
      * @param process true or false
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final void setElementProcess(Element element,
@@ -1554,10 +1494,9 @@ public class DatabaseModel extends Model {
     /**
      * set or reset tag PROCESSED given an element
      *
-     * @param element to set or reset
+     * @param element   to set or reset
      * @param processed true or false
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final void setElementProcessed(Element element,
@@ -1573,9 +1512,8 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @param elements DOCUMENT ME!
-     * @param process DOCUMENT ME!
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @param process  DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final void setElementsProcessRecursively(Element elements,
@@ -1599,10 +1537,9 @@ public class DatabaseModel extends Model {
     /**
      * DOCUMENT ME!
      *
-     * @param elements DOCUMENT ME!
+     * @param elements  DOCUMENT ME!
      * @param processed DOCUMENT ME!
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final void setElementsProcessedRecursively(Element elements,
@@ -1624,86 +1561,19 @@ public class DatabaseModel extends Model {
     }
 
     /**
-     * DOCUMENT ME!
-     *
-     * @param element
-     *
-     * @throws IllegalArgumentException DOCUMENT ME!
-     */
-    public final void setDestinationModel(Element element) {
-        if (element == null) {
-            throw new IllegalArgumentException("Missing element");
-        }
-
-        if (destinationDb.getChild(XMLTags.MODEL) != null) {
-        	destinationDb.removeChild(XMLTags.MODEL);
-        }
-        
-        destinationModel = element;
-        destinationDb.addContent(destinationModel);
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @param element
-     *
-     * @throws IllegalArgumentException DOCUMENT ME!
-     */
-    public final void setSourceModel(Element element) {
-        if (element == null) {
-            throw new IllegalArgumentException("Missing element");
-        }
-
-        sourceModel = element;
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @param element
-     *
-     * @throws IllegalArgumentException DOCUMENT ME!
-     */
-    public void setDestinationMetadata(Element element) {
-        if (element == null) {
-            throw new IllegalArgumentException("Missing element");
-        }
-
-        destinationMetadata = element;
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @param element
-     *
-     * @throws IllegalArgumentException DOCUMENT ME!
-     */
-    public void setSourceMetadata(Element element) {
-        if (element == null) {
-            throw new IllegalArgumentException("Missing element");
-        }
-
-        sourceMetadata = element;
-    }
-
-    /**
      * get all elements to process
      *
      * @param iterator (of all source table or mapping table elements)
-     *
      * @return List of elements to be processed
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
      */
     private List getElementsToProcess(Iterator iterator) throws MissingAttributeException {
         if (iterator == null) {
             throw new IllegalArgumentException("Missing iterator");
         }
 
-        Vector  process = new Vector();
+        Vector process = new Vector();
         Element element = null;
 
         while (iterator.hasNext()) {
@@ -1720,15 +1590,13 @@ public class DatabaseModel extends Model {
     /**
      * DOCUMENT ME!
      *
-     * @param table DOCUMENT ME!
+     * @param table   DOCUMENT ME!
      * @param tagType DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     private final List getKeys(Element table,
-                               String  tagType) {
+                               String tagType) {
         if ((table == null) || (tagType == null)) {
             throw new IllegalArgumentException("Missing arguments values: table=" + table + " tagType=" + tagType);
         }
@@ -1739,13 +1607,12 @@ public class DatabaseModel extends Model {
     /**
      * set or reset tag PROCESSED given an iterator
      *
-     * @param iterator (source table or mapping table iterator)
+     * @param iterator  (source table or mapping table iterator)
      * @param processed true or false
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     private void setProcessed(Iterator iterator,
-                              boolean  processed) {
+                              boolean processed) {
         if (iterator == null) {
             throw new IllegalArgumentException("Missing iterator");
         }
@@ -1762,14 +1629,12 @@ public class DatabaseModel extends Model {
      * get elements to be processed given an iterator
      *
      * @param db_element DOCUMENT ME!
-     *
      * @return List of elements to be processed
-     *
-     * @throws DependencyNotSolvableException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
+     * @throws DependencyNotSolvableException     DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
+     * @throws IllegalArgumentException           DOCUMENT ME!
      */
     private List getTablesToProcessOrdered(Element db_element) throws DependencyNotSolvableException, MissingAttributeException, UnsupportedAttributeValueException, MissingElementException {
         if (db_element == null) {
@@ -1779,7 +1644,7 @@ public class DatabaseModel extends Model {
         Dependency dependency = new Dependency(this, db_element);
         dependency.setProcessOrder();
 
-        TreeMap  treeMap = new TreeMap();
+        TreeMap treeMap = new TreeMap();
 
         Iterator itTables;
 
@@ -1815,28 +1680,26 @@ public class DatabaseModel extends Model {
      *
      * @param iteratorTable (table iterator)
      * @param attributeName MAPPED
-     *
      * @return list of unmapped table elements
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
      */
     private List getUnmappedElements(Iterator iteratorTable,
-                                     String   attributeName) throws MissingAttributeException, MissingElementException {
+                                     String attributeName) throws MissingAttributeException, MissingElementException {
         if ((iteratorTable == null) || (attributeName == null)) {
             throw new IllegalArgumentException("Missing arguments values iteratorTable=" + iteratorTable + " attributeName=" + attributeName);
         }
 
-        Vector  unmappedElements = new Vector();
+        Vector unmappedElements = new Vector();
         Element element = null;
-        String  elementName = "";
+        String elementName = "";
         boolean mapped = false;
 
         while (iteratorTable.hasNext()) {
-            mapped          = false;
-            element         = (Element) iteratorTable.next();
-            elementName     = getAttributeValue(element, XMLTags.NAME);
+            mapped = false;
+            element = (Element) iteratorTable.next();
+            elementName = getAttributeValue(element, XMLTags.NAME);
 
             Iterator itMapping = getMappingTables().iterator();
 
@@ -1861,27 +1724,27 @@ public class DatabaseModel extends Model {
      * DOCUMENT ME!
      *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
      */
     private void loadExistingElements() throws MissingAttributeException, MissingElementException {
-        sourceDb               = getChildElement(root, XMLTags.SOURCE_DB);
-        sourceDriver           = getChildElement(sourceDb, XMLTags.DRIVER);
-        sourceMetadata         = getChildElement(sourceDb, XMLTags.METADATA);
-        sourceConnection       = getChildElement(sourceDb, XMLTags.CONNECTION);
-        sourceCatalog          = getChildElement(sourceDb, XMLTags.CATALOG);
-        sourceSchema           = getChildElement(sourceDb, XMLTags.SCHEMA);
-        sourceTablePattern     = getChildElement(sourceDb, XMLTags.TABLE_PATTERN);
-        sourceModel            = getChildElement(sourceDb, XMLTags.MODEL);
+        sourceDb = getChildElement(root, XMLTags.SOURCE_DB);
+        sourceDriver = getChildElement(sourceDb, XMLTags.DRIVER);
+        sourceMetadata = getChildElement(sourceDb, XMLTags.METADATA);
+        sourceConnection = getChildElement(sourceDb, XMLTags.CONNECTION);
+        sourceCatalog = getChildElement(sourceDb, XMLTags.CATALOG);
+        sourceSchema = getChildElement(sourceDb, XMLTags.SCHEMA);
+        sourceTablePattern = getChildElement(sourceDb, XMLTags.TABLE_PATTERN);
+        sourceModel = getChildElement(sourceDb, XMLTags.MODEL);
 
         if (root.getChild(XMLTags.DESTINATION_DB) != null) {
-            destinationDb               = getChildElement(root, XMLTags.DESTINATION_DB);
-            destinationDriver           = getChildElement(destinationDb, XMLTags.DRIVER);
-            destinationMetadata         = getChildElement(destinationDb, XMLTags.METADATA);
-            destinationConnection       = getChildElement(destinationDb, XMLTags.CONNECTION);
-            destinationCatalog          = getChildElement(destinationDb, XMLTags.CATALOG);
-            destinationSchema           = getChildElement(destinationDb, XMLTags.SCHEMA);
-            destinationTablePattern     = getChildElement(destinationDb, XMLTags.TABLE_PATTERN);
-            destinationModel            = getChildElement(destinationDb, XMLTags.MODEL);
+            destinationDb = getChildElement(root, XMLTags.DESTINATION_DB);
+            destinationDriver = getChildElement(destinationDb, XMLTags.DRIVER);
+            destinationMetadata = getChildElement(destinationDb, XMLTags.METADATA);
+            destinationConnection = getChildElement(destinationDb, XMLTags.CONNECTION);
+            destinationCatalog = getChildElement(destinationDb, XMLTags.CATALOG);
+            destinationSchema = getChildElement(destinationDb, XMLTags.SCHEMA);
+            destinationTablePattern = getChildElement(destinationDb, XMLTags.TABLE_PATTERN);
+            destinationModel = getChildElement(destinationDb, XMLTags.MODEL);
         }
 
         if (root.getChild(XMLTags.MAPPING) != null) {

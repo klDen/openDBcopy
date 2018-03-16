@@ -1,1 +1,4 @@
-ant.importBuild 'build.xml'
+dependencies {
+    implementation project(':opendbcopy')
+    compile group: 'de.unkrig', name: 'jsh', version: '0.1.1'
+}

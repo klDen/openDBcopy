@@ -23,25 +23,23 @@
 package opendbcopy.plugin.model.database.beans;
 
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.plugin.model.exception.MissingAttributeException;
-
-import org.jdom.Element;
+import org.jdom2.Element;
 
 
 /**
  * class description
  *
- * @author  Anthony Smith
+ * @author Anthony Smith
  * @version $Revision$
  */
 public class Key {
     private Element keyElement;
-    private String  parentTableName;
-    private String  parentColumnName;
-    private String  childColumnName;
-    private String  childKeyName;
-    private String  parentKeyName;
+    private String parentTableName;
+    private String parentColumnName;
+    private String childColumnName;
+    private String childKeyName;
+    private String parentKeyName;
     private Integer updateRule;
     private Integer deleteRule;
     private Integer keySequence;
@@ -56,7 +54,6 @@ public class Key {
      * Creates a new Key object.
      *
      * @param keyElement DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
      */
     public Key(Element keyElement) throws MissingAttributeException {
@@ -128,100 +125,116 @@ public class Key {
             throw new MissingAttributeException(keyElement, XMLTags.DELETE_RULE);
         }
     }
-	/**
-	 * @return Returns the childColumnName.
-	 */
-	public String getChildColumnName() {
-		return childColumnName;
-	}
-	/**
-	 * @param childColumnName The childColumnName to set.
-	 */
-	public void setChildColumnName(String childColumnName) {
-		this.childColumnName = childColumnName;
-	}
-	/**
-	 * @return Returns the childKeyName.
-	 */
-	public String getChildKeyName() {
-		return childKeyName;
-	}
-	/**
-	 * @param childKeyName The childKeyName to set.
-	 */
-	public void setChildKeyName(String childKeyName) {
-		this.childKeyName = childKeyName;
-	}
-	/**
-	 * @return Returns the deleteRule.
-	 */
-	public Integer getDeleteRule() {
-		return deleteRule;
-	}
-	/**
-	 * @param deleteRule The deleteRule to set.
-	 */
-	public void setDeleteRule(Integer deleteRule) {
-		this.deleteRule = deleteRule;
-	}
-	/**
-	 * @return Returns the keySequence.
-	 */
-	public Integer getKeySequence() {
-		return keySequence;
-	}
-	/**
-	 * @param keySequence The keySequence to set.
-	 */
-	public void setKeySequence(Integer keySequence) {
-		this.keySequence = keySequence;
-	}
-	/**
-	 * @return Returns the parentColumnName.
-	 */
-	public String getParentColumnName() {
-		return parentColumnName;
-	}
-	/**
-	 * @param parentColumnName The parentColumnName to set.
-	 */
-	public void setParentColumnName(String parentColumnName) {
-		this.parentColumnName = parentColumnName;
-	}
-	/**
-	 * @return Returns the parentKeyName.
-	 */
-	public String getParentKeyName() {
-		return parentKeyName;
-	}
-	/**
-	 * @param parentKeyName The parentKeyName to set.
-	 */
-	public void setParentKeyName(String parentKeyName) {
-		this.parentKeyName = parentKeyName;
-	}
-	/**
-	 * @return Returns the parentTableName.
-	 */
-	public String getParentTableName() {
-		return parentTableName;
-	}
-	/**
-	 * @param parentTableName The parentTableName to set.
-	 */
-	public void setParentTableName(String parentTableName) {
-		this.parentTableName = parentTableName;
-	}
-	/**
-	 * @return Returns the updateRule.
-	 */
-	public Integer getUpdateRule() {
-		return updateRule;
-	}
-	/**
-	 * @param updateRule The updateRule to set.
-	 */
-	public void setUpdateRule(Integer updateRule) {
-		this.updateRule = updateRule;
-	}
+
+    /**
+     * @return Returns the childColumnName.
+     */
+    public String getChildColumnName() {
+        return childColumnName;
+    }
+
+    /**
+     * @param childColumnName The childColumnName to set.
+     */
+    public void setChildColumnName(String childColumnName) {
+        this.childColumnName = childColumnName;
+    }
+
+    /**
+     * @return Returns the childKeyName.
+     */
+    public String getChildKeyName() {
+        return childKeyName;
+    }
+
+    /**
+     * @param childKeyName The childKeyName to set.
+     */
+    public void setChildKeyName(String childKeyName) {
+        this.childKeyName = childKeyName;
+    }
+
+    /**
+     * @return Returns the deleteRule.
+     */
+    public Integer getDeleteRule() {
+        return deleteRule;
+    }
+
+    /**
+     * @param deleteRule The deleteRule to set.
+     */
+    public void setDeleteRule(Integer deleteRule) {
+        this.deleteRule = deleteRule;
+    }
+
+    /**
+     * @return Returns the keySequence.
+     */
+    public Integer getKeySequence() {
+        return keySequence;
+    }
+
+    /**
+     * @param keySequence The keySequence to set.
+     */
+    public void setKeySequence(Integer keySequence) {
+        this.keySequence = keySequence;
+    }
+
+    /**
+     * @return Returns the parentColumnName.
+     */
+    public String getParentColumnName() {
+        return parentColumnName;
+    }
+
+    /**
+     * @param parentColumnName The parentColumnName to set.
+     */
+    public void setParentColumnName(String parentColumnName) {
+        this.parentColumnName = parentColumnName;
+    }
+
+    /**
+     * @return Returns the parentKeyName.
+     */
+    public String getParentKeyName() {
+        return parentKeyName;
+    }
+
+    /**
+     * @param parentKeyName The parentKeyName to set.
+     */
+    public void setParentKeyName(String parentKeyName) {
+        this.parentKeyName = parentKeyName;
+    }
+
+    /**
+     * @return Returns the parentTableName.
+     */
+    public String getParentTableName() {
+        return parentTableName;
+    }
+
+    /**
+     * @param parentTableName The parentTableName to set.
+     */
+    public void setParentTableName(String parentTableName) {
+        this.parentTableName = parentTableName;
+    }
+
+    /**
+     * @return Returns the updateRule.
+     */
+    public Integer getUpdateRule() {
+        return updateRule;
+    }
+
+    /**
+     * @param updateRule The updateRule to set.
+     */
+    public void setUpdateRule(Integer updateRule) {
+        this.updateRule = updateRule;
+    }
 }

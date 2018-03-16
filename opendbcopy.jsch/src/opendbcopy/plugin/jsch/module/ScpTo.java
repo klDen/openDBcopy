@@ -22,32 +22,21 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.plugin.jsch.module;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import com.jcraft.jsch.*;
 import opendbcopy.config.XMLTags;
 import opendbcopy.plugin.jsch.config.JschXMLTags;
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.PluginException;
 import opendbcopy.util.InputOutputHelper;
-
 import org.apache.log4j.Logger;
-import org.jdom.Element;
+import org.jdom2.Element;
 
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
+import java.io.*;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -61,18 +50,17 @@ public final class ScpTo {
      * DOCUMENT ME!
      *
      * @param logger DOCUMENT ME!
-     * @param conf DOCUMENT ME!
-     * @param input DOCUMENT ME!
+     * @param conf   DOCUMENT ME!
+     * @param input  DOCUMENT ME!
      * @param output DOCUMENT ME!
-     *
      * @throws PluginException DOCUMENT ME!
      */
-    public static final void execute(Logger  logger,
+    public static final void execute(Logger logger,
                                      Element conf,
                                      Element input,
                                      Element output) throws PluginException {
-        File[]    inputFiles = null;
-        URL[]    outputURLs = null;
+        File[] inputFiles = null;
+        URL[] outputURLs = null;
         ArrayList remoteURLs = new ArrayList();
 
         try {
@@ -80,7 +68,7 @@ public final class ScpTo {
 
             String remotePath = retrieveOutputPath(conf);
             String host = retrieveHost(conf);
-            int    port = retrievePort(conf);
+            int port = retrievePort(conf);
             String userName = retrieveUserName(conf);
             String password = retrievePassword(conf);
             String fileListIdentifier = retrieveFileListIdentifier(conf);
@@ -92,13 +80,13 @@ public final class ScpTo {
                     secureCopyDir(logger, host, port, userName, password, inputFile, remotePath);
                 }
             }
-            
-            outputURLs     = new URL[remoteURLs.size()];            
-            outputURLs    = (URL[]) remoteURLs.toArray(outputURLs);
+
+            outputURLs = new URL[remoteURLs.size()];
+            outputURLs = (URL[]) remoteURLs.toArray(outputURLs);
 
             Element outputElement = InputOutputHelper.createURLListElement(outputURLs);
             output.addContent(outputElement);
-            
+
         } catch (MissingAttributeException e) {
             throw new PluginException(e);
         } catch (MissingElementException e) {
@@ -115,33 +103,32 @@ public final class ScpTo {
     /**
      * Only works if the remote directory already exists or is created first, which it isn't at the moment
      *
-     * @param logger DOCUMENT ME!
-     * @param host DOCUMENT ME!
-     * @param port DOCUMENT ME!
-     * @param userName DOCUMENT ME!
-     * @param password DOCUMENT ME!
+     * @param logger     DOCUMENT ME!
+     * @param host       DOCUMENT ME!
+     * @param port       DOCUMENT ME!
+     * @param userName   DOCUMENT ME!
+     * @param password   DOCUMENT ME!
      * @param sourceFile DOCUMENT ME!
      * @param remotePath DOCUMENT ME!
-     *
-     * @throws IOException DOCUMENT ME!
-     * @throws JSchException DOCUMENT ME!
+     * @throws IOException     DOCUMENT ME!
+     * @throws JSchException   DOCUMENT ME!
      * @throws PluginException DOCUMENT ME!
      */
     private static void secureCopyDir(Logger logger,
                                       String host,
-                                      int    port,
+                                      int port,
                                       String userName,
                                       String password,
-                                      File   sourceFile,
+                                      File sourceFile,
                                       String remotePath) throws IOException, JSchException, PluginException {
         if (sourceFile.isDirectory()) {
             File[] fileList = sourceFile.listFiles();
 
             for (int i = 0; i < fileList.length; i++) {
                 if (fileList[i].isDirectory()) {
-                	secureCopyDir(logger, host, port, userName, password, fileList[i], remotePath + "/" + sourceFile.getName() + "/" + fileList[i].getName());
+                    secureCopyDir(logger, host, port, userName, password, fileList[i], remotePath + "/" + sourceFile.getName() + "/" + fileList[i].getName());
                 } else if (fileList[i].isFile()) {
-                	secureCopyFile(logger, host, port, userName, password, fileList[i], remotePath + "/" + sourceFile.getName() + "/" + fileList[i].getName());
+                    secureCopyFile(logger, host, port, userName, password, fileList[i], remotePath + "/" + sourceFile.getName() + "/" + fileList[i].getName());
                 }
             }
         } else {
@@ -152,26 +139,25 @@ public final class ScpTo {
     /**
      * DOCUMENT ME!
      *
-     * @param logger DOCUMENT ME!
-     * @param host DOCUMENT ME!
-     * @param port DOCUMENT ME!
-     * @param userName DOCUMENT ME!
-     * @param password DOCUMENT ME!
+     * @param logger     DOCUMENT ME!
+     * @param host       DOCUMENT ME!
+     * @param port       DOCUMENT ME!
+     * @param userName   DOCUMENT ME!
+     * @param password   DOCUMENT ME!
      * @param sourceFile DOCUMENT ME!
      * @param remotePath DOCUMENT ME!
-     *
-     * @throws IOException DOCUMENT ME!
-     * @throws JSchException DOCUMENT ME!
+     * @throws IOException     DOCUMENT ME!
+     * @throws JSchException   DOCUMENT ME!
      * @throws PluginException DOCUMENT ME!
      */
     private static void secureCopyFile(Logger logger,
                                        String host,
-                                       int    port,
+                                       int port,
                                        String userName,
                                        String password,
-                                       File   sourceFile,
+                                       File sourceFile,
                                        String remotePath) throws IOException, JSchException, PluginException {
-        JSch    jsch = new JSch();
+        JSch jsch = new JSch();
         Session session = jsch.getSession(userName, host, port);
 
         session.setHost(host);
@@ -180,13 +166,13 @@ public final class ScpTo {
         session.connect();
 
         // exec 'scp -t rfile' remotely
-        String  command = "scp -t " + remotePath;
+        String command = "scp -t " + remotePath;
         Channel channel = session.openChannel("exec");
         ((ChannelExec) channel).setCommand(command);
 
         // get I/O streams for remote scp
         OutputStream out = channel.getOutputStream();
-        InputStream  in = channel.getInputStream();
+        InputStream in = channel.getInputStream();
 
         channel.connect();
 
@@ -212,7 +198,7 @@ public final class ScpTo {
 
         // send a content of sourceFile
         FileInputStream fis = new FileInputStream(sourceFile);
-        byte[]          buf = new byte[1024];
+        byte[] buf = new byte[1024];
 
         while (true) {
             int len = fis.read(buf, 0, buf.length);
@@ -241,10 +227,8 @@ public final class ScpTo {
      * DOCUMENT ME!
      *
      * @param in DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws IOException DOCUMENT ME!
+     * @throws IOException     DOCUMENT ME!
      * @throws PluginException DOCUMENT ME!
      */
     private static int checkAck(InputStream in) throws IOException, PluginException {
@@ -264,7 +248,7 @@ public final class ScpTo {
 
         if ((b == 1) || (b == 2)) {
             StringBuffer sb = new StringBuffer();
-            int          c;
+            int c;
 
             do {
                 c = in.read();
@@ -286,21 +270,19 @@ public final class ScpTo {
     /**
      * DOCUMENT ME!
      *
-     * @param conf DOCUMENT ME!
+     * @param conf  DOCUMENT ME!
      * @param input DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws FileNotFoundException DOCUMENT ME!
-     * @throws PluginException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws FileNotFoundException     DOCUMENT ME!
+     * @throws PluginException           DOCUMENT ME!
      */
     private static File[] retrieveInput(Element conf,
                                         Element input) throws MissingAttributeException, MissingElementException, FileNotFoundException, PluginException {
         ArrayList inputFiles = new ArrayList();
 
-        Element   inputConf = conf.getChild(XMLTags.INPUT);
+        Element inputConf = conf.getChild(XMLTags.INPUT);
 
         if (inputConf == null) {
             throw new PluginException(new MissingElementException(new Element(XMLTags.INPUT), XMLTags.INPUT));
@@ -379,9 +361,7 @@ public final class ScpTo {
      * DOCUMENT ME!
      *
      * @param conf DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws PluginException DOCUMENT ME!
      */
     private static String retrieveOutputPath(Element conf) throws PluginException {
@@ -396,9 +376,7 @@ public final class ScpTo {
      * DOCUMENT ME!
      *
      * @param conf DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws PluginException DOCUMENT ME!
      */
     private static String retrieveHost(Element conf) throws PluginException {
@@ -413,9 +391,7 @@ public final class ScpTo {
      * DOCUMENT ME!
      *
      * @param conf DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws PluginException DOCUMENT ME!
      */
     private static int retrievePort(Element conf) throws PluginException {
@@ -430,9 +406,7 @@ public final class ScpTo {
      * DOCUMENT ME!
      *
      * @param conf DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws PluginException DOCUMENT ME!
      */
     private static String retrieveUserName(Element conf) throws PluginException {
@@ -447,9 +421,7 @@ public final class ScpTo {
      * DOCUMENT ME!
      *
      * @param conf DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws PluginException DOCUMENT ME!
      */
     private static String retrievePassword(Element conf) throws PluginException {
@@ -464,9 +436,7 @@ public final class ScpTo {
      * DOCUMENT ME!
      *
      * @param conf DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws PluginException DOCUMENT ME!
      */
     private static String retrieveFileListIdentifier(Element conf) throws PluginException {

@@ -23,11 +23,9 @@
 package opendbcopy.plugin.model.exception;
 
 import opendbcopy.plugin.model.Model;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-
-import org.jdom.Element;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.jdom2.Element;
 
 
 /**
@@ -37,20 +35,20 @@ import org.jdom.Element;
  * @version $Revision$
  */
 public class MissingElementException extends Exception {
-    private Model   pluginModel;
+    private Model pluginModel;
     private Element element;
-    private String  elementName;
+    private String elementName;
 
     /**
      * Creates a new MissingElementException object.
      *
-     * @param element DOCUMENT ME!
+     * @param element     DOCUMENT ME!
      * @param elementName DOCUMENT ME!
      */
     public MissingElementException(Element element,
-                                   String  elementName) {
-        this.element         = element;
-        this.elementName     = elementName;
+                                   String elementName) {
+        this.element = element;
+        this.elementName = elementName;
     }
 
     /**

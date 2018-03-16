@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
 
-<installation version="1.0">
+<izpack:installation version="5.0"
+                     xmlns:izpack="http://izpack.org/schema/installation"
+                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                     xsi:schemaLocation="http://izpack.org/schema/installation http://izpack.org/schema/5.0/izpack-installation-5.0.xsd">
 
     <info>
         <appname>openDBcopy</appname>
@@ -10,34 +13,32 @@
         </authors>
         <url>http://opendbcopy.org/</url>
     </info>
-    
-    <native type="izpack" name="ShellLink.dll"/>
 
     <guiprefs width="640" height="480" resizable="yes"/>
-    
+
     <locale>
         <langpack iso3="eng"/>
         <langpack iso3="deu"/>
     </locale>
-    
+
     <resources>
         <res id="LicencePanel.licence" src="COPYING"/>
         <res id="InfoPanel.info" src="README"/>
-        <res id="installer.langsel.img" src="xdocs/images/opendbcopy_logo.gif" />
-	  	<res id="shortcutSpec.xml" src="shortcutSpec.xml"/>
+        <res id="installer.langsel.img" src="xdocs/images/opendbcopy_logo.gif"/>
+        <res id="shortcutSpec.xml" src="shortcutSpec.xml"/>
     </resources>
-    
+
     <panels>
         <panel classname="HelloPanel"/>
         <panel classname="InfoPanel"/>
         <panel classname="LicencePanel"/>
-        <panel classname="TargetPanel"/> 
+        <panel classname="TargetPanel"/>
         <panel classname="PacksPanel"/>
         <panel classname="InstallPanel"/>
         <panel classname="ShortcutPanel"/>
         <panel classname="FinishPanel"/>
     </panels>
-    
+
     <packs>
         <pack name="Base Programme" required="yes" preselected="yes">
             <description>openDBcopy Core Component including Plugin Binaries as is</description>
@@ -48,17 +49,17 @@
             <file src="ChangeLog" targetdir="$INSTALL_PATH"/>
             <file src="bin/start.bat" targetdir="$INSTALL_PATH/bin"/>
             <file src="bin/start.sh" targetdir="$INSTALL_PATH/bin"/>
-            <file src="resource" targetdir="$INSTALL_PATH"/>
+            <file src="resources" targetdir="$INSTALL_PATH"/>
             <file src="conf" targetdir="$INSTALL_PATH"/>
             <file src="plugins" targetdir="$INSTALL_PATH"/>
             <file src="lib/opendbcopy.jar" targetdir="$INSTALL_PATH/lib"/>
             <file src="lib/jdom.jar" targetdir="$INSTALL_PATH/lib"/>
             <file src="lib/xerces.jar" targetdir="$INSTALL_PATH/lib"/>
             <file src="lib/log4j-1.2.8.jar" targetdir="$INSTALL_PATH/lib"/>
-			<file src="lib/commons-lang-2.0.jar" targetdir="$INSTALL_PATH/lib"/>
-			<file src="lib/TableLayout.jar" targetdir="$INSTALL_PATH/lib"/>
-			<file src="lib/ostermillerutils_1_03_00.jar" targetdir="$INSTALL_PATH/lib"/>
-			<executable stage="never" targetfile="$INSTALL_PATH/bin/start.sh"/>
+            <file src="lib/commons-lang-2.0.jar" targetdir="$INSTALL_PATH/lib"/>
+            <file src="lib/TableLayout.jar" targetdir="$INSTALL_PATH/lib"/>
+            <file src="lib/ostermillerutils_1_03_00.jar" targetdir="$INSTALL_PATH/lib"/>
+            <executable stage="never" targetfile="$INSTALL_PATH/bin/start.sh"/>
         </pack>
         <pack name="User Manual" required="no" preselected="yes">
             <description>User Manual</description>
@@ -75,5 +76,5 @@
             <file src="docs/developer-manual.pdf" targetdir="$INSTALL_PATH/docs"/>
         </pack>
     </packs>
-    
-</installation>
+
+</izpack:installation>

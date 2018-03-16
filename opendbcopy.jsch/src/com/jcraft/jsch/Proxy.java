@@ -29,10 +29,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-import java.io.*;
-public interface Proxy{
-  void connect(Session session, String host, int port) throws Exception;
-  InputStream getInputStream();
-  OutputStream getOutputStream();
-  void close();
+import java.io.InputStream;
+import java.io.OutputStream;
+
+public interface Proxy {
+    void connect(Session session, String host, int port) throws Exception;
+
+    InputStream getInputStream();
+
+    OutputStream getOutputStream();
+
+    void close();
 }

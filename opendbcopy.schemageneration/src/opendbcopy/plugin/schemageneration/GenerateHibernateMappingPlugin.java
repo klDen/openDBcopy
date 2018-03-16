@@ -24,12 +24,9 @@ package opendbcopy.plugin.schemageneration;
 
 import opendbcopy.config.APM;
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.controller.MainController;
-
 import opendbcopy.io.PropertiesToFile;
 import opendbcopy.io.Writer;
-
 import opendbcopy.plugin.model.DynamicPluginThread;
 import opendbcopy.plugin.model.Model;
 import opendbcopy.plugin.model.database.DatabaseModel;
@@ -38,19 +35,12 @@ import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.PluginException;
 import opendbcopy.plugin.model.exception.UnsupportedAttributeValueException;
-
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.sql.DatabaseMetaData;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 
 /**
@@ -62,34 +52,33 @@ import java.util.Properties;
 public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
     private static final String HBM_FILE_SUFFIX = ".hbm.xml";
     private static final String MANY_TO_ONE_REF_EXTENSION = "Ref";
-    private DatabaseModel       model;
-    private TypeMapping         typeMapping;
-    private StringBuffer        sb;
-    private Element             conf;
-    private File                outputPath;
-    private String              packageName;
-    private String              hibernateDialect;
-    private String              database = "";
-    private String              uniqueKeyGenerator = "";
-    private String              identifierQuoteStringOut = "";
-    private String              outerJoin;
-    private boolean             show_qualified_table_name = false;
-    private boolean             lazy;
-    private boolean             inverse;
-    private int                 counterRecords = 0;
-    private int                 counterTables = 0;
-    private List                processTables;
+    private DatabaseModel model;
+    private TypeMapping typeMapping;
+    private StringBuffer sb;
+    private Element conf;
+    private File outputPath;
+    private String packageName;
+    private String hibernateDialect;
+    private String database = "";
+    private String uniqueKeyGenerator = "";
+    private String identifierQuoteStringOut = "";
+    private String outerJoin;
+    private boolean show_qualified_table_name = false;
+    private boolean lazy;
+    private boolean inverse;
+    private int counterRecords = 0;
+    private int counterTables = 0;
+    private List processTables;
 
     /**
      * Creates a new CopyMapping object.
      *
      * @param controller DOCUMENT ME!
-     * @param baseModel DOCUMENT ME!
-     *
+     * @param baseModel  DOCUMENT ME!
      * @throws PluginException DOCUMENT ME!
      */
     public GenerateHibernateMappingPlugin(MainController controller,
-                                          Model          baseModel) throws PluginException {
+                                          Model baseModel) throws PluginException {
         super(controller, baseModel);
         this.model = (DatabaseModel) baseModel;
     }
@@ -102,10 +91,10 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
     protected void setUp() throws PluginException {
         try {
             // setup SQL Type -> Java Type Mapping up as HashMap for fast lookup
-            typeMapping     = new TypeMapping(getTypeMapping());
+            typeMapping = new TypeMapping(getTypeMapping());
 
             // read the plugin configuration
-            conf     = model.getConf();
+            conf = model.getConf();
 
             outputPath = new File(conf.getChild(XMLTags.DIR).getAttributeValue(XMLTags.VALUE));
 
@@ -117,13 +106,13 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
                 }
             }
 
-            packageName          = conf.getChild(XMLTags.PACKAGE_NAME).getAttributeValue(XMLTags.VALUE);
-            hibernateDialect     = conf.getChild(XMLTags.HIBERNATE_DIALECT).getAttributeValue(XMLTags.CLASS);
+            packageName = conf.getChild(XMLTags.PACKAGE_NAME).getAttributeValue(XMLTags.VALUE);
+            hibernateDialect = conf.getChild(XMLTags.HIBERNATE_DIALECT).getAttributeValue(XMLTags.CLASS);
 
-            outerJoin     = conf.getChild(XMLTags.OUTER_JOIN).getAttributeValue(XMLTags.VALUE);
+            outerJoin = conf.getChild(XMLTags.OUTER_JOIN).getAttributeValue(XMLTags.VALUE);
 
-            lazy        = Boolean.valueOf(conf.getChild(XMLTags.LAZY).getAttributeValue(XMLTags.VALUE)).booleanValue();
-            inverse     = Boolean.valueOf(conf.getChild(XMLTags.INVERSE).getAttributeValue(XMLTags.VALUE)).booleanValue();
+            lazy = Boolean.valueOf(conf.getChild(XMLTags.LAZY).getAttributeValue(XMLTags.VALUE)).booleanValue();
+            inverse = Boolean.valueOf(conf.getChild(XMLTags.INVERSE).getAttributeValue(XMLTags.VALUE)).booleanValue();
 
             // retrieve unique key generator
             uniqueKeyGenerator = conf.getChild(XMLTags.GENERATOR_CLASS).getAttributeValue(XMLTags.VALUE);
@@ -157,21 +146,21 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
      */
     public final void execute() throws PluginException {
         try {
-            String   destinationTableName = "";
-            String   tableName = "";
-            String   fileName = "";
+            String destinationTableName = "";
+            String tableName = "";
+            String fileName = "";
 
             Iterator itProcessTables = processTables.iterator();
 
             while (itProcessTables.hasNext() && !isInterrupted()) {
                 Element tableProcess = (Element) itProcessTables.next();
-                List    processColumns = null;
+                List processColumns = null;
                 counterRecords = 0;
 
                 if (model.getDbMode() == model.DUAL_MODE) {
-                    destinationTableName     = tableProcess.getAttributeValue(XMLTags.DESTINATION_DB);
-                    processColumns           = model.getMappingColumnsToProcessByDestinationTable(destinationTableName);
-                    fileName                 = outputPath.getAbsolutePath() + APM.FILE_SEP + destinationTableName + HBM_FILE_SUFFIX;
+                    destinationTableName = tableProcess.getAttributeValue(XMLTags.DESTINATION_DB);
+                    processColumns = model.getMappingColumnsToProcessByDestinationTable(destinationTableName);
+                    fileName = outputPath.getAbsolutePath() + APM.FILE_SEP + destinationTableName + HBM_FILE_SUFFIX;
                 }
 
                 sb = new StringBuffer();
@@ -187,8 +176,8 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
 
             // create hibernate.properties file
             Properties p = new Properties();
-            Element    destinationDriver = model.getDestinationConnection();
-            Element    destinationDbProductName = model.getDestinationMetadata().getChild(XMLTags.DB_PRODUCT_NAME);
+            Element destinationDriver = model.getDestinationConnection();
+            Element destinationDbProductName = model.getDestinationMetadata().getChild(XMLTags.DB_PRODUCT_NAME);
 
             p.setProperty("hibernate.connection.driver_class", destinationDriver.getAttributeValue(XMLTags.DRIVER_CLASS));
             p.setProperty("hibernate.connection.url", destinationDriver.getAttributeValue(XMLTags.URL));
@@ -235,23 +224,22 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
      * DOCUMENT ME!
      *
      * @param destinationTableName DOCUMENT ME!
-     * @param processColumns DOCUMENT ME!
-     *
-     * @throws MissingAttributeException DOCUMENT ME!
+     * @param processColumns       DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
      */
     private void genHibernateMappingFile(String destinationTableName,
-                                         List   processColumns) throws MissingAttributeException, UnsupportedAttributeValueException, MissingElementException {
+                                         List processColumns) throws MissingAttributeException, UnsupportedAttributeValueException, MissingElementException {
         initXMLHeader();
 
         sb.append("<hibernate-mapping>" + APM.LINE_SEP);
         sb.append("<class name=\"" + packageName + "." + destinationTableName + "\" table=\"" + destinationTableName + "\">" + APM.LINE_SEP);
 
-        HashMap   mapPrimaryKeyElements = new HashMap();
-        HashMap   mapImportedKeyElements = new HashMap();
-        HashMap   mapExportedKeyElements = new HashMap();
-        HashMap   mapIndexElements = new HashMap();
+        HashMap mapPrimaryKeyElements = new HashMap();
+        HashMap mapImportedKeyElements = new HashMap();
+        HashMap mapExportedKeyElements = new HashMap();
+        HashMap mapIndexElements = new HashMap();
         ArrayList listImportedKeyElementsOrdered = new ArrayList();
 
         // check for primary keys
@@ -299,11 +287,11 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
         ArrayList normalColumns = new ArrayList();
         ArrayList primaryKeyColumns = new ArrayList();
         ArrayList importedKeyColumns = new ArrayList();
-        Element   column = null;
+        Element column = null;
 
         for (int i = 0; i < processColumns.size(); i++) {
-            column     = (Element) processColumns.get(i);
-            column     = model.getDestinationColumn(destinationTableName, column.getAttributeValue(XMLTags.DESTINATION_DB));
+            column = (Element) processColumns.get(i);
+            column = model.getDestinationColumn(destinationTableName, column.getAttributeValue(XMLTags.DESTINATION_DB));
 
             if (mapPrimaryKeyElements.containsKey(column.getAttributeValue(XMLTags.NAME))) {
                 primaryKeyColumns.add(column);
@@ -355,17 +343,16 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
     /**
      * DOCUMENT ME!
      *
-     * @param sb DOCUMENT ME!
-     * @param column DOCUMENT ME!
+     * @param sb        DOCUMENT ME!
+     * @param column    DOCUMENT ME!
      * @param tableName DOCUMENT ME!
-     *
-     * @throws MissingAttributeException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
      */
     private void processSinglePrimaryKey(StringBuffer sb,
-                                         Element      column,
-                                         String       tableName) throws MissingAttributeException, UnsupportedAttributeValueException, MissingElementException {
+                                         Element column,
+                                         String tableName) throws MissingAttributeException, UnsupportedAttributeValueException, MissingElementException {
         sb.append("<id");
         sb.append(" name=\"" + column.getAttributeValue(XMLTags.NAME) + "\"");
         sb.append(" column=\"" + column.getAttributeValue(XMLTags.NAME) + "\"");
@@ -373,7 +360,7 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
         sb.append(">" + APM.LINE_SEP);
 
         // add params if available - and replace [table] patterns
-        Element  generatorElement = null;
+        Element generatorElement = null;
         Iterator itGeneratorElements = conf.getChild(XMLTags.GENERATOR_CLASS).getChildren().iterator();
 
         while (itGeneratorElements.hasNext() && (generatorElement == null)) {
@@ -420,17 +407,17 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
     /**
      * DOCUMENT ME!
      *
-     * @param sb DOCUMENT ME!
+     * @param sb                   DOCUMENT ME!
      * @param destinationTableName DOCUMENT ME!
-     * @param importedKeys DOCUMENT ME!
-     * @param importedKeysOrdered DOCUMENT ME!
-     * @param primaryKeyColumns DOCUMENT ME!
+     * @param importedKeys         DOCUMENT ME!
+     * @param importedKeysOrdered  DOCUMENT ME!
+     * @param primaryKeyColumns    DOCUMENT ME!
      */
     private void processCompositeKey(StringBuffer sb,
-                                     String       destinationTableName,
-                                     HashMap      importedKeys,
-                                     ArrayList    importedKeysOrdered,
-                                     ArrayList    primaryKeyColumns) {
+                                     String destinationTableName,
+                                     HashMap importedKeys,
+                                     ArrayList importedKeysOrdered,
+                                     ArrayList primaryKeyColumns) {
         // check which primary key is only within this table and which ones point to another table
         ArrayList onlyPrimaryKeyColumns = new ArrayList();
         ArrayList primaryAndImportedKeyColumns = new ArrayList();
@@ -460,7 +447,7 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
         }
 
         for (int i = 0; i < parentTables.size(); i++) {
-            String    parentTableName = (String) parentTables.get(i);
+            String parentTableName = (String) parentTables.get(i);
 
             ArrayList childColumns = new ArrayList();
 
@@ -528,13 +515,13 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
     /**
      * DOCUMENT ME!
      *
-     * @param sb DOCUMENT ME!
+     * @param sb      DOCUMENT ME!
      * @param indexes DOCUMENT ME!
-     * @param column DOCUMENT ME!
+     * @param column  DOCUMENT ME!
      */
     private void processNormalColumn(StringBuffer sb,
-                                     HashMap      indexes,
-                                     Element      column) {
+                                     HashMap indexes,
+                                     Element column) {
         sb.append("<property");
         sb.append(" name=\"" + column.getAttributeValue(XMLTags.NAME) + "\"");
         sb.append(" type=\"" + typeMapping.getJavaType(column.getAttributeValue(XMLTags.DATA_TYPE)) + "\"");
@@ -542,6 +529,10 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
         sb.append("   <column" + APM.LINE_SEP);
         sb.append("     name=\"" + column.getAttributeValue(XMLTags.NAME) + "\"" + APM.LINE_SEP);
         sb.append("     length=\"" + column.getAttributeValue(XMLTags.COLUMN_SIZE) + "\"" + APM.LINE_SEP);
+
+        if (typeMapping.getJavaType(column.getAttributeValue(XMLTags.DATA_TYPE)).equals("java.math.BigDecimal")) {
+            sb.append("     scale=\"" + column.getAttributeValue(XMLTags.DECIMAL_DIGITS) + "\"" + APM.LINE_SEP);
+        }
 
         // check if not null
         if (column.getAttributeValue(XMLTags.NULLABLE).compareTo("false") == 0) {
@@ -571,25 +562,24 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
      * Imported Keys are appended at the end of a table, given by hbm2java Tool, independent of hbm column order An imported key can be a reference
      * to a single primary key or compound key of another table
      *
-     * @param sb DOCUMENT ME!
+     * @param sb                     DOCUMENT ME!
      * @param mapImportedKeyElements DOCUMENT ME!
      * @param listImportedKeyColumns DOCUMENT ME!
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     private void processImportedKeys(StringBuffer sb,
-                                     HashMap      mapImportedKeyElements,
-                                     ArrayList    listImportedKeyColumns) throws MissingElementException {
+                                     HashMap mapImportedKeyElements,
+                                     ArrayList listImportedKeyColumns) throws MissingElementException {
         // find out which columns are imported keys pointing to a compound key - or primary key
-        HashMap   mapImportedTables = new HashMap();
+        HashMap mapImportedTables = new HashMap();
         ArrayList listImportedTablesOrdered = new ArrayList();
 
         for (int i = 0; i < listImportedKeyColumns.size(); i++) {
             Element columnElement = (Element) listImportedKeyColumns.get(i);
             Element impElement = (Element) mapImportedKeyElements.get(columnElement.getAttributeValue(XMLTags.NAME));
 
-            String  referencedTableName = impElement.getAttributeValue(XMLTags.PKTABLE_NAME);
-            
+            String referencedTableName = impElement.getAttributeValue(XMLTags.PKTABLE_NAME);
+
             if (!listImportedTablesOrdered.contains(referencedTableName)) {
                 listImportedTablesOrdered.add(referencedTableName);
             }
@@ -605,7 +595,7 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
         }
 
         for (int i = 0; i < listImportedTablesOrdered.size(); i++) {
-            String    referencedTableName = (String) listImportedTablesOrdered.get(i);
+            String referencedTableName = (String) listImportedTablesOrdered.get(i);
 
             ArrayList listImpElements = (ArrayList) mapImportedTables.get(referencedTableName);
 
@@ -622,13 +612,13 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
     /**
      * DOCUMENT ME!
      *
-     * @param sb DOCUMENT ME!
+     * @param sb     DOCUMENT ME!
      * @param impKey DOCUMENT ME!
      * @param column DOCUMENT ME!
      */
     private void processSingleImportedKey(StringBuffer sb,
-                                          Element      impKey,
-                                          Element      column) {
+                                          Element impKey,
+                                          Element column) {
         sb.append("<many-to-one");
         sb.append(" name=\"" + impKey.getAttributeValue(XMLTags.PKTABLE_NAME).toLowerCase() + MANY_TO_ONE_REF_EXTENSION + "\"");
         sb.append(" class=\"" + packageName + "." + impKey.getAttributeValue(XMLTags.PKTABLE_NAME) + "\"");
@@ -653,18 +643,17 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
     /**
      * DOCUMENT ME!
      *
-     * @param sb DOCUMENT ME!
+     * @param sb      DOCUMENT ME!
      * @param impKeys DOCUMENT ME!
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     private void processCompositeImportedKey(StringBuffer sb,
-                                             ArrayList    impKeys) throws MissingElementException {
+                                             ArrayList impKeys) throws MissingElementException {
         // Retrieve basic information
         Element impElement = (Element) impKeys.get(0);
         Element columnElement = model.getDestinationColumn(impElement.getAttributeValue(XMLTags.FKTABLE_NAME), impElement.getAttributeValue(XMLTags.FKCOLUMN_NAME));
-        String  importedTableName = impElement.getAttributeValue(XMLTags.PKTABLE_NAME);
-        String  deleteRuleString = impElement.getAttributeValue(XMLTags.DELETE_RULE);
+        String importedTableName = impElement.getAttributeValue(XMLTags.PKTABLE_NAME);
+        String deleteRuleString = impElement.getAttributeValue(XMLTags.DELETE_RULE);
 
         sb.append("<many-to-one");
         sb.append(" name=\"" + importedTableName.toLowerCase() + MANY_TO_ONE_REF_EXTENSION + "\"");
@@ -693,36 +682,36 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
     /**
      * DOCUMENT ME!
      *
-     * @param sb DOCUMENT ME!
+     * @param sb         DOCUMENT ME!
      * @param deleteRule DOCUMENT ME!
      */
     private void processImportDeleteRule(StringBuffer sb,
-                                         int          deleteRule) {
+                                         int deleteRule) {
         switch (deleteRule) {
-        case DatabaseMetaData.importedKeyNoAction:
-            sb.append(" cascade=\"none\"");
+            case DatabaseMetaData.importedKeyNoAction:
+                sb.append(" cascade=\"none\"");
 
-            break;
+                break;
 
-        case DatabaseMetaData.importedKeyRestrict:
-            sb.append(" cascade=\"none\"");
+            case DatabaseMetaData.importedKeyRestrict:
+                sb.append(" cascade=\"none\"");
 
-            break;
+                break;
 
-        case DatabaseMetaData.importedKeyCascade:
-            sb.append(" cascade=\"all\"");
+            case DatabaseMetaData.importedKeyCascade:
+                sb.append(" cascade=\"all\"");
 
-            break;
+                break;
 
-        case DatabaseMetaData.importedKeySetNull:
-            sb.append(" cascade=\"all\"");
+            case DatabaseMetaData.importedKeySetNull:
+                sb.append(" cascade=\"all\"");
 
-            break;
+                break;
 
-        case DatabaseMetaData.importedKeySetDefault:
-            sb.append(" cascade=\"all\"");
+            case DatabaseMetaData.importedKeySetDefault:
+                sb.append(" cascade=\"all\"");
 
-            break;
+                break;
         }
     }
 
@@ -733,7 +722,7 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
      */
     private void processExportedKey(Element expKey) {
         sb.append("<set");
-        
+
         // the exported key name must be different than the foreign key table name as other object may already have a reference called the same
         sb.append(" name=\"" + expKey.getAttributeValue(XMLTags.FKTABLE_NAME).toLowerCase() + "s" + "\"");
         sb.append(" lazy=\"" + lazy + "\"");
@@ -742,30 +731,30 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
         int deleteRule = Integer.parseInt(expKey.getAttributeValue(XMLTags.DELETE_RULE));
 
         switch (deleteRule) {
-        case DatabaseMetaData.importedKeyNoAction:
-            sb.append(" cascade=\"none\"");
+            case DatabaseMetaData.importedKeyNoAction:
+                sb.append(" cascade=\"none\"");
 
-            break;
+                break;
 
-        case DatabaseMetaData.importedKeyRestrict:
-            sb.append(" cascade=\"none\"");
+            case DatabaseMetaData.importedKeyRestrict:
+                sb.append(" cascade=\"none\"");
 
-            break;
+                break;
 
-        case DatabaseMetaData.importedKeyCascade:
-            sb.append(" cascade=\"all\"");
+            case DatabaseMetaData.importedKeyCascade:
+                sb.append(" cascade=\"all\"");
 
-            break;
+                break;
 
-        case DatabaseMetaData.importedKeySetNull:
-            sb.append(" cascade=\"all\"");
+            case DatabaseMetaData.importedKeySetNull:
+                sb.append(" cascade=\"all\"");
 
-            break;
+                break;
 
-        case DatabaseMetaData.importedKeySetDefault:
-            sb.append(" cascade=\"all\"");
+            case DatabaseMetaData.importedKeySetDefault:
+                sb.append(" cascade=\"all\"");
 
-            break;
+                break;
         }
 
         sb.append(">" + APM.LINE_SEP);

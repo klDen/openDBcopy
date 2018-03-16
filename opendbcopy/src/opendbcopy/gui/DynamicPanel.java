@@ -25,31 +25,22 @@ package opendbcopy.gui;
 import opendbcopy.connection.exception.CloseConnectionException;
 import opendbcopy.connection.exception.DriverNotFoundException;
 import opendbcopy.connection.exception.OpenConnectionException;
-
 import opendbcopy.controller.MainController;
-
 import opendbcopy.plugin.JobManager;
-
 import opendbcopy.plugin.model.Model;
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.UnsupportedAttributeValueException;
-
 import opendbcopy.resource.ResourceManager;
-
 import org.apache.log4j.Level;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
 
-import org.jdom.Element;
-import org.jdom.JDOMException;
-
+import javax.swing.*;
 import java.io.IOException;
-
 import java.sql.SQLException;
-
 import java.util.Observable;
 import java.util.Observer;
-
-import javax.swing.JPanel;
 
 
 /**
@@ -59,27 +50,27 @@ import javax.swing.JPanel;
  * @version $Revision$
  */
 public class DynamicPanel extends JPanel implements Observer {
-    protected MainController  controller;
-    protected PluginGui       pluginGui;
-    protected JobManager      jm;
+    protected MainController controller;
+    protected PluginGui pluginGui;
+    protected JobManager jm;
     protected ResourceManager rm;
-    protected Model           model;
+    protected Model model;
 
     /**
      * Creates a new DynamicPanel object.
      *
-     * @param controller DOCUMENT ME!
-     * @param pluginGui DOCUMENT ME!
+     * @param controller         DOCUMENT ME!
+     * @param pluginGui          DOCUMENT ME!
      * @param registerAsObserver DOCUMENT ME!
      */
     public DynamicPanel(MainController controller,
-                        PluginGui      pluginGui,
-                        Boolean        registerAsObserver) {
-        this.controller     = controller;
-        this.rm             = controller.getResourceManager();
-        this.jm             = controller.getJobManager();
-        this.pluginGui      = pluginGui;
-        this.model          = pluginGui.getModel();
+                        PluginGui pluginGui,
+                        Boolean registerAsObserver) {
+        this.controller = controller;
+        this.rm = controller.getResourceManager();
+        this.jm = controller.getJobManager();
+        this.pluginGui = pluginGui;
+        this.model = pluginGui.getModel();
 
         if (registerAsObserver.booleanValue()) {
             model.registerObserver(this);
@@ -89,11 +80,11 @@ public class DynamicPanel extends JPanel implements Observer {
     /**
      * This method must be overriden by each subclass if required
      *
-     * @param o DOCUMENT ME!
+     * @param o   DOCUMENT ME!
      * @param obj DOCUMENT ME!
      */
     public void update(Observable o,
-                       Object     obj) {
+                       Object obj) {
     }
 
     /**
@@ -105,22 +96,21 @@ public class DynamicPanel extends JPanel implements Observer {
     /**
      * DOCUMENT ME!
      *
-     * @param operation DOCUMENT ME!
+     * @param operation         DOCUMENT ME!
      * @param messageSuccessful DOCUMENT ME!
-     *
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws DriverNotFoundException DOCUMENT ME!
-     * @throws OpenConnectionException DOCUMENT ME!
-     * @throws CloseConnectionException DOCUMENT ME!
-     * @throws JDOMException DOCUMENT ME!
-     * @throws SQLException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
-     * @throws Exception DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
+     * @throws DriverNotFoundException            DOCUMENT ME!
+     * @throws OpenConnectionException            DOCUMENT ME!
+     * @throws CloseConnectionException           DOCUMENT ME!
+     * @throws JDOMException                      DOCUMENT ME!
+     * @throws SQLException                       DOCUMENT ME!
+     * @throws IOException                        DOCUMENT ME!
+     * @throws Exception                          DOCUMENT ME!
      */
     protected final void execute(Element operation,
-                                 String  messageSuccessful) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, DriverNotFoundException, OpenConnectionException, CloseConnectionException, JDOMException, SQLException, IOException, Exception {
+                                 String messageSuccessful) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, DriverNotFoundException, OpenConnectionException, CloseConnectionException, JDOMException, SQLException, IOException, Exception {
         pluginGui.execute(operation, messageSuccessful);
     }
 

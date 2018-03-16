@@ -30,41 +30,52 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jcraft.jsch.jce;
 
 import com.jcraft.jsch.MAC;
-import javax.crypto.*;
-import javax.crypto.spec.*;
 
-public class HMACSHA196 implements MAC{
-  private String name="hmac-sha1-96";
-  private int bsize=12;
-  private Mac mac;
-  private byte[] tmp=new byte[4];
-  private byte[] buf=new byte[12];
-  public int getBlockSize(){return bsize;};
-  public void init(byte[] key) throws Exception{
-    if(key.length>20){
-      byte[] tmp=new byte[20];
-      System.arraycopy(key, 0, tmp, 0, 20);	  
-      key=tmp;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
+public class HMACSHA196 implements MAC {
+    private String name = "hmac-sha1-96";
+    private int bsize = 12;
+    private Mac mac;
+    private byte[] tmp = new byte[4];
+    private byte[] buf = new byte[12];
+
+    public int getBlockSize() {
+        return bsize;
     }
-    SecretKeySpec skey=new SecretKeySpec(key, "HmacSHA1");
-    mac=Mac.getInstance("HmacSHA1");
-    mac.init(skey);
-  } 
-  public void update(int i){
-    tmp[0]=(byte)(i>>>24);
-    tmp[1]=(byte)(i>>>16);
-    tmp[2]=(byte)(i>>>8);
-    tmp[3]=(byte)i;
-    update(tmp, 0, 4);
-  }
-  public void update(byte foo[], int s, int l){
-    mac.update(foo, s, l);      
-  }
-  public byte[] doFinal(){
-    System.arraycopy(mac.doFinal(), 0, buf, 0, 12);
-    return buf;
-  }
-  public String getName(){
-    return name;
-  }
+
+    ;
+
+    public void init(byte[] key) throws Exception {
+        if (key.length > 20) {
+            byte[] tmp = new byte[20];
+            System.arraycopy(key, 0, tmp, 0, 20);
+            key = tmp;
+        }
+        SecretKeySpec skey = new SecretKeySpec(key, "HmacSHA1");
+        mac = Mac.getInstance("HmacSHA1");
+        mac.init(skey);
+    }
+
+    public void update(int i) {
+        tmp[0] = (byte) (i >>> 24);
+        tmp[1] = (byte) (i >>> 16);
+        tmp[2] = (byte) (i >>> 8);
+        tmp[3] = (byte) i;
+        update(tmp, 0, 4);
+    }
+
+    public void update(byte foo[], int s, int l) {
+        mac.update(foo, s, l);
+    }
+
+    public byte[] doFinal() {
+        System.arraycopy(mac.doFinal(), 0, buf, 0, 12);
+        return buf;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

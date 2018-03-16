@@ -24,8 +24,7 @@ package opendbcopy.config;
 
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
-
-import org.jdom.Element;
+import org.jdom2.Element;
 
 
 /**
@@ -41,9 +40,8 @@ public class Driver {
      * Creates a new Driver object.
      *
      * @param driver DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
      */
     public Driver(Element driver) throws MissingAttributeException, MissingElementException {
         this.driver = driver;
@@ -55,7 +53,7 @@ public class Driver {
      * DOCUMENT ME!
      *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
      */
     public final void checkDriver() throws MissingAttributeException, MissingElementException {
         if (driver.getAttributeValue(XMLTags.NAME) == null) {
@@ -147,23 +145,23 @@ public class Driver {
     }
 
     public String getDefaultURL(String database) {
-    	Element defaultElement = getDefault(database);
-    	
-    	if (defaultElement != null) {
-    		return defaultElement.getChild(XMLTags.URL).getAttributeValue(XMLTags.VALUE);
-    	} else {
-    		return null;
-    	}
+        Element defaultElement = getDefault(database);
+
+        if (defaultElement != null) {
+            return defaultElement.getChild(XMLTags.URL).getAttributeValue(XMLTags.VALUE);
+        } else {
+            return null;
+        }
     }
-    
+
     public String getDefaultUsername(String database) {
-    	Element defaultElement = getDefault(database);
-    	
-    	if (defaultElement != null) {
-    		return defaultElement.getChild(XMLTags.USERNAME).getAttributeValue(XMLTags.VALUE);
-    	} else {
-    		return null;
-    	}
+        Element defaultElement = getDefault(database);
+
+        if (defaultElement != null) {
+            return defaultElement.getChild(XMLTags.USERNAME).getAttributeValue(XMLTags.VALUE);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -172,68 +170,68 @@ public class Driver {
      * @param database DOCUMENT ME!
      */
     public void setDefault(String database, String url, String username) {
-    	if (database == null) {
-    		throw new IllegalArgumentException("Missing database");
-    	}
-    	
-    	Element defaultElement = null;
-    	
-    	if (driver.getChild(XMLTags.DEFAULT) == null) {
-    		defaultElement = new Element(XMLTags.DEFAULT);
-    	} else {
-    		defaultElement = driver.getChild(XMLTags.DEFAULT);
-    		resetDefault(database);
-    	}
+        if (database == null) {
+            throw new IllegalArgumentException("Missing database");
+        }
 
-    	Element dbElement = new Element(database);
-    	Element urlElement = new Element(XMLTags.URL);
-    	Element usernameElement = new Element(XMLTags.USERNAME);
-    	
-    	urlElement.setAttribute(XMLTags.VALUE, url);
-    	usernameElement.setAttribute(XMLTags.VALUE, username);
-    	
-    	dbElement.addContent(urlElement);
-    	dbElement.addContent(usernameElement);
-    	
-    	dbElement.setAttribute(XMLTags.LAST_SELECTED, Boolean.toString(true));
-    	
-    	defaultElement.addContent(dbElement);
-    	
-    	if (driver.getChild(XMLTags.DEFAULT) == null) {
-        	driver.addContent(defaultElement);
-    	}
+        Element defaultElement = null;
+
+        if (driver.getChild(XMLTags.DEFAULT) == null) {
+            defaultElement = new Element(XMLTags.DEFAULT);
+        } else {
+            defaultElement = driver.getChild(XMLTags.DEFAULT);
+            resetDefault(database);
+        }
+
+        Element dbElement = new Element(database);
+        Element urlElement = new Element(XMLTags.URL);
+        Element usernameElement = new Element(XMLTags.USERNAME);
+
+        urlElement.setAttribute(XMLTags.VALUE, url);
+        usernameElement.setAttribute(XMLTags.VALUE, username);
+
+        dbElement.addContent(urlElement);
+        dbElement.addContent(usernameElement);
+
+        dbElement.setAttribute(XMLTags.LAST_SELECTED, Boolean.toString(true));
+
+        defaultElement.addContent(dbElement);
+
+        if (driver.getChild(XMLTags.DEFAULT) == null) {
+            driver.addContent(defaultElement);
+        }
     }
-    
-    public void resetDefault(String database) {
-    	if (database == null) {
-    		throw new IllegalArgumentException("Missing database");
-    	}
 
-    	driver.getChild(XMLTags.DEFAULT).removeChild(database);
+    public void resetDefault(String database) {
+        if (database == null) {
+            throw new IllegalArgumentException("Missing database");
+        }
+
+        driver.getChild(XMLTags.DEFAULT).removeChild(database);
     }
 
     public void setLastSelected(String database, boolean enable) {
-    	if (database == null) {
-    		throw new IllegalArgumentException("Missing database");
-    	}
-    	
-    	if (driver.getChild(XMLTags.DEFAULT) != null && driver.getChild(XMLTags.DEFAULT).getChild(database) != null) {
-    		driver.getChild(XMLTags.DEFAULT).getChild(database).setAttribute(XMLTags.LAST_SELECTED, Boolean.toString(enable));
-    	}
+        if (database == null) {
+            throw new IllegalArgumentException("Missing database");
+        }
+
+        if (driver.getChild(XMLTags.DEFAULT) != null && driver.getChild(XMLTags.DEFAULT).getChild(database) != null) {
+            driver.getChild(XMLTags.DEFAULT).getChild(database).setAttribute(XMLTags.LAST_SELECTED, Boolean.toString(enable));
+        }
     }
-    
+
     /**
      * DOCUMENT ME!
      *
      * @return DOCUMENT ME!
      */
     public boolean isDefault(String database) {
-    	if (driver.getChild(XMLTags.DEFAULT) != null) {
+        if (driver.getChild(XMLTags.DEFAULT) != null) {
             if (driver.getChild(XMLTags.DEFAULT).getChild(database) != null && driver.getChild(XMLTags.DEFAULT).getChild(database).getAttributeValue(XMLTags.LAST_SELECTED) != null) {
                 return Boolean.valueOf(driver.getChild(XMLTags.DEFAULT).getChild(database).getAttributeValue(XMLTags.LAST_SELECTED)).booleanValue();
             } else {
-            	return false;
-            }    		
+                return false;
+            }
         } else {
             return false;
         }

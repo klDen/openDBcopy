@@ -22,33 +22,6 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.gui.database.single;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Rectangle;
-import java.awt.SystemColor;
-import java.awt.event.ActionEvent;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Observable;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTree;
-import javax.swing.border.Border;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import opendbcopy.config.OperationType;
 import opendbcopy.config.XMLTags;
 import opendbcopy.controller.MainController;
@@ -56,8 +29,20 @@ import opendbcopy.gui.DynamicPanel;
 import opendbcopy.gui.PluginGui;
 import opendbcopy.plugin.model.database.DatabaseModel;
 import opendbcopy.plugin.model.exception.MissingElementException;
+import org.jdom2.Element;
 
-import org.jdom.Element;
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Observable;
 
 
 /**
@@ -67,48 +52,47 @@ import org.jdom.Element;
  * @version $Revision$
  */
 public class PanelProcessColumn extends DynamicPanel {
-    private static final String    SQL_START = "SELECT <RECORDS> FROM ";
-    private static final String    WHERE = " WHERE";
-    private DatabaseModel          model;
-    private String                 currentTable;
+    private static final String SQL_START = "SELECT <RECORDS> FROM ";
+    private static final String WHERE = " WHERE";
+    private DatabaseModel model;
+    private String currentTable;
     private DefaultMutableTreeNode top;
-    private ProcessColumnModel     processColumnModel;
-    private boolean                select_all = false;
-    private Border                 borderRightPanel;
-    private BorderLayout           borderLayout = new BorderLayout();
-    private BorderLayout           borderLayoutRight = new BorderLayout();
-    private BorderLayout           borderLayoutTextfield = new BorderLayout();
-    private GridLayout             gridLayoutFilter = new GridLayout();
-    private JPanel                 panelOptions = new JPanel();
-    private JPanel                 panelRight = new JPanel();
-    private JPanel                 panelTableFilters = new JPanel();
-    private JPanel                 panelProcessColumns = null;
-    private JPanel                 panelSelection = new JPanel();
-    private JPanel                 panelControlFilter = new JPanel();
-    private JSplitPane             splitPane = new JSplitPane();
-    private JScrollPane            scrollPaneTree = null;
-    private JScrollPane            scrollPaneTables = null;
-    private JTree                  treeSourceTables = new JTree();
-    private JTable                tableProcessColumn = new JTable();
-    private JTextField             tfFilter = new JTextField();
-    private JButton                buttonApplyTestFilter = new JButton();
-    private JButton                buttonDeleteFilter = new JButton();
-    private JCheckBox              checkBoxProcess = new JCheckBox();
-    private JLabel                 labelSelect = new JLabel();
-    private JLabel                 labelInfo = new JLabel();
+    private ProcessColumnModel processColumnModel;
+    private boolean select_all = false;
+    private Border borderRightPanel;
+    private BorderLayout borderLayout = new BorderLayout();
+    private BorderLayout borderLayoutRight = new BorderLayout();
+    private BorderLayout borderLayoutTextfield = new BorderLayout();
+    private GridLayout gridLayoutFilter = new GridLayout();
+    private JPanel panelOptions = new JPanel();
+    private JPanel panelRight = new JPanel();
+    private JPanel panelTableFilters = new JPanel();
+    private JPanel panelProcessColumns = null;
+    private JPanel panelSelection = new JPanel();
+    private JPanel panelControlFilter = new JPanel();
+    private JSplitPane splitPane = new JSplitPane();
+    private JScrollPane scrollPaneTree = null;
+    private JScrollPane scrollPaneTables = null;
+    private JTree treeSourceTables = new JTree();
+    private JTable tableProcessColumn = new JTable();
+    private JTextField tfFilter = new JTextField();
+    private JButton buttonApplyTestFilter = new JButton();
+    private JButton buttonDeleteFilter = new JButton();
+    private JCheckBox checkBoxProcess = new JCheckBox();
+    private JLabel labelSelect = new JLabel();
+    private JLabel labelInfo = new JLabel();
 
     /**
      * Creates a new PanelProcessColumn object.
      *
-     * @param controller DOCUMENT ME!
-     * @param pluginGui DOCUMENT ME!
+     * @param controller         DOCUMENT ME!
+     * @param workingMode        DOCUMENT ME!
      * @param registerAsObserver DOCUMENT ME!
-     *
      * @throws Exception DOCUMENT ME!
      */
     public PanelProcessColumn(MainController controller,
-                              PluginGui    workingMode,
-                              Boolean        registerAsObserver) throws Exception {
+                              PluginGui workingMode,
+                              Boolean registerAsObserver) throws Exception {
         super(controller, workingMode, registerAsObserver);
         model = (DatabaseModel) super.model;
         guiInit();
@@ -118,11 +102,11 @@ public class PanelProcessColumn extends DynamicPanel {
     /**
      * DOCUMENT ME!
      *
-     * @param o DOCUMENT ME!
+     * @param o   DOCUMENT ME!
      * @param obj DOCUMENT ME!
      */
     public final void update(Observable o,
-                             Object     obj) {
+                             Object obj) {
         if ((currentTable != null) && (currentTable.length() > 0)) {
             try {
                 Element tableFilter = model.getTableFilter(currentTable);
@@ -163,22 +147,22 @@ public class PanelProcessColumn extends DynamicPanel {
 
             // Listen for when the selection changes.
             treeSourceTables.addTreeSelectionListener(new TreeSelectionListener() {
-                    public void valueChanged(TreeSelectionEvent e) {
-                        DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeSourceTables.getLastSelectedPathComponent();
+                public void valueChanged(TreeSelectionEvent e) {
+                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeSourceTables.getLastSelectedPathComponent();
 
-                        if (node == null) {
-                            return;
-                        }
+                    if (node == null) {
+                        return;
+                    }
 
-                        if (node.getLevel() == 1) {
-                            try {
-                                loadColumnsAndFilter(node.toString());
-                            } catch (Exception ex) {
-                                postException(ex);
-                            }
+                    if (node.getLevel() == 1) {
+                        try {
+                            loadColumnsAndFilter(node.toString());
+                        } catch (Exception ex) {
+                            postException(ex);
                         }
                     }
-                });
+                }
+            });
 
             // add component		
             scrollPaneTree = new JScrollPane(treeSourceTables);
@@ -209,7 +193,6 @@ public class PanelProcessColumn extends DynamicPanel {
      * DOCUMENT ME!
      *
      * @param tableName DOCUMENT ME!
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     private void loadColumnsAndFilter(String tableName) throws MissingElementException {
@@ -226,9 +209,9 @@ public class PanelProcessColumn extends DynamicPanel {
             }
         }
 
-        processColumnModel     = new ProcessColumnModel(model.getSourceColumns(tableName));
+        processColumnModel = new ProcessColumnModel(model.getSourceColumns(tableName));
 
-       // load filter for table
+        // load filter for table
         labelSelect.setText(SQL_START + tableName + WHERE);
 
         Element tableFilter = model.getTableFilter(tableName);
@@ -242,7 +225,7 @@ public class PanelProcessColumn extends DynamicPanel {
             String nbrRecordsString = tableFilter.getAttributeValue(XMLTags.RECORDS);
 
             if (nbrRecordsString != null) {
-                String[] param = { nbrRecordsString };
+                String[] param = {nbrRecordsString};
                 labelInfo.setText(rm.getString("text.column.selectedRecords", param));
             }
         } else {
@@ -252,7 +235,7 @@ public class PanelProcessColumn extends DynamicPanel {
             labelInfo.setText("");
         }
 
-        tableProcessColumn     = new JTable(processColumnModel);
+        tableProcessColumn = new JTable(processColumnModel);
 
         panelProcessColumns.add(tableProcessColumn.getTableHeader(), BorderLayout.PAGE_START);
         panelProcessColumns.add(tableProcessColumn, BorderLayout.CENTER);
@@ -286,13 +269,12 @@ public class PanelProcessColumn extends DynamicPanel {
      * DOCUMENT ME!
      *
      * @param top DOCUMENT ME!
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     private void createNodes(DefaultMutableTreeNode top) throws MissingElementException {
         DefaultMutableTreeNode table = null;
 
-        Iterator               itSourceTables = model.getSourceTables().iterator();
+        Iterator itSourceTables = model.getSourceTables().iterator();
 
         while (itSourceTables.hasNext()) {
             Element tableElement = (Element) itSourceTables.next();
@@ -368,7 +350,7 @@ public class PanelProcessColumn extends DynamicPanel {
         panelTableFilters.add(panelSelection, null);
         panelTableFilters.add(panelControlFilter, null);
 
-        panelProcessColumns     = new JPanel(new BorderLayout());
+        panelProcessColumns = new JPanel(new BorderLayout());
 
         panelRight.add(panelProcessColumns, BorderLayout.CENTER);
         panelRight.add(panelTableFilters, BorderLayout.SOUTH);
@@ -376,8 +358,8 @@ public class PanelProcessColumn extends DynamicPanel {
 
         splitPane.setDividerLocation(splitPane.getLastDividerLocation());
 
-        scrollPaneTree       = new JScrollPane();
-        scrollPaneTables     = new JScrollPane(panelRight);
+        scrollPaneTree = new JScrollPane();
+        scrollPaneTables = new JScrollPane(panelRight);
 
         splitPane.add(scrollPaneTree, JSplitPane.LEFT);
         splitPane.add(scrollPaneTables, JSplitPane.RIGHT);
@@ -474,13 +456,13 @@ public class PanelProcessColumn extends DynamicPanel {
      * @version $Revision$
      */
     class ProcessColumnModel extends AbstractTableModel {
-        private String[]      columnNames = { rm.getString("text.column.type"), rm.getString("text.column.sourceColumn"), rm.getString("text.column.process") };
-        public final Object[] longValues = { "TIMESTAMP(6)", "abcdefghijklmnopqrstuvwxyz", new Boolean(false) };
+        public final Object[] longValues = {"TIMESTAMP(6)", "abcdefghijklmnopqrstuvwxyz", new Boolean(false)};
+        private String[] columnNames = {rm.getString("text.column.type"), rm.getString("text.column.sourceColumn"), rm.getString("text.column.process")};
         private List columnsList;
-        
+
         public ProcessColumnModel(List columnsList) {
-    		this.columnsList = columnsList;
-    	}    	
+            this.columnsList = columnsList;
+        }
 
         /**
          * DOCUMENT ME!
@@ -504,7 +486,6 @@ public class PanelProcessColumn extends DynamicPanel {
          * DOCUMENT ME!
          *
          * @param col DOCUMENT ME!
-         *
          * @return DOCUMENT ME!
          */
         public final String getColumnName(int col) {
@@ -516,19 +497,21 @@ public class PanelProcessColumn extends DynamicPanel {
          *
          * @param row DOCUMENT ME!
          * @param col DOCUMENT ME!
-         *
          * @return DOCUMENT ME!
          */
         public final Object getValueAt(int row,
                                        int col) {
-        	Element rowElement = (Element) columnsList.get(row);
-            
-        	switch (col) {
-        		case 0: return rowElement.getAttributeValue(XMLTags.TYPE_NAME);
-        		case 1: return rowElement.getAttributeValue(XMLTags.NAME);
-        		case 2: return Boolean.valueOf(rowElement.getAttributeValue(XMLTags.PROCESS));
-        	}
-        	return "you should'nt be here";
+            Element rowElement = (Element) columnsList.get(row);
+
+            switch (col) {
+                case 0:
+                    return rowElement.getAttributeValue(XMLTags.TYPE_NAME);
+                case 1:
+                    return rowElement.getAttributeValue(XMLTags.NAME);
+                case 2:
+                    return Boolean.valueOf(rowElement.getAttributeValue(XMLTags.PROCESS));
+            }
+            return "you should'nt be here";
         }
 
         /*
@@ -561,14 +544,14 @@ public class PanelProcessColumn extends DynamicPanel {
          * data can change.
          */
         public final void setValueAt(Object value,
-                                     int    row,
-                                     int    col) {
-        	
-        	if (col == 2) {
-            	Element rowElement = (Element) columnsList.get(row);
-            	rowElement.setAttribute(XMLTags.PROCESS, ((Boolean) value).toString());
+                                     int row,
+                                     int col) {
+
+            if (col == 2) {
+                Element rowElement = (Element) columnsList.get(row);
+                rowElement.setAttribute(XMLTags.PROCESS, ((Boolean) value).toString());
                 fireTableCellUpdated(row, col);
-        	}
+            }
         }
     }
 }

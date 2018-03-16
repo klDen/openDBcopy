@@ -23,10 +23,8 @@
 package opendbcopy.plugin.model.database.beans;
 
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.plugin.model.exception.MissingAttributeException;
-
-import org.jdom.Element;
+import org.jdom2.Element;
 
 
 /**
@@ -37,8 +35,8 @@ import org.jdom.Element;
  */
 public class Index {
     private Element indexElement;
-    private String  indexName;
-    private String  columnName;
+    private String indexName;
+    private String columnName;
     private Boolean isUnique;
     private Integer ordinalPosition;
 
@@ -52,7 +50,6 @@ public class Index {
      * Creates a new Index object.
      *
      * @param indexElement DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
      */
     public Index(Element indexElement) throws MissingAttributeException {

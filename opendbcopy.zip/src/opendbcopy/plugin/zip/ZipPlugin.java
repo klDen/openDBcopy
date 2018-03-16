@@ -22,18 +22,6 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.plugin.zip;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
 import opendbcopy.config.APM;
 import opendbcopy.config.XMLTags;
 import opendbcopy.controller.MainController;
@@ -43,8 +31,14 @@ import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.PluginException;
 import opendbcopy.util.InputOutputHelper;
+import org.jdom2.Element;
 
-import org.jdom.Element;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 
 /**
@@ -55,26 +49,25 @@ import org.jdom.Element;
  */
 public class ZipPlugin extends DynamicPluginThread {
     private static final String outputFileType = "zip";
-    private Element             conf;
-    private Element             input;
-    private Element             output;
-    private Model               model;
-    private File                inputFile; // may be null in case of filelists
-    private List                inputFilelists;
-    private File                outputFile;
-    private FileOutputStream    fos = null;
-    private ZipOutputStream     zos = null;
+    private Element conf;
+    private Element input;
+    private Element output;
+    private Model model;
+    private File inputFile; // may be null in case of filelists
+    private List inputFilelists;
+    private File outputFile;
+    private FileOutputStream fos = null;
+    private ZipOutputStream zos = null;
 
     /**
      * Creates a new ZipPluign object.
      *
      * @param controller DOCUMENT ME!
-     * @param baseModel DOCUMENT ME!
-     *
+     * @param baseModel  DOCUMENT ME!
      * @throws PluginException DOCUMENT ME!
      */
     public ZipPlugin(MainController controller,
-                     Model          baseModel) throws PluginException {
+                     Model baseModel) throws PluginException {
         super(controller, baseModel);
         model = baseModel;
     }
@@ -87,7 +80,7 @@ public class ZipPlugin extends DynamicPluginThread {
     protected final void setUp() throws PluginException {
         String inputConfSelection = null;
 
-        conf     = model.getConf();
+        conf = model.getConf();
 
         // get input
         input = model.getInput();
@@ -116,7 +109,7 @@ public class ZipPlugin extends DynamicPluginThread {
         if (outputConf.getChild(XMLTags.FILE).getAttributeValue(XMLTags.VALUE).length() > 0) {
             String pathFilename = outputConf.getChild(XMLTags.FILE).getAttributeValue(XMLTags.VALUE);
 
-            int    indexFileExtension = pathFilename.indexOf(outputFileType);
+            int indexFileExtension = pathFilename.indexOf(outputFileType);
 
             // file does not yet contain extension
             if (indexFileExtension != (pathFilename.length() - outputFileType.length())) {
@@ -186,8 +179,8 @@ public class ZipPlugin extends DynamicPluginThread {
         Element outputFileElement = null;
 
         try {
-            fos     = new FileOutputStream(outputFile.getAbsolutePath());
-            zos     = new ZipOutputStream(fos);
+            fos = new FileOutputStream(outputFile.getAbsolutePath());
+            zos = new ZipOutputStream(fos);
 
             // zip filelist(s) from input of former plugin
             if (inputFilelists != null) {
@@ -195,8 +188,8 @@ public class ZipPlugin extends DynamicPluginThread {
 
                 // only takes the first filelist -> future versions shall implement something nicer regarding filelists
                 if (itFileLists.hasNext()) {
-                    Element   filelist = (Element) itFileLists.next();
-                    String    dir = filelist.getAttributeValue(XMLTags.DIR);
+                    Element filelist = (Element) itFileLists.next();
+                    String dir = filelist.getAttributeValue(XMLTags.DIR);
                     ArrayList files = InputOutputHelper.getFileList(filelist);
                     zipFiles(files, dir);
                     outputFileElement = InputOutputHelper.createFileElement(inputFile);
@@ -236,13 +229,12 @@ public class ZipPlugin extends DynamicPluginThread {
      * DOCUMENT ME!
      *
      * @param files DOCUMENT ME!
-     * @param dir DOCUMENT ME!
-     *
+     * @param dir   DOCUMENT ME!
      * @throws FileNotFoundException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
+     * @throws IOException           DOCUMENT ME!
      */
     private void zipFiles(ArrayList files,
-                          String    dir) throws FileNotFoundException, IOException {
+                          String dir) throws FileNotFoundException, IOException {
         for (int i = 0; i < files.size(); i++) {
             zipFileEntry((File) files.get(i), dir);
         }
@@ -252,9 +244,8 @@ public class ZipPlugin extends DynamicPluginThread {
      * file may be a single file or directory
      *
      * @param file DOCUMENT ME!
-     *
      * @throws FileNotFoundException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
+     * @throws IOException           DOCUMENT ME!
      */
     private void zipFileOrDirectory(File file) throws FileNotFoundException, IOException {
         if (file.isDirectory()) {
@@ -268,13 +259,12 @@ public class ZipPlugin extends DynamicPluginThread {
     /**
      * DOCUMENT ME!
      *
-     * @param fileIn DOCUMENT ME!
+     * @param fileIn      DOCUMENT ME!
      * @param dirAppender DOCUMENT ME!
-     *
      * @throws FileNotFoundException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
+     * @throws IOException           DOCUMENT ME!
      */
-    private void zipDir(File   fileIn,
+    private void zipDir(File fileIn,
                         String dirAppender) throws FileNotFoundException, IOException {
         if (fileIn.exists() == true) {
             if (fileIn.isDirectory() == true) {
@@ -295,15 +285,14 @@ public class ZipPlugin extends DynamicPluginThread {
      * DOCUMENT ME!
      *
      * @param zipEntryFile DOCUMENT ME!
-     * @param dirAppender DOCUMENT ME!
-     *
+     * @param dirAppender  DOCUMENT ME!
      * @throws FileNotFoundException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
+     * @throws IOException           DOCUMENT ME!
      */
-    private void zipFileEntry(File   zipEntryFile,
+    private void zipFileEntry(File zipEntryFile,
                               String dirAppender) throws FileNotFoundException, IOException {
         // Create a file input stream and a buffered input stream.
-        FileInputStream     fis = new FileInputStream(zipEntryFile);
+        FileInputStream fis = new FileInputStream(zipEntryFile);
         BufferedInputStream bis = new BufferedInputStream(fis);
 
         // Create a Zip Entry and put it into the archive (no data yet).
@@ -319,7 +308,7 @@ public class ZipPlugin extends DynamicPluginThread {
 
         // Create a byte array object named data and declare byte count variable.
         byte[] data = new byte[1024];
-        int    byteCount;
+        int byteCount;
 
         // Create a loop that reads from the buffered input stream and writes
         // to the zip output stream until the bis has been entirely read.

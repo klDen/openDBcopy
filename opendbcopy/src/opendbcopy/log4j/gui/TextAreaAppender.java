@@ -28,7 +28,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.SimpleLayout;
 import org.apache.log4j.spi.LoggingEvent;
 
-import javax.swing.JTextArea;
+import javax.swing.*;
 
 
 /**
@@ -39,9 +39,9 @@ import javax.swing.JTextArea;
  */
 public class TextAreaAppender extends AppenderSkeleton {
     private static TextAreaAppender instance = null;
-    private JTextArea               textArea;
-    private Layout                  layout;
-    private boolean                 enabled;
+    private JTextArea textArea;
+    private Layout layout;
+    private boolean enabled;
 
     /**
      * Creates a new TextAreaAppender object. Be aware that this appender can be enabled and disabled. Use enable(boolean) therefore Default value is
@@ -54,8 +54,8 @@ public class TextAreaAppender extends AppenderSkeleton {
         textArea.setEditable(false);
         textArea.setAutoscrolls(true);
 
-        layout       = new SimpleLayout();
-        instance     = this;
+        layout = new SimpleLayout();
+        instance = this;
 
         setEnabled(false); // default
     }
@@ -64,29 +64,19 @@ public class TextAreaAppender extends AppenderSkeleton {
      * Creates a new TextAreaAppender object.
      *
      * @param layout DOCUMENT ME!
-     * @param name DOCUMENT ME!
+     * @param name   DOCUMENT ME!
      */
     public TextAreaAppender(Layout layout,
                             String name) {
         super();
 
-        this.layout     = layout;
-        this.name       = name;
+        this.layout = layout;
+        this.name = name;
 
         textArea = new JTextArea();
         textArea.setEditable(false);
         textArea.setAutoscrolls(true);
         instance = this;
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @param enable DOCUMENT ME!
-     */
-    public void setEnabled(boolean enable) {
-        enabled = enable;
-        textArea.setEditable(enable);
     }
 
     /**
@@ -105,6 +95,16 @@ public class TextAreaAppender extends AppenderSkeleton {
     /**
      * DOCUMENT ME!
      *
+     * @param enable DOCUMENT ME!
+     */
+    public void setEnabled(boolean enable) {
+        enabled = enable;
+        textArea.setEditable(enable);
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
      * @return DOCUMENT ME!
      */
     public JTextArea getTextArea() {
@@ -114,19 +114,19 @@ public class TextAreaAppender extends AppenderSkeleton {
     /**
      * DOCUMENT ME!
      *
-     * @param layout DOCUMENT ME!
+     * @param textArea DOCUMENT ME!
      */
-    public void setLayout(Layout layout) {
-        this.layout = layout;
+    public void setTextArea(JTextArea textArea) {
+        this.textArea = textArea;
     }
 
     /**
      * DOCUMENT ME!
      *
-     * @param textArea DOCUMENT ME!
+     * @param layout DOCUMENT ME!
      */
-    public void setTextArea(JTextArea textArea) {
-        this.textArea = textArea;
+    public void setLayout(Layout layout) {
+        this.layout = layout;
     }
 
     /**

@@ -179,23 +179,23 @@
                 </generate>
                 <parseComments>false</parseComments>
                 <tags>
-                    <in-line />
-                    <standard />
+                    <in-line/>
+                    <standard/>
                 </tags>
                 <templates>
-                    <class>/**| * class description| *| * @author  smi| * @version $Revision$| */</class>
+                    <class>/**| * class description| *| * @author smi| * @version $Revision$| */</class>
                     <constructor>
-                        <bottom> */</bottom>
-                        <exception> * @throws $exceptionType$ DOCUMENT ME!</exception>
-                        <param> * @param $paramType$ DOCUMENT ME!</param>
+                        <bottom>*/</bottom>
+                        <exception>* @throws $exceptionType$ DOCUMENT ME!</exception>
+                        <param>* @param $paramType$ DOCUMENT ME!</param>
                         <top>/**| * Creates a new $objectType$ object.</top>
                     </constructor>
                     <interface>/**| * DOCUMENT ME!| *| */</interface>
                     <method>
-                        <bottom> */</bottom>
-                        <exception> * @throws $exceptionType$ DOCUMENT ME!</exception>
-                        <param> * @param $paramType$ DOCUMENT ME!</param>
-                        <return> * @return DOCUMENT ME!</return>
+                        <bottom>*/</bottom>
+                        <exception>* @throws $exceptionType$ DOCUMENT ME!</exception>
+                        <param>* @param $paramType$ DOCUMENT ME!</param>
+                        <return>* @return DOCUMENT ME!</return>
                         <top>/**| * DOCUMENT ME!</top>
                     </method>
                     <variable>/** DOCUMENT ME! */</variable>
@@ -221,16 +221,27 @@
                 </text>
             </separator>
         </comments>
-        <environment />
+        <environment/>
         <footer>
-            <keys />
+            <keys/>
             <smartMode>0</smartMode>
             <use>false</use>
         </footer>
         <header>
             <keys>*/</keys>
             <smartMode>0</smartMode>
-            <text>/*| * Copyright (C) 2004 Anthony Smith| *| * This program is free software; you can redistribute it and/or| * modify it under the terms of the GNU General Public License| * as published by the Free Software Foundation; either version 2| * of the License, or (at your option) any later version.| *| * This program is distributed in the hope that it will be useful,| * but WITHOUT ANY WARRANTY; without even the implied warranty of| * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the| * GNU General Public License for more details.| *| * You should have received a copy of the GNU General Public License| * along with this program; if not, write to the Free Software| * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.| *| * ----------------------------------------------------------------------------| * TITLE $Id$| * ---------------------------------------------------------------------------| *| * --------------------------------------------------------------------------*/</text>
+            <text>/*| * Copyright (C) 2004 Anthony Smith| *| * This program is free software; you can redistribute it
+                and/or| * modify it under the terms of the GNU General Public License| * as published by the Free
+                Software Foundation; either version 2| * of the License, or (at your option) any later version.| *| *
+                This program is distributed in the hope that it will be useful,| * but WITHOUT ANY WARRANTY; without
+                even the implied warranty of| * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the| * GNU
+                General Public License for more details.| *| * You should have received a copy of the GNU General Public
+                License| * along with this program; if not, write to the Free Software| * Foundation, Inc., 59 Temple
+                Place - Suite 330, Boston, MA 02111-1307, USA.| *| *
+                ----------------------------------------------------------------------------| * TITLE $Id$| *
+                ---------------------------------------------------------------------------| *| *
+                --------------------------------------------------------------------------*/
+            </text>
             <use>true</use>
         </header>
         <history>
@@ -295,7 +306,8 @@
             </declaration>
             <modifier>
                 <enable>false</enable>
-                <order>public|protected|private|abstract|static|final|synchronized|transient|volatile|native|strictfp</order>
+                <order>public|protected|private|abstract|static|final|synchronized|transient|volatile|native|strictfp
+                </order>
             </modifier>
         </sorting>
         <whitespace>

@@ -22,6 +22,12 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.util;
 
+import opendbcopy.config.APM;
+import opendbcopy.config.XMLTags;
+import opendbcopy.plugin.model.exception.MissingAttributeException;
+import opendbcopy.plugin.model.exception.MissingElementException;
+import org.jdom2.Element;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
@@ -29,13 +35,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.StringTokenizer;
-
-import opendbcopy.config.APM;
-import opendbcopy.config.XMLTags;
-import opendbcopy.plugin.model.exception.MissingAttributeException;
-import opendbcopy.plugin.model.exception.MissingElementException;
-
-import org.jdom.Element;
 
 
 /**
@@ -48,15 +47,13 @@ public final class InputOutputHelper {
     /**
      * DOCUMENT ME!
      *
-     * @param file may be a single file or directory. If it is a directory, all files and only files within this directory are returned inside the
-     *        filelist element
+     * @param file       may be a single file or directory. If it is a directory, all files and only files within this directory are returned inside the
+     *                   filelist element
      * @param identifier DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
-    public static Element createFileListElement(File   file,
+    public static Element createFileListElement(File file,
                                                 String identifier) {
         if (file == null) {
             throw new IllegalArgumentException("Missing file or directory");
@@ -84,9 +81,7 @@ public final class InputOutputHelper {
      * DOCUMENT ME!
      *
      * @param file DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public static Element createFileElement(File file) {
@@ -104,9 +99,7 @@ public final class InputOutputHelper {
      * DOCUMENT ME!
      *
      * @param file DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public static Element createDirElement(File file) {
@@ -123,11 +116,9 @@ public final class InputOutputHelper {
     /**
      * DOCUMENT ME!
      *
-     * @param files DOCUMENT ME!
+     * @param files      DOCUMENT ME!
      * @param identifier DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public static Element createFileListElement(File[] files,
@@ -154,9 +145,7 @@ public final class InputOutputHelper {
      * DOCUMENT ME!
      *
      * @param urls DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public static Element createURLListElement(URL[] urls) {
@@ -167,7 +156,7 @@ public final class InputOutputHelper {
         Element urllist = new Element(XMLTags.URLLIST);
 
         for (int i = 0; i < urls.length; i++) {
-            URL     url = urls[i];
+            URL url = urls[i];
             Element urlElement = new Element(XMLTags.URL);
             urlElement.setAttribute(XMLTags.VALUE, url.toExternalForm());
             urllist.addContent(urlElement);
@@ -180,13 +169,11 @@ public final class InputOutputHelper {
      * Retrieves files in filelist and checks if those exist! ArrayList returned contains files
      *
      * @param filelist DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws FileNotFoundException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws FileNotFoundException     DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
      */
     public static ArrayList getFileList(Element filelist) throws MissingAttributeException, MissingElementException, FileNotFoundException {
         String dir = null;
@@ -210,7 +197,7 @@ public final class InputOutputHelper {
         }
 
         // ok, required attributes are available
-        ArrayList       files = new ArrayList();
+        ArrayList files = new ArrayList();
 
         StringTokenizer st = new StringTokenizer(filelist.getAttributeValue(XMLTags.FILES), ",");
 
@@ -225,10 +212,8 @@ public final class InputOutputHelper {
      * DOCUMENT ME!
      *
      * @param urlList DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws MalformedURLException DOCUMENT ME!
+     * @throws MalformedURLException    DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public static URL[] getURLList(Element urlList) throws MalformedURLException {
@@ -242,7 +227,7 @@ public final class InputOutputHelper {
 
         ArrayList urls = new ArrayList();
 
-        Iterator  itUrls = urlList.getChildren(XMLTags.URL).iterator();
+        Iterator itUrls = urlList.getChildren(XMLTags.URL).iterator();
 
         while (itUrls.hasNext()) {
             Element urlElement = (Element) itUrls.next();
@@ -258,12 +243,10 @@ public final class InputOutputHelper {
      * Given a file or dir element retrieves the File which can be a file or directory. If file does not exist a FileNotFoundException is thrown
      *
      * @param file DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws FileNotFoundException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws FileNotFoundException     DOCUMENT ME!
      */
     public static File getFile(Element file) throws MissingAttributeException, MissingElementException, FileNotFoundException {
         if (file == null) {
@@ -287,9 +270,7 @@ public final class InputOutputHelper {
      * Returns String array containing absolute path and file names
      *
      * @param files DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public static String[] getFilePathNames(File[] files) {
@@ -310,9 +291,7 @@ public final class InputOutputHelper {
      * DOCUMENT ME!
      *
      * @param file DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public static String getFilePathName(File file) {
@@ -327,7 +306,6 @@ public final class InputOutputHelper {
      * returns list of files as string, comma separated. Directories are excluded
      *
      * @param files DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     private static String getFileNameList(File[] files) {
@@ -347,11 +325,9 @@ public final class InputOutputHelper {
     /**
      * DOCUMENT ME!
      *
-     * @param dir DOCUMENT ME!
+     * @param dir      DOCUMENT ME!
      * @param filename DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws FileNotFoundException DOCUMENT ME!
      */
     private static File getFile(String dir,

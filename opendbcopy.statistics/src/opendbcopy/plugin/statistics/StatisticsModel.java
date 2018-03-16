@@ -24,22 +24,19 @@ package opendbcopy.plugin.statistics;
 
 import opendbcopy.config.OperationType;
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.connection.DBConnection;
 import opendbcopy.connection.exception.CloseConnectionException;
 import opendbcopy.connection.exception.DriverNotFoundException;
 import opendbcopy.connection.exception.OpenConnectionException;
 import opendbcopy.controller.MainController;
-
 import opendbcopy.plugin.model.database.DatabaseModel;
 import opendbcopy.plugin.model.database.DatabaseModelReader;
 import opendbcopy.plugin.model.database.DbTest;
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.UnsupportedAttributeValueException;
-
-import org.jdom.Element;
-import org.jdom.JDOMException;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -58,24 +55,23 @@ public class StatisticsModel extends DatabaseModel {
     /**
      * Creates a new StatisticsModel object.
      *
-     * @param controller DOCUMENT ME!
+     * @param controller    DOCUMENT ME!
      * @param pluginElement DOCUMENT ME!
-     *
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws JDOMException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
+     * @throws JDOMException                      DOCUMENT ME!
+     * @throws IOException                        DOCUMENT ME!
      */
     public StatisticsModel(MainController controller,
-                           Element        pluginElement) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, JDOMException, IOException {
+                           Element pluginElement) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, JDOMException, IOException {
         super(controller, pluginElement);
         loadStatistics(pluginElement);
     }
 
     public void execute(Element operation) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, DriverNotFoundException, OpenConnectionException, CloseConnectionException, JDOMException, SQLException, IOException, Exception {
         String operationString = operation.getAttributeValue(XMLTags.NAME);
-        
+
         // test source connection
         if (operationString.compareTo(OperationType.TEST_SOURCE_CONNECTION) == 0) {
             source_db_connection_successful = DBConnection.testConnection(getSourceConnection());
@@ -141,12 +137,11 @@ public class StatisticsModel extends DatabaseModel {
             }
         }
     }
-    
+
     /**
      * DOCUMENT ME!
      *
      * @return DOCUMENT ME!
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public final Element getDestinationStatistics() throws MissingElementException {
@@ -157,10 +152,8 @@ public class StatisticsModel extends DatabaseModel {
      * get statistics for source table
      *
      * @param tableName (source table)
-     *
      * @return statistics element
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final Element getSourceStatisticsTable(String tableName) throws MissingElementException {
@@ -175,10 +168,8 @@ public class StatisticsModel extends DatabaseModel {
      * get statistics for destination table
      *
      * @param tableName (destination table)
-     *
      * @return statistics element
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final Element getDestinationStatisticsTable(String tableName) throws MissingElementException {
@@ -190,10 +181,19 @@ public class StatisticsModel extends DatabaseModel {
     }
 
     /**
+     * get source statistics element
+     *
+     * @return source statistics element
+     * @throws MissingElementException DOCUMENT ME!
+     */
+    public final Element getSourceStatistics() throws MissingElementException {
+        return getElement(sourceStatistics, "sourceStatistics");
+    }
+
+    /**
      * set source statistics element
      *
      * @param element
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final void setSourceStatistics(Element element) {
@@ -202,17 +202,6 @@ public class StatisticsModel extends DatabaseModel {
         }
 
         sourceStatistics = element;
-    }
-
-    /**
-     * get source statistics element
-     *
-     * @return source statistics element
-     *
-     * @throws MissingElementException DOCUMENT ME!
-     */
-    public final Element getSourceStatistics() throws MissingElementException {
-        return getElement(sourceStatistics, "sourceStatistics");
     }
 
     /**

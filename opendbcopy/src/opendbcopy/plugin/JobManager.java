@@ -22,12 +22,6 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.plugin;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
-import java.util.Observable;
-import java.util.Properties;
-
 import opendbcopy.config.APM;
 import opendbcopy.config.OperationType;
 import opendbcopy.config.XMLTags;
@@ -42,11 +36,16 @@ import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.PluginException;
 import opendbcopy.plugin.model.exception.UnsupportedAttributeValueException;
-
 import org.apache.log4j.Level;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+import java.util.Observable;
+import java.util.Properties;
 
 
 /**
@@ -57,91 +56,89 @@ import org.jdom.JDOMException;
  */
 public class JobManager extends Observable {
     private MainController controller;
-    private PluginManager  pluginManager;
-    private Document       job;
-    private Document       typeMapping;
+    private PluginManager pluginManager;
+    private Document job;
+    private Document typeMapping;
 
     private Element jobRoot;
     private Element plugins;
-    private String  encoding;
+    private String encoding;
 
     /**
      * Creates a new JobManager object.
      *
-     * @param controller DOCUMENT ME!
-     * @param typeMapping DOCUMENT ME!
-     * @param pluginsLocation DOCUMENT ME!
-     * @param pluginFilename DOCUMENT ME!
+     * @param controller          DOCUMENT ME!
+     * @param typeMapping         DOCUMENT ME!
+     * @param pluginsLocation     DOCUMENT ME!
+     * @param pluginFilename      DOCUMENT ME!
      * @param workingModeFilename DOCUMENT ME!
-     *
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws JDOMException DOCUMENT ME!
-     * @throws ClassNotFoundException DOCUMENT ME!
-     * @throws IllegalAccessException DOCUMENT ME!
-     * @throws InstantiationException DOCUMENT ME!
-     * @throws InvocationTargetException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
-     * @throws PluginException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
+     * @throws JDOMException                      DOCUMENT ME!
+     * @throws ClassNotFoundException             DOCUMENT ME!
+     * @throws IllegalAccessException             DOCUMENT ME!
+     * @throws InstantiationException             DOCUMENT ME!
+     * @throws InvocationTargetException          DOCUMENT ME!
+     * @throws IOException                        DOCUMENT ME!
+     * @throws PluginException                    DOCUMENT ME!
+     * @throws IllegalArgumentException           DOCUMENT ME!
      */
     public JobManager(MainController controller,
-                          Document       typeMapping,
-                          String         pluginsLocation,
-                          String         pluginFilename,
-                          String         workingModeFilename) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, JDOMException, ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, IOException, PluginException {
+                      Document typeMapping,
+                      String pluginsLocation,
+                      String pluginFilename,
+                      String workingModeFilename) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, JDOMException, ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, IOException, PluginException {
         if ((controller == null) || (typeMapping == null)) {
             throw new IllegalArgumentException("Missing arguments values: controller=" + controller + " typeMapping=" + typeMapping);
         }
 
-        this.controller      = controller;
-        this.typeMapping     = typeMapping;
+        this.controller = controller;
+        this.typeMapping = typeMapping;
 
         initJob(controller.getApplicationProperties());
 
-        this.pluginManager     = new PluginManager(controller, this, plugins, pluginsLocation, pluginFilename, workingModeFilename);
+        this.pluginManager = new PluginManager(controller, this, plugins, pluginsLocation, pluginFilename, workingModeFilename);
     }
 
     /**
      * Creates a new JobManager object.
      *
-     * @param controller DOCUMENT ME!
-     * @param typeMapping DOCUMENT ME!
-     * @param job DOCUMENT ME!
-     * @param pluginsLocation DOCUMENT ME!
-     * @param pluginFilename DOCUMENT ME!
+     * @param controller          DOCUMENT ME!
+     * @param typeMapping         DOCUMENT ME!
+     * @param job                 DOCUMENT ME!
+     * @param pluginsLocation     DOCUMENT ME!
+     * @param pluginFilename      DOCUMENT ME!
      * @param workingModeFilename DOCUMENT ME!
-     *
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws JDOMException DOCUMENT ME!
-     * @throws ClassNotFoundException DOCUMENT ME!
-     * @throws IllegalAccessException DOCUMENT ME!
-     * @throws InstantiationException DOCUMENT ME!
-     * @throws InvocationTargetException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
-     * @throws PluginException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
+     * @throws JDOMException                      DOCUMENT ME!
+     * @throws ClassNotFoundException             DOCUMENT ME!
+     * @throws IllegalAccessException             DOCUMENT ME!
+     * @throws InstantiationException             DOCUMENT ME!
+     * @throws InvocationTargetException          DOCUMENT ME!
+     * @throws IOException                        DOCUMENT ME!
+     * @throws PluginException                    DOCUMENT ME!
+     * @throws IllegalArgumentException           DOCUMENT ME!
      */
     public JobManager(MainController controller,
-                          Document       typeMapping,
-                          Document       job,
-                          String         pluginsLocation,
-                          String         pluginFilename,
-                          String         workingModeFilename) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, JDOMException, ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, IOException, PluginException {
+                      Document typeMapping,
+                      Document job,
+                      String pluginsLocation,
+                      String pluginFilename,
+                      String workingModeFilename) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, JDOMException, ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, IOException, PluginException {
         if ((controller == null) || (typeMapping == null) || (job == null)) {
             throw new IllegalArgumentException("Missing arguments values: controller=" + controller + " typeMapping=" + typeMapping + " job=" + job);
         }
 
-        this.controller      = controller;
-        this.typeMapping     = typeMapping;
-        this.job         = job;
+        this.controller = controller;
+        this.typeMapping = typeMapping;
+        this.job = job;
 
         initJob(controller.getApplicationProperties());
 
-        this.pluginManager     = new PluginManager(controller, this, plugins, pluginsLocation, pluginFilename, workingModeFilename);
+        this.pluginManager = new PluginManager(controller, this, plugins, pluginsLocation, pluginFilename, workingModeFilename);
 
         // inform Observers that job has been loaded
         broadcast();
@@ -167,11 +164,11 @@ public class JobManager extends Observable {
     /**
      * Used to post Exceptions given a general Exception and Log level to the controller
      *
-     * @param e DOCUMENT ME!
+     * @param e     DOCUMENT ME!
      * @param level DOCUMENT ME!
      */
     public final void postException(Exception e,
-                                    Level     level) {
+                                    Level level) {
         controller.postException(e, level);
     }
 
@@ -179,17 +176,16 @@ public class JobManager extends Observable {
      * DOCUMENT ME!
      *
      * @param operation DOCUMENT ME!
-     *
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws DriverNotFoundException DOCUMENT ME!
-     * @throws OpenConnectionException DOCUMENT ME!
-     * @throws CloseConnectionException DOCUMENT ME!
-     * @throws JDOMException DOCUMENT ME!
-     * @throws SQLException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
-     * @throws Exception should only be thrown by plugins
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
+     * @throws DriverNotFoundException            DOCUMENT ME!
+     * @throws OpenConnectionException            DOCUMENT ME!
+     * @throws CloseConnectionException           DOCUMENT ME!
+     * @throws JDOMException                      DOCUMENT ME!
+     * @throws SQLException                       DOCUMENT ME!
+     * @throws IOException                        DOCUMENT ME!
+     * @throws Exception                          should only be thrown by plugins
      */
     public final void execute(Element operation) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, DriverNotFoundException, OpenConnectionException, CloseConnectionException, JDOMException, SQLException, IOException, Exception {
         String operationString = operation.getAttributeValue(XMLTags.NAME);
@@ -204,8 +200,8 @@ public class JobManager extends Observable {
         }
         // import job from xml file
         else if (operationString.compareTo(OperationType.IMPORT_JOB) == 0) {
-            job         = ImportFromXML.importFile(operation.getAttributeValue(XMLTags.FILE));
-            jobRoot     = job.getRootElement();
+            job = ImportFromXML.importFile(operation.getAttributeValue(XMLTags.FILE));
+            jobRoot = job.getRootElement();
 
             if (jobRoot != null) {
                 if (jobRoot.getChild(XMLTags.PLUGINS) != null) {
@@ -243,7 +239,7 @@ public class JobManager extends Observable {
         // execute plugins
         else if (operationString.compareToIgnoreCase(OperationType.EXECUTE) == 0) {
             pluginManager.executePlugins();
-            
+
             postMessage(controller.getResourceManager().getString("text.execute.done"));
         }
         // cancel -> interrupt thread

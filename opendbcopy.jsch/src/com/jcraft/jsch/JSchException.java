@@ -29,11 +29,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-public class JSchException extends Exception{
-  public JSchException () {
-    super();
-  }
-  public JSchException (String s) {
-    super(s);
-  }
+public class JSchException extends Exception {
+    public JSchException() {
+        super();
+    }
+
+    public JSchException(String s) {
+        super(s);
+    }
 }

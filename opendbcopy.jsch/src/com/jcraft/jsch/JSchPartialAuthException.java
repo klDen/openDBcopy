@@ -29,16 +29,19 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-public class JSchPartialAuthException extends JSchException{
-  String methods;
-  public JSchPartialAuthException () {
-    super();
-  }
-  public JSchPartialAuthException (String s) {
-    super(s);
-    this.methods=s;
-  }
-  public String getMethods(){
-    return methods;
-  }
+public class JSchPartialAuthException extends JSchException {
+    String methods;
+
+    public JSchPartialAuthException() {
+        super();
+    }
+
+    public JSchPartialAuthException(String s) {
+        super(s);
+        this.methods = s;
+    }
+
+    public String getMethods() {
+        return methods;
+    }
 }

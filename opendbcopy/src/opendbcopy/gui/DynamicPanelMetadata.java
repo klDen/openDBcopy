@@ -29,23 +29,23 @@ package opendbcopy.gui;
  * @version $Revision$
  */
 public class DynamicPanelMetadata {
-    private String  title;
-    private String  className;
+    private String title;
+    private String className;
     private boolean registerObserver;
 
     /**
      * Creates a new DynamicPanelMetadata object.
      *
-     * @param title DOCUMENT ME!
-     * @param className DOCUMENT ME!
+     * @param title            DOCUMENT ME!
+     * @param className        DOCUMENT ME!
      * @param registerObserver DOCUMENT ME!
      */
-    DynamicPanelMetadata(String  title,
-                         String  className,
+    DynamicPanelMetadata(String title,
+                         String className,
                          boolean registerObserver) {
-        this.title                = title;
-        this.className            = className;
-        this.registerObserver     = registerObserver;
+        this.title = title;
+        this.className = className;
+        this.registerObserver = registerObserver;
     }
 
     /**

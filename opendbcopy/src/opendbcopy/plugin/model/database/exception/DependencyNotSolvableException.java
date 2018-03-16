@@ -36,25 +36,25 @@ import java.util.TreeMap;
 public class DependencyNotSolvableException extends Exception {
     private HashMap unsortedNodes;
     private TreeMap sortedNodes;
-    private int     nbrTries;
-    private String  message;
+    private int nbrTries;
+    private String message;
 
     /**
      * Creates a new DependencyNotSolvableException object.
      *
      * @param unsortedNodes DOCUMENT ME!
-     * @param sortedNodes DOCUMENT ME!
-     * @param nbrTries DOCUMENT ME!
-     * @param message DOCUMENT ME!
+     * @param sortedNodes   DOCUMENT ME!
+     * @param nbrTries      DOCUMENT ME!
+     * @param message       DOCUMENT ME!
      */
     public DependencyNotSolvableException(HashMap unsortedNodes,
                                           TreeMap sortedNodes,
-                                          int     nbrTries,
-                                          String  message) {
-        this.unsortedNodes     = unsortedNodes;
-        this.sortedNodes       = sortedNodes;
-        this.nbrTries          = nbrTries;
-        this.message           = message;
+                                          int nbrTries,
+                                          String message) {
+        this.unsortedNodes = unsortedNodes;
+        this.sortedNodes = sortedNodes;
+        this.nbrTries = nbrTries;
+        this.message = message;
     }
 
     /**
@@ -81,15 +81,15 @@ public class DependencyNotSolvableException extends Exception {
      * @return DOCUMENT ME!
      */
     public String getUnsortedNodesListed() {
-    	String output = "";
-    	if (unsortedNodes != null && unsortedNodes.size() > 0) {
-        	Iterator itKeys = unsortedNodes.keySet().iterator();
-        	
-        	while (itKeys.hasNext()) {
-        		output += (String) itKeys.next() + "\n";
-        	}
-    	}
-    	
+        String output = "";
+        if (unsortedNodes != null && unsortedNodes.size() > 0) {
+            Iterator itKeys = unsortedNodes.keySet().iterator();
+
+            while (itKeys.hasNext()) {
+                output += (String) itKeys.next() + "\n";
+            }
+        }
+
         return output;
     }
 
@@ -99,15 +99,15 @@ public class DependencyNotSolvableException extends Exception {
      * @return DOCUMENT ME!
      */
     public String getSortedNodesListed() {
-    	String output = "";
-    	if (sortedNodes != null && sortedNodes.size() > 0) {
-        	Iterator itKeys = sortedNodes.keySet().iterator();
-        	
-        	while (itKeys.hasNext()) {
-        		output += (String) itKeys.next() + "\n";
-        	}
-    	}
-    	
+        String output = "";
+        if (sortedNodes != null && sortedNodes.size() > 0) {
+            Iterator itKeys = sortedNodes.keySet().iterator();
+
+            while (itKeys.hasNext()) {
+                output += (String) itKeys.next() + "\n";
+            }
+        }
+
         return output;
     }
 }

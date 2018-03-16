@@ -24,27 +24,21 @@ package opendbcopy.plugin.schemageneration.model;
 
 import opendbcopy.config.OperationType;
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.connection.DBConnection;
-
 import opendbcopy.connection.exception.CloseConnectionException;
 import opendbcopy.connection.exception.DriverNotFoundException;
 import opendbcopy.connection.exception.OpenConnectionException;
-
 import opendbcopy.controller.MainController;
-
 import opendbcopy.plugin.model.database.DatabaseModel;
 import opendbcopy.plugin.model.database.DatabaseModelReader;
 import opendbcopy.plugin.model.database.dependency.Mapper;
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.UnsupportedAttributeValueException;
-
-import org.jdom.Element;
-import org.jdom.JDOMException;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
 
 import java.io.IOException;
-
 import java.sql.SQLException;
 
 
@@ -63,17 +57,16 @@ public class SchemagenerationModel extends DatabaseModel {
     /**
      * Creates a new SchemagenerationModel object.
      *
-     * @param controller DOCUMENT ME!
+     * @param controller    DOCUMENT ME!
      * @param pluginElement DOCUMENT ME!
-     *
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws JDOMException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
+     * @throws JDOMException                      DOCUMENT ME!
+     * @throws IOException                        DOCUMENT ME!
      */
     public SchemagenerationModel(MainController controller,
-                                Element        pluginElement) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, JDOMException, IOException {
+                                 Element pluginElement) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, JDOMException, IOException {
         super(controller, pluginElement);
     }
 
@@ -81,17 +74,16 @@ public class SchemagenerationModel extends DatabaseModel {
      * DOCUMENT ME!
      *
      * @param operation DOCUMENT ME!
-     *
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws DriverNotFoundException DOCUMENT ME!
-     * @throws OpenConnectionException DOCUMENT ME!
-     * @throws CloseConnectionException DOCUMENT ME!
-     * @throws JDOMException DOCUMENT ME!
-     * @throws SQLException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
-     * @throws Exception DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
+     * @throws DriverNotFoundException            DOCUMENT ME!
+     * @throws OpenConnectionException            DOCUMENT ME!
+     * @throws CloseConnectionException           DOCUMENT ME!
+     * @throws JDOMException                      DOCUMENT ME!
+     * @throws SQLException                       DOCUMENT ME!
+     * @throws IOException                        DOCUMENT ME!
+     * @throws Exception                          DOCUMENT ME!
      */
     public void execute(Element operation) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, DriverNotFoundException, OpenConnectionException, CloseConnectionException, JDOMException, SQLException, IOException, Exception {
         String operationString = operation.getAttributeValue(XMLTags.NAME);
@@ -129,7 +121,7 @@ public class SchemagenerationModel extends DatabaseModel {
 
             // copy source model into destination model
             setDestinationModel((Element) getSourceModel().clone());
-            
+
             Mapper mapper = new Mapper(this);
             mapper.createInitialMapping();
             mapper.findInitalMatches();

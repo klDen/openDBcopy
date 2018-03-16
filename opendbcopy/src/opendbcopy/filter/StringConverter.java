@@ -32,12 +32,11 @@ public final class StringConverter {
     /**
      * DOCUMENT ME!
      *
-     * @param o DOCUMENT ME!
+     * @param o                   DOCUMENT ME!
      * @param returnNullWhenEmpty DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
-    public static Object trimString(Object  o,
+    public static Object trimString(Object o,
                                     boolean returnNullWhenEmpty) {
         if (o instanceof String || o instanceof Character) {
             if (returnNullWhenEmpty) {
@@ -57,12 +56,11 @@ public final class StringConverter {
     /**
      * DOCUMENT ME!
      *
-     * @param o DOCUMENT ME!
+     * @param o                   DOCUMENT ME!
      * @param returnNullWhenEmpty DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
-    public static Object trimAndRemoveMultipleIntermediateWhitespaces(Object  o,
+    public static Object trimAndRemoveMultipleIntermediateWhitespaces(Object o,
                                                                       boolean returnNullWhenEmpty) {
         if (o instanceof String || o instanceof Character) {
             Object in = trimString(o, returnNullWhenEmpty);
@@ -71,7 +69,7 @@ public final class StringConverter {
                 StringBuffer strb = new StringBuffer(((String) in));
                 StringBuffer strbn = new StringBuffer();
 
-                int          index = 0;
+                int index = 0;
 
                 while (index < strb.length()) {
                     if ((strb.charAt(index) == ' ') && (index != 0)) {

@@ -23,19 +23,15 @@
 package opendbcopy.sql;
 
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.filter.StringConverter;
-
 import opendbcopy.plugin.model.database.DatabaseModel;
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
-
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import java.util.Iterator;
 import java.util.List;
 
@@ -50,14 +46,12 @@ public final class Helper {
     /**
      * DOCUMENT ME!
      *
-     * @param in DOCUMENT ME!
+     * @param in                  DOCUMENT ME!
      * @param returnNullWhenEmpty DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
-    public static Object trimObject(Object  in,
+    public static Object trimObject(Object in,
                                     boolean returnNullWhenEmpty) {
         if (in == null) {
             throw new IllegalArgumentException("Missing in object");
@@ -73,14 +67,12 @@ public final class Helper {
     /**
      * DOCUMENT ME!
      *
-     * @param in DOCUMENT ME!
+     * @param in                  DOCUMENT ME!
      * @param returnNullWhenEmpty DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
-    public static Object trimAndRemoveMultipleIntermediateWhitespaces(Object  in,
+    public static Object trimAndRemoveMultipleIntermediateWhitespaces(Object in,
                                                                       boolean returnNullWhenEmpty) {
         if (in == null) {
             throw new IllegalArgumentException("Missing in object");
@@ -96,26 +88,24 @@ public final class Helper {
     /**
      * DOCUMENT ME!
      *
-     * @param qs DOCUMENT ME!
-     * @param model DOCUMENT ME!
-     * @param database DOCUMENT ME!
+     * @param qs        DOCUMENT ME!
+     * @param model     DOCUMENT ME!
+     * @param database  DOCUMENT ME!
      * @param tableName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws SQLException DOCUMENT ME!
-     * @throws Exception DOCUMENT ME!
+     * @throws SQLException             DOCUMENT ME!
+     * @throws Exception                DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
-    public static int getNumberOfRecordsFiltered(Statement     qs,
+    public static int getNumberOfRecordsFiltered(Statement qs,
                                                  DatabaseModel model,
-                                                 String        database,
-                                                 String        tableName) throws SQLException, Exception {
+                                                 String database,
+                                                 String tableName) throws SQLException, Exception {
         if ((qs == null) || (model == null) || (database == null) || (tableName == null)) {
             throw new IllegalArgumentException("Missing arguments values: qs=" + qs + " model=" + model + " database=" + database + " tableName=" + tableName);
         }
 
-        int    numberRecords = 0;
+        int numberRecords = 0;
         String stm = "";
         String qualifiedTableName = "";
 
@@ -148,27 +138,25 @@ public final class Helper {
     /**
      * DOCUMENT ME!
      *
-     * @param qs DOCUMENT ME!
-     * @param model DOCUMENT ME!
-     * @param database DOCUMENT ME!
+     * @param qs        DOCUMENT ME!
+     * @param model     DOCUMENT ME!
+     * @param database  DOCUMENT ME!
      * @param tableName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws SQLException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws SQLException              DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
      */
-    public static int getNumberOfRecords(Statement     qs,
+    public static int getNumberOfRecords(Statement qs,
                                          DatabaseModel model,
-                                         String        database,
-                                         String        tableName) throws MissingAttributeException, MissingElementException, SQLException {
+                                         String database,
+                                         String tableName) throws MissingAttributeException, MissingElementException, SQLException {
         if ((qs == null) || (model == null) || (database == null) || (tableName == null)) {
             throw new IllegalArgumentException("Missing arguments values: qs=" + qs + " model=" + model + " database=" + database + " tableName=" + tableName);
         }
 
-        int    numberRecords = 0;
+        int numberRecords = 0;
         String qualifiedTableName = "";
 
         if (database.compareTo(XMLTags.SOURCE_DB) == 0) {
@@ -177,7 +165,7 @@ public final class Helper {
             qualifiedTableName = model.getQualifiedDestinationTableName(tableName);
         }
 
-        String    stm = SQL.SELECT + "COUNT(*)" + SQL.FROM + qualifiedTableName;
+        String stm = SQL.SELECT + "COUNT(*)" + SQL.FROM + qualifiedTableName;
 
         ResultSet rs = qs.executeQuery(stm);
 
@@ -193,21 +181,19 @@ public final class Helper {
     /**
      * DOCUMENT ME!
      *
-     * @param model DOCUMENT ME!
-     * @param tableName DOCUMENT ME!
-     * @param attributeName DOCUMENT ME!
+     * @param model          DOCUMENT ME!
+     * @param tableName      DOCUMENT ME!
+     * @param attributeName  DOCUMENT ME!
      * @param processColumns DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
      */
     public static String getSelectStatement(DatabaseModel model,
-                                            String        tableName,
-                                            String        attributeName,
-                                            List          processColumns) throws MissingAttributeException, MissingElementException {
+                                            String tableName,
+                                            String attributeName,
+                                            List processColumns) throws MissingAttributeException, MissingElementException {
         if ((model == null) || (tableName == null) || (attributeName == null) || (processColumns == null)) {
             throw new IllegalArgumentException("Missing arguments values: model=" + model + " tableName=" + tableName + " attributeName=" + attributeName + " processColumns=" + processColumns);
         }
@@ -237,17 +223,15 @@ public final class Helper {
     /**
      * DOCUMENT ME!
      *
-     * @param model DOCUMENT ME!
+     * @param model     DOCUMENT ME!
      * @param tableName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
      */
     public static String getSelectAllStatement(DatabaseModel model,
-                                               String        tableName) throws MissingAttributeException, MissingElementException {
+                                               String tableName) throws MissingAttributeException, MissingElementException {
         if ((model == null) || (tableName == null)) {
             throw new IllegalArgumentException("Missing arguments values: model=" + model + " tableName=" + tableName);
         }
@@ -269,20 +253,18 @@ public final class Helper {
      * DOCUMENT ME!
      *
      * @param qualifiedTableName DOCUMENT ME!
-     * @param processColumns DOCUMENT ME!
-     *
+     * @param processColumns     DOCUMENT ME!
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public static String getInsertPreparedStatement(String qualifiedTableName,
-                                                    List   processColumns) {
+                                                    List processColumns) {
         if ((qualifiedTableName == null) || (processColumns == null)) {
             throw new IllegalArgumentException("Missing arguments values: qualifiedTableName=" + qualifiedTableName + " processColumns=" + processColumns);
         }
 
         StringBuffer pstmInsert = new StringBuffer();
-        int          nbrColumns = 0;
+        int nbrColumns = 0;
 
         pstmInsert.append(SQL.INSERT_INTO + qualifiedTableName + SQL.SPACE + SQL.LPAREN);
 
@@ -315,9 +297,7 @@ public final class Helper {
      * DOCUMENT ME!
      *
      * @param qualifiedTableName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public static String getDeleteTableStatement(String qualifiedTableName) {

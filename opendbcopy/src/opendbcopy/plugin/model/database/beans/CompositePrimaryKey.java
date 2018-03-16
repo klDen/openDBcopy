@@ -28,11 +28,11 @@ import java.util.List;
 /**
  * class description
  *
- * @author  Anthony Smith
+ * @author Anthony Smith
  * @version $Revision$
  */
 public class CompositePrimaryKey {
-    private List   primaryKeys;
+    private List primaryKeys;
     private String keyName;
 
     /**

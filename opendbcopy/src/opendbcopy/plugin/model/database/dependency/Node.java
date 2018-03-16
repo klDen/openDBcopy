@@ -32,7 +32,7 @@ import java.util.HashMap;
  * @version $Revision$
  */
 public class Node {
-    private String  name = "";
+    private String name = "";
     private HashMap childNodes = null;
     private HashMap parentNodes = null;
 
@@ -84,7 +84,6 @@ public class Node {
      * DOCUMENT ME!
      *
      * @param name DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public final Node findChild(String name) {
@@ -99,7 +98,6 @@ public class Node {
      * DOCUMENT ME!
      *
      * @param name DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public final Node findParent(String name) {
@@ -166,7 +164,6 @@ public class Node {
      * DOCUMENT ME!
      *
      * @param node DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public final boolean compareTo(Node node) {
@@ -181,7 +178,6 @@ public class Node {
      * DOCUMENT ME!
      *
      * @param object DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public final boolean equals(Object object) {

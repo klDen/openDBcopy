@@ -37,12 +37,10 @@ import java.net.Socket;
 /**
  * class description
  *
- * @author  Anthony Smith
+ * @author Anthony Smith
  * @version $Revision$
  */
 public class Session implements Runnable {
-    static private final String version = "JSCH-0.1.14";
-
     // http://ietf.org/internet-drafts/draft-ietf-secsh-assignednumbers-01.txt
     static final int SSH_MSG_DISCONNECT = 1;
     static final int SSH_MSG_IGNORE = 2;
@@ -75,62 +73,62 @@ public class Session implements Runnable {
     static final int SSH_MSG_CHANNEL_REQUEST = 98;
     static final int SSH_MSG_CHANNEL_SUCCESS = 99;
     static final int SSH_MSG_CHANNEL_FAILURE = 100;
-    static Random       random;
-    private byte[]      V_S; // server version
-    private byte[]      V_C = ("SSH-2.0-" + version).getBytes(); // client version
-    private byte[]      I_C; // the payload of the client's SSH_MSG_KEXINIT
-    private byte[]      I_S; // the payload of the server's SSH_MSG_KEXINIT
-    private byte[]      K_S; // the host key
-    private byte[]      session_id;
-    private byte[]      IVc2s;
-    private byte[]      IVs2c;
-    private byte[]      Ec2s;
-    private byte[]      Es2c;
-    private byte[]      MACc2s;
-    private byte[]      MACs2c;
-    private int         seqi = 0;
-    private int         seqo = 0;
-    private Cipher      s2ccipher;
-    private Cipher      c2scipher;
-    private MAC         s2cmac;
-    private MAC         c2smac;
-    private byte[]      mac_buf;
-    private Compression deflater;
-    private Compression inflater;
-    private IO          io;
-    private Socket      socket;
-    private int         timeout = 0;
-    private boolean     isConnected = false;
-    InputStream         in = null;
-    OutputStream        out = null;
-    Buffer                      buf;
-    Packet                      packet;
-    SocketFactory               socket_factory = null;
-    private java.util.Hashtable config = null;
-    private Proxy               proxy = null;
-    private UserInfo            userinfo;
-    String                      host = "127.0.0.1";
-    int                         port = 22;
-    String                      username = null;
-    String                      password = null;
-    JSch                        jsch;
-    private boolean in_kex = false;
+    static private final String version = "JSCH-0.1.14";
+    static Random random;
+    InputStream in = null;
+    OutputStream out = null;
+    Buffer buf;
+    Packet packet;
+    SocketFactory socket_factory = null;
+    String host = "127.0.0.1";
+    int port = 22;
+    String username = null;
+    String password = null;
+    JSch jsch;
     int[] uncompress_len = new int[1];
     Runnable thread;
+    private byte[] V_S; // server version
+    private byte[] V_C = ("SSH-2.0-" + version).getBytes(); // client version
+    private byte[] I_C; // the payload of the client's SSH_MSG_KEXINIT
+    private byte[] I_S; // the payload of the server's SSH_MSG_KEXINIT
+    private byte[] K_S; // the host key
+    private byte[] session_id;
+    private byte[] IVc2s;
+    private byte[] IVs2c;
+    private byte[] Ec2s;
+    private byte[] Es2c;
+    private byte[] MACc2s;
+    private byte[] MACs2c;
+    private int seqi = 0;
+    private int seqo = 0;
+    private Cipher s2ccipher;
+    private Cipher c2scipher;
+    private MAC s2cmac;
+    private MAC c2smac;
+    private byte[] mac_buf;
+    private Compression deflater;
+    private Compression inflater;
+    private IO io;
+    private Socket socket;
+    private int timeout = 0;
+    private boolean isConnected = false;
+    private java.util.Hashtable config = null;
+    private Proxy proxy = null;
+    private UserInfo userinfo;
+    private boolean in_kex = false;
 
     /**
      * Creates a new Session object.
      *
      * @param jsch DOCUMENT ME!
-     *
      * @throws JSchException DOCUMENT ME!
      */
     Session(JSch jsch) throws JSchException {
         super();
-        this.jsch     = jsch;
-        buf           = new Buffer();
-        packet        = new Packet(buf);
-        io            = new IO();
+        this.jsch = jsch;
+        buf = new Buffer();
+        packet = new Packet(buf);
+        io = new IO();
     }
 
     /**
@@ -164,33 +162,33 @@ public class Session implements Runnable {
             }
 
             if (proxy == null) {
-                InputStream  in;
+                InputStream in;
                 OutputStream out;
 
                 if (socket_factory == null) {
                     if (timeout == 0) {
                         socket = new Socket(host, port);
                     } else {
-                        final Socket[]    sockp = new Socket[1];
-                        final Thread      thread = Thread.currentThread();
+                        final Socket[] sockp = new Socket[1];
+                        final Thread thread = Thread.currentThread();
                         final Exception[] ee = new Exception[1];
-                        final boolean[]   done = new boolean[1];
+                        final boolean[] done = new boolean[1];
                         done[0] = false;
                         new Thread(new Runnable() {
-                                public void run() {
-                                    try {
-                                        sockp[0] = new Socket(host, port);
+                            public void run() {
+                                try {
+                                    sockp[0] = new Socket(host, port);
 
-                                        if (done[0]) {
-                                            sockp[0].close();
-                                        } else {
-                                            thread.interrupt();
-                                        }
-                                    } catch (Exception e) {
-                                        ee[0] = e;
+                                    if (done[0]) {
+                                        sockp[0].close();
+                                    } else {
+                                        thread.interrupt();
                                     }
+                                } catch (Exception e) {
+                                    ee[0] = e;
                                 }
-                            }).start();
+                            }
+                        }).start();
 
                         try {
                             Thread.sleep(timeout);
@@ -212,12 +210,12 @@ public class Session implements Runnable {
                         }
                     }
 
-                    in      = socket.getInputStream();
-                    out     = socket.getOutputStream();
+                    in = socket.getInputStream();
+                    out = socket.getOutputStream();
                 } else {
-                    socket     = socket_factory.createSocket(host, port);
-                    in         = socket_factory.getInputStream(socket);
-                    out        = socket_factory.getOutputStream(socket);
+                    socket = socket_factory.createSocket(host, port);
+                    in = socket_factory.getInputStream(socket);
+                    out = socket_factory.getOutputStream(socket);
                 }
 
                 if (timeout > 0) {
@@ -233,13 +231,13 @@ public class Session implements Runnable {
                 io.setOutputStream(proxy.getOutputStream());
             }
 
-            isConnected     = true;
+            isConnected = true;
 
             i = 0;
 
             while (true) {
-                j                 = io.getByte();
-                buf.buffer[i]     = (byte) j;
+                j = io.getByte();
+                buf.buffer[i] = (byte) j;
                 i++;
 
                 if (j == 10) {
@@ -273,7 +271,7 @@ public class Session implements Runnable {
 
             KeyExchange kex = receive_kexinit(buf);
 
-            boolean     result;
+            boolean result;
 
             while (true) {
                 buf = read(buf);
@@ -306,7 +304,7 @@ public class Session implements Runnable {
                 throw new JSchException("invalid protocol(newkyes): " + buf.buffer[5]);
             }
 
-            boolean      auth = false;
+            boolean auth = false;
 
             UserAuthNone usn = new UserAuthNone(userinfo);
             auth = usn.start(this);
@@ -318,7 +316,7 @@ public class Session implements Runnable {
                 methods = "publickey,password,keyboard-interactive";
             }
 
-loop: 
+            loop:
             while (true) {
                 //System.out.println("methods: "+methods);
                 while (!auth && (methods != null) && (methods.length() > 0)) {
@@ -407,10 +405,8 @@ loop:
      * DOCUMENT ME!
      *
      * @param buf DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws Exception DOCUMENT ME!
+     * @throws Exception     DOCUMENT ME!
      * @throws JSchException DOCUMENT ME!
      */
     private KeyExchange receive_kexinit(Buffer buf) throws Exception {
@@ -545,17 +541,16 @@ loop:
      * DOCUMENT ME!
      *
      * @param host DOCUMENT ME!
-     * @param kex DOCUMENT ME!
-     *
+     * @param kex  DOCUMENT ME!
      * @throws JSchException DOCUMENT ME!
      */
-    private void checkHost(String      host,
+    private void checkHost(String host,
                            KeyExchange kex) throws JSchException {
         String shkc = getConfig("StrictHostKeyChecking");
 
         //System.out.println("shkc: "+shkc);
         byte[] K_S = kex.getHostKey();
-        int    i = jsch.getKnownHosts().check(host, K_S);
+        int i = jsch.getKnownHosts().check(host, K_S);
 
         if ((shkc.equals("ask") || shkc.equals("yes")) && (i == KnownHosts.CHANGED)) {
             System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n" + "@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @\n" + "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n" + "IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!      \n" + "Someone could be eavesdropping on you right now (man-in-the-middle attack)!\n" + "It is also possible that the " + kex.getKeyType() + " host key has just been changed.\n" + "The fingerprint for the " + kex.getKeyType() + " key sent by the remote host is\n" + kex.getFingerPrint() + ".\n" + "Please contact your system administrator.\n" + "Add correct host key in " + jsch.getKnownHosts().getKnownHostsFile() + " to get rid of this message.");
@@ -661,11 +656,9 @@ loop:
      * DOCUMENT ME!
      *
      * @param buf DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws Exception DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
+     * @throws Exception     DOCUMENT ME!
+     * @throws IOException   DOCUMENT ME!
      * @throws JSchException DOCUMENT ME!
      */
     public Buffer read(Buffer buf) throws Exception {
@@ -711,8 +704,8 @@ loop:
                 byte[] foo = inflater.uncompress(buf.buffer, 5, uncompress_len);
 
                 if (foo != null) {
-                    buf.buffer     = foo;
-                    buf.index      = 5 + uncompress_len[0];
+                    buf.buffer = foo;
+                    buf.index = 5 + uncompress_len[0];
                 } else {
                     System.err.println("fail in inflater");
 
@@ -728,7 +721,7 @@ loop:
                 buf.getInt();
                 buf.getShort();
 
-                int    reason_code = buf.getInt();
+                int reason_code = buf.getInt();
                 byte[] description = buf.getString();
                 byte[] language_tag = buf.getString();
                 System.err.println("SSH_MSG_DISCONNECT:" + " " + reason_code + " " + new String(description) + " " + new String(language_tag));
@@ -741,7 +734,7 @@ loop:
                 buf.getInt();
                 buf.getShort();
 
-                byte   always_display = (byte) buf.getByte();
+                byte always_display = (byte) buf.getByte();
                 byte[] message = buf.getString();
                 byte[] language_tag = buf.getString();
                 System.err.println("SSH_MSG_DEBUG:" + " " + new String(message) + " " + new String(language_tag));
@@ -780,10 +773,9 @@ loop:
      *
      * @param buf DOCUMENT ME!
      * @param kex DOCUMENT ME!
-     *
      * @throws Exception DOCUMENT ME!
      */
-    private void receive_newkeys(Buffer      buf,
+    private void receive_newkeys(Buffer buf,
                                  KeyExchange kex) throws Exception {
         send_newkeys();
         in_kex = false;
@@ -794,13 +786,12 @@ loop:
      * DOCUMENT ME!
      *
      * @param kex DOCUMENT ME!
-     *
      * @throws Exception DOCUMENT ME!
      */
     private void updateKeys(KeyExchange kex) throws Exception {
-        byte[]   K = kex.getK();
-        byte[]   H = kex.getH();
-        HASH     hash = kex.getHash();
+        byte[] K = kex.getK();
+        byte[] H = kex.getH();
+        HASH hash = kex.getHash();
 
         String[] guess = kex.guess;
 
@@ -850,8 +841,8 @@ loop:
         try {
             Class c;
 
-            c             = Class.forName(getConfig(guess[KeyExchange.PROPOSAL_ENC_ALGS_STOC]));
-            s2ccipher     = (Cipher) (c.newInstance());
+            c = Class.forName(getConfig(guess[KeyExchange.PROPOSAL_ENC_ALGS_STOC]));
+            s2ccipher = (Cipher) (c.newInstance());
 
             while (s2ccipher.getBlockSize() > Es2c.length) {
                 buf.reset();
@@ -869,13 +860,13 @@ loop:
 
             s2ccipher.init(Cipher.DECRYPT_MODE, Es2c, IVs2c);
 
-            c          = Class.forName(getConfig(guess[KeyExchange.PROPOSAL_MAC_ALGS_STOC]));
-            s2cmac     = (MAC) (c.newInstance());
+            c = Class.forName(getConfig(guess[KeyExchange.PROPOSAL_MAC_ALGS_STOC]));
+            s2cmac = (MAC) (c.newInstance());
             s2cmac.init(MACs2c);
-            mac_buf     = new byte[s2cmac.getBlockSize()];
+            mac_buf = new byte[s2cmac.getBlockSize()];
 
-            c             = Class.forName(getConfig(guess[KeyExchange.PROPOSAL_ENC_ALGS_CTOS]));
-            c2scipher     = (Cipher) (c.newInstance());
+            c = Class.forName(getConfig(guess[KeyExchange.PROPOSAL_ENC_ALGS_CTOS]));
+            c2scipher = (Cipher) (c.newInstance());
 
             while (c2scipher.getBlockSize() > Ec2s.length) {
                 buf.reset();
@@ -893,8 +884,8 @@ loop:
 
             c2scipher.init(Cipher.ENCRYPT_MODE, Ec2s, IVc2s);
 
-            c          = Class.forName(getConfig(guess[KeyExchange.PROPOSAL_MAC_ALGS_CTOS]));
-            c2smac     = (MAC) (c.newInstance());
+            c = Class.forName(getConfig(guess[KeyExchange.PROPOSAL_MAC_ALGS_CTOS]));
+            c2smac = (MAC) (c.newInstance());
             c2smac.init(MACc2s);
 
             if (!guess[KeyExchange.PROPOSAL_COMP_ALGS_CTOS].equals("none")) {
@@ -902,8 +893,8 @@ loop:
 
                 if (foo != null) {
                     try {
-                        c            = Class.forName(foo);
-                        deflater     = (Compression) (c.newInstance());
+                        c = Class.forName(foo);
+                        deflater = (Compression) (c.newInstance());
                         deflater.init(Compression.DEFLATER, 6);
                     } catch (Exception ee) {
                         System.err.println(foo + " isn't accessible.");
@@ -920,8 +911,8 @@ loop:
 
                 if (foo != null) {
                     try {
-                        c            = Class.forName(foo);
-                        inflater     = (Compression) (c.newInstance());
+                        c = Class.forName(foo);
+                        inflater = (Compression) (c.newInstance());
                         inflater.init(Compression.INFLATER, 0);
                     } catch (Exception ee) {
                         System.err.println(foo + " isn't accessible.");
@@ -941,15 +932,14 @@ loop:
      * DOCUMENT ME!
      *
      * @param packet DOCUMENT ME!
-     * @param c DOCUMENT ME!
+     * @param c      DOCUMENT ME!
      * @param length DOCUMENT ME!
-     *
-     * @throws Exception DOCUMENT ME!
+     * @throws Exception   DOCUMENT ME!
      * @throws IOException DOCUMENT ME!
      */
-    public /*synchronized*/ void write(Packet  packet,
+    public /*synchronized*/ void write(Packet packet,
                                        Channel c,
-                                       int     length) throws Exception {
+                                       int length) throws Exception {
         while (true) {
             if (c.rwsize >= length) {
                 c.rwsize -= length;
@@ -962,10 +952,10 @@ loop:
             }
 
             if (c.rwsize > 0) {
-                int  len = c.rwsize;
-                int  s = packet.shift(len, ((c2smac != null) ? c2smac.getBlockSize() : 0));
+                int len = c.rwsize;
+                int s = packet.shift(len, ((c2smac != null) ? c2smac.getBlockSize() : 0));
                 byte command = packet.buffer.buffer[5];
-                int  recipient = c.getRecipient();
+                int recipient = c.getRecipient();
                 length -= len;
                 c.rwsize = 0;
                 write(packet);
@@ -987,7 +977,6 @@ loop:
      * DOCUMENT ME!
      *
      * @param packet DOCUMENT ME!
-     *
      * @throws Exception DOCUMENT ME!
      */
     public synchronized void write(Packet packet) throws Exception {
@@ -1005,13 +994,13 @@ loop:
     public void run() {
         thread = this;
 
-        byte[]      foo;
-        Buffer      buf = new Buffer();
-        Packet      packet = new Packet(buf);
-        int         i = 0;
-        Channel     channel;
-        int[]       start = new int[1];
-        int[]       length = new int[1];
+        byte[] foo;
+        Buffer buf = new Buffer();
+        Packet packet = new Packet(buf);
+        int i = 0;
+        Channel channel;
+        int[] start = new int[1];
+        int[] length = new int[1];
         KeyExchange kex = null;
 
         try {
@@ -1033,110 +1022,110 @@ loop:
                 }
 
                 switch (msgType) {
-                case SSH_MSG_KEXINIT:
-                    System.out.println("KEXINIT");
-                    kex = receive_kexinit(buf);
+                    case SSH_MSG_KEXINIT:
+                        System.out.println("KEXINIT");
+                        kex = receive_kexinit(buf);
 
-                    break;
-
-                case SSH_MSG_NEWKEYS:
-                    System.out.println("NEWKEYS");
-                    receive_newkeys(buf, kex);
-                    kex = null;
-
-                    break;
-
-                case SSH_MSG_CHANNEL_DATA:
-                    buf.getInt();
-                    buf.getByte();
-                    buf.getByte();
-                    i = buf.getInt();
-                    channel = Channel.getChannel(i, this);
-                    foo = buf.getString(start, length);
-
-                    if (channel == null) {
                         break;
-                    }
 
-                    try {
-                        channel.write(foo, start[0], length[0]);
-                    } catch (Exception e) {
-                        //System.out.println(e);
+                    case SSH_MSG_NEWKEYS:
+                        System.out.println("NEWKEYS");
+                        receive_newkeys(buf, kex);
+                        kex = null;
+
+                        break;
+
+                    case SSH_MSG_CHANNEL_DATA:
+                        buf.getInt();
+                        buf.getByte();
+                        buf.getByte();
+                        i = buf.getInt();
+                        channel = Channel.getChannel(i, this);
+                        foo = buf.getString(start, length);
+
+                        if (channel == null) {
+                            break;
+                        }
+
                         try {
-                            channel.disconnect();
-                        } catch (Exception ee) {
+                            channel.write(foo, start[0], length[0]);
+                        } catch (Exception e) {
+                            //System.out.println(e);
+                            try {
+                                channel.disconnect();
+                            } catch (Exception ee) {
+                            }
+
+                            break;
+                        }
+
+                        int len = length[0];
+                        channel.setLocalWindowSize(channel.lwsize - len);
+
+                        if (channel.lwsize < (channel.lwsize_max / 2)) {
+                            packet.reset();
+                            buf.putByte((byte) SSH_MSG_CHANNEL_WINDOW_ADJUST);
+                            buf.putInt(channel.getRecipient());
+                            buf.putInt(channel.lwsize_max - channel.lwsize);
+                            write(packet);
+                            channel.setLocalWindowSize(channel.lwsize_max);
                         }
 
                         break;
-                    }
 
-                    int len = length[0];
-                    channel.setLocalWindowSize(channel.lwsize - len);
+                    case SSH_MSG_CHANNEL_EXTENDED_DATA:
+                        buf.getInt();
+                        buf.getShort();
+                        i = buf.getInt();
+                        channel = Channel.getChannel(i, this);
+                        buf.getInt(); // data_type_code == 1
+                        foo = buf.getString(start, length);
 
-                    if (channel.lwsize < (channel.lwsize_max / 2)) {
-                        packet.reset();
-                        buf.putByte((byte) SSH_MSG_CHANNEL_WINDOW_ADJUST);
-                        buf.putInt(channel.getRecipient());
-                        buf.putInt(channel.lwsize_max - channel.lwsize);
-                        write(packet);
-                        channel.setLocalWindowSize(channel.lwsize_max);
-                    }
+                        //System.out.println("stderr: "+new String(foo,start[0],length[0]));
+                        if (channel == null) {
+                            break;
+                        }
 
-                    break;
+                        //channel.write(foo, start[0], length[0]);
+                        channel.write_ext(foo, start[0], length[0]);
 
-                case SSH_MSG_CHANNEL_EXTENDED_DATA:
-                    buf.getInt();
-                    buf.getShort();
-                    i = buf.getInt();
-                    channel = Channel.getChannel(i, this);
-                    buf.getInt(); // data_type_code == 1
-                    foo = buf.getString(start, length);
+                        len = length[0];
+                        channel.setLocalWindowSize(channel.lwsize - len);
 
-                    //System.out.println("stderr: "+new String(foo,start[0],length[0]));
-                    if (channel == null) {
+                        if (channel.lwsize < (channel.lwsize_max / 2)) {
+                            packet.reset();
+                            buf.putByte((byte) SSH_MSG_CHANNEL_WINDOW_ADJUST);
+                            buf.putInt(channel.getRecipient());
+                            buf.putInt(channel.lwsize_max - channel.lwsize);
+                            write(packet);
+                            channel.setLocalWindowSize(channel.lwsize_max);
+                        }
+
                         break;
-                    }
 
-                    //channel.write(foo, start[0], length[0]);
-                    channel.write_ext(foo, start[0], length[0]);
+                    case SSH_MSG_CHANNEL_WINDOW_ADJUST:
+                        buf.getInt();
+                        buf.getShort();
+                        i = buf.getInt();
+                        channel = Channel.getChannel(i, this);
 
-                    len = length[0];
-                    channel.setLocalWindowSize(channel.lwsize - len);
+                        if (channel == null) {
+                            break;
+                        }
 
-                    if (channel.lwsize < (channel.lwsize_max / 2)) {
-                        packet.reset();
-                        buf.putByte((byte) SSH_MSG_CHANNEL_WINDOW_ADJUST);
-                        buf.putInt(channel.getRecipient());
-                        buf.putInt(channel.lwsize_max - channel.lwsize);
-                        write(packet);
-                        channel.setLocalWindowSize(channel.lwsize_max);
-                    }
+                        channel.addRemoteWindowSize(buf.getInt());
 
-                    break;
-
-                case SSH_MSG_CHANNEL_WINDOW_ADJUST:
-                    buf.getInt();
-                    buf.getShort();
-                    i = buf.getInt();
-                    channel = Channel.getChannel(i, this);
-
-                    if (channel == null) {
                         break;
-                    }
 
-                    channel.addRemoteWindowSize(buf.getInt());
+                    case SSH_MSG_CHANNEL_EOF:
+                        buf.getInt();
+                        buf.getShort();
+                        i = buf.getInt();
+                        channel = Channel.getChannel(i, this);
 
-                    break;
-
-                case SSH_MSG_CHANNEL_EOF:
-                    buf.getInt();
-                    buf.getShort();
-                    i = buf.getInt();
-                    channel = Channel.getChannel(i, this);
-
-                    if (channel != null) {
-                        channel.eof();
-                    }
+                        if (channel != null) {
+                            channel.eof();
+                        }
 
                     /*
                     packet.reset();
@@ -1144,134 +1133,134 @@ loop:
                     buf.putInt(channel.getRecipient());
                     write(packet);
                     */
-                    break;
+                        break;
 
-                case SSH_MSG_CHANNEL_CLOSE:
-                    buf.getInt();
-                    buf.getShort();
-                    i = buf.getInt();
-                    channel = Channel.getChannel(i, this);
+                    case SSH_MSG_CHANNEL_CLOSE:
+                        buf.getInt();
+                        buf.getShort();
+                        i = buf.getInt();
+                        channel = Channel.getChannel(i, this);
 
-                    if (channel != null) {
-                        //	      channel.close();
-                        channel.disconnect();
-                    }
+                        if (channel != null) {
+                            //	      channel.close();
+                            channel.disconnect();
+                        }
 
                     /*
                     if(Channel.pool.size()==0){
                       thread=null;
                     }
                     */
-                    break;
+                        break;
 
-                case SSH_MSG_CHANNEL_OPEN_CONFIRMATION:
-                    buf.getInt();
-                    buf.getShort();
-                    i = buf.getInt();
-                    channel = Channel.getChannel(i, this);
+                    case SSH_MSG_CHANNEL_OPEN_CONFIRMATION:
+                        buf.getInt();
+                        buf.getShort();
+                        i = buf.getInt();
+                        channel = Channel.getChannel(i, this);
 
-                    if (channel == null) {
-                        //break;
-                    }
-
-                    channel.setRecipient(buf.getInt());
-                    channel.setRemoteWindowSize(buf.getInt());
-                    channel.setRemotePacketSize(buf.getInt());
-
-                    break;
-
-                case SSH_MSG_CHANNEL_REQUEST:
-                    buf.getInt();
-                    buf.getShort();
-                    i = buf.getInt();
-                    foo = buf.getString();
-
-                    boolean reply = (buf.getByte() != 0);
-                    channel = Channel.getChannel(i, this);
-
-                    if (channel != null) {
-                        byte reply_type = (byte) SSH_MSG_CHANNEL_FAILURE;
-
-                        if ((new String(foo)).equals("exit-status")) {
-                            i = buf.getInt(); // exit-status
-                            channel.setExitStatus(i);
-
-                            //	    System.out.println("exit-stauts: "+i);
-                            //          channel.close();
-                            reply_type = (byte) SSH_MSG_CHANNEL_SUCCESS;
+                        if (channel == null) {
+                            //break;
                         }
 
-                        if (reply) {
+                        channel.setRecipient(buf.getInt());
+                        channel.setRemoteWindowSize(buf.getInt());
+                        channel.setRemotePacketSize(buf.getInt());
+
+                        break;
+
+                    case SSH_MSG_CHANNEL_REQUEST:
+                        buf.getInt();
+                        buf.getShort();
+                        i = buf.getInt();
+                        foo = buf.getString();
+
+                        boolean reply = (buf.getByte() != 0);
+                        channel = Channel.getChannel(i, this);
+
+                        if (channel != null) {
+                            byte reply_type = (byte) SSH_MSG_CHANNEL_FAILURE;
+
+                            if ((new String(foo)).equals("exit-status")) {
+                                i = buf.getInt(); // exit-status
+                                channel.setExitStatus(i);
+
+                                //	    System.out.println("exit-stauts: "+i);
+                                //          channel.close();
+                                reply_type = (byte) SSH_MSG_CHANNEL_SUCCESS;
+                            }
+
+                            if (reply) {
+                                packet.reset();
+                                buf.putByte(reply_type);
+                                buf.putInt(channel.getRecipient());
+                                write(packet);
+                            }
+                        } else {
+                        }
+
+                        break;
+
+                    case SSH_MSG_CHANNEL_OPEN:
+                        buf.getInt();
+                        buf.getShort();
+                        foo = buf.getString();
+
+                        String ctyp = new String(foo);
+
+                        //System.out.println("type="+ctyp);
+                        if (!"forwarded-tcpip".equals(ctyp) && !"x11".equals(ctyp)) {
+                            System.out.println("Session.run: CHANNEL OPEN " + ctyp);
+                            throw new IOException("Session.run: CHANNEL OPEN " + ctyp);
+                        } else {
+                            channel = Channel.getChannel(ctyp);
+                            addChannel(channel);
+                            channel.getData(buf);
+                            channel.init();
+
                             packet.reset();
-                            buf.putByte(reply_type);
+                            buf.putByte((byte) SSH_MSG_CHANNEL_OPEN_CONFIRMATION);
                             buf.putInt(channel.getRecipient());
+                            buf.putInt(channel.id);
+                            buf.putInt(channel.lwsize);
+                            buf.putInt(channel.lmpsize);
                             write(packet);
+                            (new Thread(channel)).start();
+
+                            break;
                         }
-                    } else {
-                    }
 
-                    break;
+                    case SSH_MSG_CHANNEL_SUCCESS:
+                        buf.getInt();
+                        buf.getShort();
+                        i = buf.getInt();
+                        channel = Channel.getChannel(i, this);
 
-                case SSH_MSG_CHANNEL_OPEN:
-                    buf.getInt();
-                    buf.getShort();
-                    foo = buf.getString();
+                        if (channel == null) {
+                            break;
+                        }
 
-                    String ctyp = new String(foo);
-
-                    //System.out.println("type="+ctyp);
-                    if (!"forwarded-tcpip".equals(ctyp) && !"x11".equals(ctyp)) {
-                        System.out.println("Session.run: CHANNEL OPEN " + ctyp);
-                        throw new IOException("Session.run: CHANNEL OPEN " + ctyp);
-                    } else {
-                        channel = Channel.getChannel(ctyp);
-                        addChannel(channel);
-                        channel.getData(buf);
-                        channel.init();
-
-                        packet.reset();
-                        buf.putByte((byte) SSH_MSG_CHANNEL_OPEN_CONFIRMATION);
-                        buf.putInt(channel.getRecipient());
-                        buf.putInt(channel.id);
-                        buf.putInt(channel.lwsize);
-                        buf.putInt(channel.lmpsize);
-                        write(packet);
-                        (new Thread(channel)).start();
+                        channel.reply = 1;
 
                         break;
-                    }
 
-                case SSH_MSG_CHANNEL_SUCCESS:
-                    buf.getInt();
-                    buf.getShort();
-                    i = buf.getInt();
-                    channel = Channel.getChannel(i, this);
+                    case SSH_MSG_CHANNEL_FAILURE:
+                        buf.getInt();
+                        buf.getShort();
+                        i = buf.getInt();
+                        channel = Channel.getChannel(i, this);
 
-                    if (channel == null) {
+                        if (channel == null) {
+                            break;
+                        }
+
+                        channel.reply = 0;
+
                         break;
-                    }
 
-                    channel.reply = 1;
-
-                    break;
-
-                case SSH_MSG_CHANNEL_FAILURE:
-                    buf.getInt();
-                    buf.getShort();
-                    i = buf.getInt();
-                    channel = Channel.getChannel(i, this);
-
-                    if (channel == null) {
-                        break;
-                    }
-
-                    channel.reply = 0;
-
-                    break;
-
-                default:
-                    System.out.println("Session.run: unsupported type " + msgType);
-                    throw new IOException("Unknown SSH message type " + msgType);
+                    default:
+                        System.out.println("Session.run: unsupported type " + msgType);
+                        throw new IOException("Unknown SSH message type " + msgType);
                 }
             }
         } catch (Exception e) {
@@ -1345,8 +1334,8 @@ loop:
             //      e.printStackTrace();
         }
 
-        io         = null;
-        socket     = null;
+        io = null;
+        socket = null;
         jsch.pool.removeElement(this);
     }
 
@@ -1354,14 +1343,13 @@ loop:
      * DOCUMENT ME!
      *
      * @param lport DOCUMENT ME!
-     * @param host DOCUMENT ME!
+     * @param host  DOCUMENT ME!
      * @param rport DOCUMENT ME!
-     *
      * @throws JSchException DOCUMENT ME!
      */
-    public void setPortForwardingL(int    lport,
+    public void setPortForwardingL(int lport,
                                    String host,
-                                   int    rport) throws JSchException {
+                                   int rport) throws JSchException {
         setPortForwardingL("127.0.0.1", lport, host, rport);
     }
 
@@ -1369,16 +1357,15 @@ loop:
      * DOCUMENT ME!
      *
      * @param boundaddress DOCUMENT ME!
-     * @param lport DOCUMENT ME!
-     * @param host DOCUMENT ME!
-     * @param rport DOCUMENT ME!
-     *
+     * @param lport        DOCUMENT ME!
+     * @param host         DOCUMENT ME!
+     * @param rport        DOCUMENT ME!
      * @throws JSchException DOCUMENT ME!
      */
     public void setPortForwardingL(String boundaddress,
-                                   int    lport,
+                                   int lport,
                                    String host,
-                                   int    rport) throws JSchException {
+                                   int rport) throws JSchException {
         PortWatcher pw = PortWatcher.addPort(this, boundaddress, lport, host, rport);
         (new Thread(pw)).start();
     }
@@ -1387,7 +1374,6 @@ loop:
      * DOCUMENT ME!
      *
      * @param lport DOCUMENT ME!
-     *
      * @throws JSchException DOCUMENT ME!
      */
     public void delPortForwardingL(int lport) throws JSchException {
@@ -1398,7 +1384,6 @@ loop:
      * DOCUMENT ME!
      *
      * @return DOCUMENT ME!
-     *
      * @throws JSchException DOCUMENT ME!
      */
     public String[] getPortForwardingL() throws JSchException {
@@ -1409,14 +1394,13 @@ loop:
      * DOCUMENT ME!
      *
      * @param rport DOCUMENT ME!
-     * @param host DOCUMENT ME!
+     * @param host  DOCUMENT ME!
      * @param lport DOCUMENT ME!
-     *
      * @throws JSchException DOCUMENT ME!
      */
-    public void setPortForwardingR(int    rport,
+    public void setPortForwardingR(int rport,
                                    String host,
-                                   int    lport) throws JSchException {
+                                   int lport) throws JSchException {
         ChannelForwardedTCPIP.addPort(this, rport, host, lport);
 
         Buffer buf = new Buffer(100); // ??
@@ -1444,7 +1428,6 @@ loop:
      * DOCUMENT ME!
      *
      * @param rport DOCUMENT ME!
-     *
      * @throws JSchException DOCUMENT ME!
      */
     public void delPortForwardingR(int rport) throws JSchException {
@@ -1464,7 +1447,6 @@ loop:
      * DOCUMENT ME!
      *
      * @param name DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public String getConfig(String name) {
@@ -1592,7 +1574,7 @@ loop:
             config = new java.util.Hashtable();
         }
 
-        for (java.util.Enumeration e = foo.keys(); e.hasMoreElements();) {
+        for (java.util.Enumeration e = foo.keys(); e.hasMoreElements(); ) {
             String key = (String) (e.nextElement());
             config.put(key, (String) (foo.get(key)));
         }
@@ -1629,7 +1611,6 @@ loop:
      * DOCUMENT ME!
      *
      * @param foo DOCUMENT ME!
-     *
      * @throws JSchException DOCUMENT ME!
      */
     public void setTimeout(int foo) throws JSchException {

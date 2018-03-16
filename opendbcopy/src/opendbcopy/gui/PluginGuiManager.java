@@ -23,27 +23,16 @@
 package opendbcopy.gui;
 
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.controller.MainController;
-
 import opendbcopy.plugin.model.Model;
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.PluginException;
-
 import opendbcopy.resource.ResourceManager;
-
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.lang.reflect.InvocationTargetException;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.TreeMap;
-import java.util.Vector;
+import java.util.*;
 
 
 /**
@@ -53,15 +42,15 @@ import java.util.Vector;
  * @version $Revision$
  */
 public class PluginGuiManager extends Observable implements Observer {
-    private MainController  controller;
+    private MainController controller;
     private ResourceManager rm;
-    private HashMap         availableModes;
-    private HashMap         availablePlugins;
-    private HashMap         pluginThreads;
-    private PluginGui       currentPluginGui;
-    private LinkedList      pluginGuisLoaded;
-    private LinkedList      pluginGuisToExecute;
-    private boolean         amRegisteredAsObserverToPluginManager = false;
+    private HashMap availableModes;
+    private HashMap availablePlugins;
+    private HashMap pluginThreads;
+    private PluginGui currentPluginGui;
+    private LinkedList pluginGuisLoaded;
+    private LinkedList pluginGuisToExecute;
+    private boolean amRegisteredAsObserverToPluginManager = false;
 
     /**
      * Creates a new PluginGuiManager object. Please be aware that PluginGuiManager contains two LinkedLists. One to hold plugin guis which are in
@@ -71,20 +60,19 @@ public class PluginGuiManager extends Observable implements Observer {
      * Guis.
      *
      * @param controller DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
      */
     public PluginGuiManager(MainController controller) throws MissingAttributeException, MissingElementException {
-        this.controller     = controller;
-        this.rm             = controller.getResourceManager();
+        this.controller = controller;
+        this.rm = controller.getResourceManager();
 
-        pluginGuisLoaded        = new LinkedList();
-        pluginGuisToExecute     = new LinkedList();
+        pluginGuisLoaded = new LinkedList();
+        pluginGuisToExecute = new LinkedList();
 
         // init containers
-        availableModes       = new HashMap();
-        availablePlugins     = new HashMap();
+        availableModes = new HashMap();
+        availablePlugins = new HashMap();
     }
 
     /**
@@ -98,11 +86,11 @@ public class PluginGuiManager extends Observable implements Observer {
     /**
      * DOCUMENT ME!
      *
-     * @param o DOCUMENT ME!
+     * @param o   DOCUMENT ME!
      * @param arg DOCUMENT ME!
      */
     public void update(Observable o,
-                       Object     arg) {
+                       Object arg) {
         if (controller.getJobManager().getPluginManager().getModelsLoaded().size() == 0) {
             pluginGuisLoaded.clear();
         }
@@ -116,21 +104,20 @@ public class PluginGuiManager extends Observable implements Observer {
      * Given a working mode identifier or description load it
      *
      * @param pluginGuiIdentifier can be a working mode identifier or its description
-     * @param isExecutableModel DOCUMENT ME!
-     *
+     * @param isExecutableModel   DOCUMENT ME!
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws ClassNotFoundException DOCUMENT ME!
-     * @throws InstantiationException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws ClassNotFoundException    DOCUMENT ME!
+     * @throws InstantiationException    DOCUMENT ME!
      * @throws InvocationTargetException DOCUMENT ME!
-     * @throws IllegalAccessException DOCUMENT ME!
-     * @throws PluginException DOCUMENT ME!
-     * @throws RuntimeException DOCUMENT ME!
+     * @throws IllegalAccessException    DOCUMENT ME!
+     * @throws PluginException           DOCUMENT ME!
+     * @throws RuntimeException          DOCUMENT ME!
      */
-    public final void loadPluginGui(String  pluginGuiIdentifier,
+    public final void loadPluginGui(String pluginGuiIdentifier,
                                     boolean isExecutableModel) throws MissingAttributeException, MissingElementException, ClassNotFoundException, InstantiationException, InvocationTargetException, IllegalAccessException, PluginException {
         PluginGui pluginGui = null;
-        Model     model = null;
+        Model model = null;
 
         if (!availableModes.containsKey(pluginGuiIdentifier)) {
             throw new RuntimeException("Unknown pluginGuiIdentifier");
@@ -161,22 +148,21 @@ public class PluginGuiManager extends Observable implements Observer {
     /**
      * DOCUMENT ME!
      *
-     * @param newModel DOCUMENT ME!
+     * @param newModel       DOCUMENT ME!
      * @param modelToExecute DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws ClassNotFoundException DOCUMENT ME!
-     * @throws InstantiationException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws ClassNotFoundException    DOCUMENT ME!
+     * @throws InstantiationException    DOCUMENT ME!
      * @throws InvocationTargetException DOCUMENT ME!
-     * @throws IllegalAccessException DOCUMENT ME!
-     * @throws PluginException DOCUMENT ME!
-     * @throws RuntimeException DOCUMENT ME!
+     * @throws IllegalAccessException    DOCUMENT ME!
+     * @throws PluginException           DOCUMENT ME!
+     * @throws RuntimeException          DOCUMENT ME!
      */
-    public final void loadPluginGuiFromModel(Model   newModel,
+    public final void loadPluginGuiFromModel(Model newModel,
                                              boolean modelToExecute) throws MissingAttributeException, MissingElementException, ClassNotFoundException, InstantiationException, InvocationTargetException, IllegalAccessException, PluginException {
         PluginGui pluginGui = null;
-        Model     model = newModel;
+        Model model = newModel;
 
         if (!availableModes.containsKey(model.getIdentifier())) {
             throw new RuntimeException("Unknown " + model.getIdentifier());
@@ -213,9 +199,9 @@ public class PluginGuiManager extends Observable implements Observer {
         }
 
         Iterator itPluginGuis = availableModes.values().iterator();
-        TreeMap  modesDisplayOrdered = new TreeMap();
-        Vector   modesDisplayUnordered = new Vector();
-        Vector   modesOrdered = new Vector();
+        TreeMap modesDisplayOrdered = new TreeMap();
+        Vector modesDisplayUnordered = new Vector();
+        Vector modesOrdered = new Vector();
 
         while (itPluginGuis.hasNext()) {
             Element pluginGui = (Element) itPluginGuis.next();
@@ -249,7 +235,6 @@ public class PluginGuiManager extends Observable implements Observer {
      * DOCUMENT ME!
      *
      * @param observer DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final void registerObserver(Observer observer) {
@@ -264,7 +249,6 @@ public class PluginGuiManager extends Observable implements Observer {
      * DOCUMENT ME!
      *
      * @param observer DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final void deleteObserver(Observer observer) {
@@ -279,10 +263,9 @@ public class PluginGuiManager extends Observable implements Observer {
      * DOCUMENT ME!
      *
      * @param pluginGuiElement DOCUMENT ME!
-     * @param pluginElement DOCUMENT ME!
-     *
+     * @param pluginElement    DOCUMENT ME!
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
      */
     public final void addPluginGui(Element pluginGuiElement,
                                    Element pluginElement) throws MissingAttributeException, MissingElementException {
@@ -307,7 +290,6 @@ public class PluginGuiManager extends Observable implements Observer {
      * DOCUMENT ME!
      *
      * @param index DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public final PluginGui getPluginGuiLoaded(int index) {
@@ -331,7 +313,6 @@ public class PluginGuiManager extends Observable implements Observer {
      * DOCUMENT ME!
      *
      * @param index DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public final PluginGui getPluginGuiToExecute(int index) {
@@ -387,7 +368,7 @@ public class PluginGuiManager extends Observable implements Observer {
     /**
      * DOCUMENT ME!
      *
-     * @param sourceIndex DOCUMENT ME!
+     * @param sourceIndex      DOCUMENT ME!
      * @param destinationIndex DOCUMENT ME!
      */
     public final void changeOrderPluginToExecute(int sourceIndex,
@@ -430,13 +411,11 @@ public class PluginGuiManager extends Observable implements Observer {
      * DOCUMENT ME!
      *
      * @param identifier DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
-     * @throws RuntimeException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
+     * @throws RuntimeException          DOCUMENT ME!
      */
     private PluginGui createNewPluginGui(String identifier) throws MissingAttributeException, MissingElementException {
         if (identifier == null) {

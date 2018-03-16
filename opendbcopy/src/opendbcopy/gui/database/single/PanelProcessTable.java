@@ -22,29 +22,22 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.gui.database.single;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.util.List;
-import java.util.Observable;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-
 import opendbcopy.config.XMLTags;
 import opendbcopy.controller.MainController;
 import opendbcopy.gui.DynamicPanel;
 import opendbcopy.gui.PluginGui;
 import opendbcopy.plugin.model.database.DatabaseModel;
 import opendbcopy.plugin.model.exception.MissingElementException;
+import org.jdom2.Element;
 
-import org.jdom.Element;
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.List;
+import java.util.Observable;
 
 
 /**
@@ -54,45 +47,44 @@ import org.jdom.Element;
  * @version $Revision$
  */
 public class PanelProcessTable extends DynamicPanel {
-    private DatabaseModel     model;
-    private boolean           select_all = false;
-    private BorderLayout      borderLayout = new BorderLayout();
-    private BorderLayout      borderLayoutPanelMain = new BorderLayout();
-    private JPanel            panelOptions = new JPanel();
-    private JPanel            panelControl = new JPanel();
-    private JPanel            panelMain = new JPanel();
-    private JPanel            panelProcessTable = null;
-    private JButton           buttonSelect = new JButton();
-    private JScrollPane       scrollPane = null;
-    private JTable           tableProcess = null;
+    private DatabaseModel model;
+    private boolean select_all = false;
+    private BorderLayout borderLayout = new BorderLayout();
+    private BorderLayout borderLayoutPanelMain = new BorderLayout();
+    private JPanel panelOptions = new JPanel();
+    private JPanel panelControl = new JPanel();
+    private JPanel panelMain = new JPanel();
+    private JPanel panelProcessTable = null;
+    private JButton buttonSelect = new JButton();
+    private JScrollPane scrollPane = null;
+    private JTable tableProcess = null;
     private ProcessTableModel processTableModel = null;
 
     /**
      * Creates a new PanelProcessTable object.
      *
-     * @param controller DOCUMENT ME!
-     * @param pluginGui DOCUMENT ME!
+     * @param controller         DOCUMENT ME!
+     * @param workingMode        DOCUMENT ME!
      * @param registerAsObserver DOCUMENT ME!
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     public PanelProcessTable(MainController controller,
-                             PluginGui    workingMode,
-                             Boolean        registerAsObserver) throws MissingElementException {
+                             PluginGui workingMode,
+                             Boolean registerAsObserver) throws MissingElementException {
         super(controller, workingMode, registerAsObserver);
 
-        model     = (DatabaseModel) super.model;
+        model = (DatabaseModel) super.model;
         guiInit();
     }
 
     /**
      * DOCUMENT ME!
      *
-     * @param o DOCUMENT ME!
+     * @param o   DOCUMENT ME!
      * @param obj DOCUMENT ME!
      */
     public final void update(Observable o,
-                             Object     obj) {
+                             Object obj) {
     }
 
     /**
@@ -118,9 +110,9 @@ public class PanelProcessTable extends DynamicPanel {
                 panelMain.remove(scrollPane);
             }
 
-            processTableModel     = new ProcessTableModel(model.getSourceTables());
+            processTableModel = new ProcessTableModel(model.getSourceTables());
 
-            tableProcess     = new JTable(processTableModel);
+            tableProcess = new JTable(processTableModel);
 
             // Set up column sizes
             initColumnSizesTable(tableProcess);
@@ -188,21 +180,21 @@ public class PanelProcessTable extends DynamicPanel {
      */
     private void initColumnSizesTable(JTable table) {
         ProcessTableModel modelTable = (ProcessTableModel) table.getModel();
-        TableColumn       column = null;
-        Component         comp = null;
-        int               headerWidth = 0;
-        int               cellWidth = 0;
-        Object[]          longValues = modelTable.longValues;
+        TableColumn column = null;
+        Component comp = null;
+        int headerWidth = 0;
+        int cellWidth = 0;
+        Object[] longValues = modelTable.longValues;
         TableCellRenderer headerRenderer = table.getTableHeader().getDefaultRenderer();
 
         for (int i = 0; i < modelTable.getColumnCount(); i++) {
-            column     = table.getColumnModel().getColumn(i);
+            column = table.getColumnModel().getColumn(i);
 
-            comp            = headerRenderer.getTableCellRendererComponent(null, column.getHeaderValue(), false, false, 0, 0);
-            headerWidth     = comp.getPreferredSize().width;
+            comp = headerRenderer.getTableCellRendererComponent(null, column.getHeaderValue(), false, false, 0, 0);
+            headerWidth = comp.getPreferredSize().width;
 
-            comp          = table.getDefaultRenderer(modelTable.getColumnClass(i)).getTableCellRendererComponent(table, longValues[i], false, false, 0, i);
-            cellWidth     = comp.getPreferredSize().width;
+            comp = table.getDefaultRenderer(modelTable.getColumnClass(i)).getTableCellRendererComponent(table, longValues[i], false, false, 0, i);
+            cellWidth = comp.getPreferredSize().width;
 
             column.setPreferredWidth(Math.max(headerWidth, cellWidth));
         }
@@ -242,13 +234,13 @@ public class PanelProcessTable extends DynamicPanel {
      * @version $Revision$
      */
     class ProcessTableModel extends AbstractTableModel {
-        private String[]      columnNames = { rm.getString("text.table.type"), rm.getString("text.table.sourceTableView"), rm.getString("text.table.process") };
-        public final Object[] longValues = { "table", "abcdefghijklmnopqrstuvwxyz", new Boolean(false) };
+        public final Object[] longValues = {"table", "abcdefghijklmnopqrstuvwxyz", new Boolean(false)};
+        private String[] columnNames = {rm.getString("text.table.type"), rm.getString("text.table.sourceTableView"), rm.getString("text.table.process")};
         private List tablesList;
-        
+
         public ProcessTableModel(List tablesList) {
-    		this.tablesList = tablesList;
-    	}    	
+            this.tablesList = tablesList;
+        }
 
         /**
          * DOCUMENT ME!
@@ -272,7 +264,6 @@ public class PanelProcessTable extends DynamicPanel {
          * DOCUMENT ME!
          *
          * @param col DOCUMENT ME!
-         *
          * @return DOCUMENT ME!
          */
         public final String getColumnName(int col) {
@@ -284,19 +275,21 @@ public class PanelProcessTable extends DynamicPanel {
          *
          * @param row DOCUMENT ME!
          * @param col DOCUMENT ME!
-         *
          * @return DOCUMENT ME!
          */
         public final Object getValueAt(int row,
                                        int col) {
-        	Element rowElement = (Element) tablesList.get(row);
-            
-        	switch (col) {
-        		case 0: return rowElement.getAttributeValue(XMLTags.TABLE_TYPE);
-        		case 1: return rowElement.getAttributeValue(XMLTags.NAME);
-        		case 2: return Boolean.valueOf(rowElement.getAttributeValue(XMLTags.PROCESS));
-        	}
-        	return "you should'nt be here";
+            Element rowElement = (Element) tablesList.get(row);
+
+            switch (col) {
+                case 0:
+                    return rowElement.getAttributeValue(XMLTags.TABLE_TYPE);
+                case 1:
+                    return rowElement.getAttributeValue(XMLTags.NAME);
+                case 2:
+                    return Boolean.valueOf(rowElement.getAttributeValue(XMLTags.PROCESS));
+            }
+            return "you should'nt be here";
         }
 
         /*
@@ -329,14 +322,14 @@ public class PanelProcessTable extends DynamicPanel {
          * data can change.
          */
         public final void setValueAt(Object value,
-                                     int    row,
-                                     int    col) {
-        	
-        	if (col == 2) {
-            	Element rowElement = (Element) tablesList.get(row);
-            	rowElement.setAttribute(XMLTags.PROCESS, ((Boolean) value).toString());
+                                     int row,
+                                     int col) {
+
+            if (col == 2) {
+                Element rowElement = (Element) tablesList.get(row);
+                rowElement.setAttribute(XMLTags.PROCESS, ((Boolean) value).toString());
                 fireTableCellUpdated(row, col);
-        	}
+            }
         }
     }
 }

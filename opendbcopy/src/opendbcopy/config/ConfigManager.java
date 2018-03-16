@@ -23,20 +23,13 @@
 package opendbcopy.config;
 
 import com.Ostermiller.util.Browser;
-
 import opendbcopy.controller.MainController;
-
 import opendbcopy.io.FileHandling;
 import opendbcopy.io.PropertiesToFile;
 import opendbcopy.io.Reader;
 import opendbcopy.io.Writer;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -51,29 +44,27 @@ import java.util.regex.Pattern;
  * @version $Revision$
  */
 public class ConfigManager {
-    private MainController      controller;
-    private File                opendbcopyUserHomeDir;
-    private File                logDir;
-    private File                inoutDir;
-    private File                personalJobsDir;
-    private File                personalPluginsDir;
-    private File                personalConfDir;
-    private File                personalSQLDriversFile;
-    private File                executionLogFile;
-    private File                fileDefaultAppProperties;
-    private File                filePersonalAppProperties;
-    private String              pathFilenameConsoleOut;
-    private Properties          defaultApplicationProperties;
-    private Properties          personalApplicationProperties;
+    private MainController controller;
+    private File opendbcopyUserHomeDir;
+    private File logDir;
+    private File inoutDir;
+    private File personalJobsDir;
+    private File personalPluginsDir;
+    private File personalConfDir;
+    private File personalSQLDriversFile;
+    private File executionLogFile;
+    private File fileDefaultAppProperties;
+    private File filePersonalAppProperties;
+    private String pathFilenameConsoleOut;
+    private Properties defaultApplicationProperties;
+    private Properties personalApplicationProperties;
 
     /**
      * Creates a new ConfigManager object.
      *
-     * @throws FileNotFoundException DOCUMENT ME!
      * @throws IOException DOCUMENT ME!
-     * @throws RuntimeException DOCUMENT ME!
      */
-    public ConfigManager() throws FileNotFoundException, IOException {
+    public ConfigManager() throws IOException {
         fileDefaultAppProperties = new File(APM.CONF_DIR + APM.FILE_SEP + APM.APP_PROPERTIES_FILE);
 
         if (!fileDefaultAppProperties.exists()) {
@@ -104,7 +95,7 @@ public class ConfigManager {
      * @throws IOException DOCUMENT ME!
      */
     private void loadBrowserSettings() throws IOException {
-        String   defaultPaths = getApplicationProperty(APM.BROWSER_PATHS);
+        String defaultPaths = getApplicationProperty(APM.BROWSER_PATHS);
         String[] peaces = null;
 
         if ((defaultPaths != null) && (defaultPaths.trim().length() > 0)) {
@@ -146,9 +137,7 @@ public class ConfigManager {
      * DOCUMENT ME!
      *
      * @param key DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws RuntimeException DOCUMENT ME!
      */
     public String getApplicationProperty(String key) {
@@ -171,10 +160,10 @@ public class ConfigManager {
     public List getAvailableGuiLanguages() {
         ArrayList locales = new ArrayList();
 
-        String    availableLanguages = getApplicationProperty(APM.OPENDBCOPY_RESOURCE_AVAILABLE);
+        String availableLanguages = getApplicationProperty(APM.OPENDBCOPY_RESOURCE_AVAILABLE);
 
         if ((availableLanguages != null) && (availableLanguages.length() > 0)) {
-            Pattern  pattern = Pattern.compile(",");
+            Pattern pattern = Pattern.compile(",");
             String[] peaces = pattern.split(availableLanguages);
 
             if ((peaces != null) && (peaces.length > 0)) {
@@ -199,21 +188,20 @@ public class ConfigManager {
     /**
      * DOCUMENT ME!
      *
-     * @param key DOCUMENT ME!
+     * @param key   DOCUMENT ME!
      * @param value DOCUMENT ME!
-     *
      * @throws IOException DOCUMENT ME!
      */
     public void updateApplicationProperty(String key,
                                           String value) throws IOException {
         // check if allowed to update
         if (getApplicationProperty(key) != null) {
-            String       oldValue = getApplicationProperty(key);
-            String       toReplace = key + "=" + oldValue;
+            String oldValue = getApplicationProperty(key);
+            String toReplace = key + "=" + oldValue;
 
             StringBuffer sb = Reader.read(filePersonalAppProperties);
 
-            int          startIndex = sb.indexOf(toReplace);
+            int startIndex = sb.indexOf(toReplace);
 
             if (startIndex >= 0) {
                 sb = sb.replace(startIndex, startIndex + toReplace.length(), key + "=" + value);
@@ -229,7 +217,7 @@ public class ConfigManager {
      * DOCUMENT ME!
      *
      * @throws FileNotFoundException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
+     * @throws IOException           DOCUMENT ME!
      */
     private void loadDefaultApplicationProperties() throws FileNotFoundException, IOException {
         defaultApplicationProperties = PropertiesToFile.importPropertiesFromFile(fileDefaultAppProperties.getAbsolutePath());
@@ -239,7 +227,7 @@ public class ConfigManager {
      * DOCUMENT ME!
      *
      * @throws FileNotFoundException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
+     * @throws IOException           DOCUMENT ME!
      */
     private void loadPersonalApplicationProperties() throws FileNotFoundException, IOException {
         // check that user's home directory for opendbcopy exists
@@ -259,7 +247,7 @@ public class ConfigManager {
         }
 
         // check that personal conf directory exists, else create it
-        personalConfDir     = setupDirInOpendbcopyUserHome(APM.CONF_DIR);
+        personalConfDir = setupDirInOpendbcopyUserHome(APM.CONF_DIR);
 
         // check if personal conf properties file exists
         filePersonalAppProperties = new File(personalConfDir.getAbsolutePath() + APM.FILE_SEP + APM.APP_PROPERTIES_FILE);
@@ -279,22 +267,22 @@ public class ConfigManager {
     private void setupDirectoriesAndCreateLocalFiles() throws IOException {
 
         // check that log directory exists, else create it
-        logDir     = setupDirInOpendbcopyUserHome("log");
+        logDir = setupDirInOpendbcopyUserHome("log");
 
         // check that plugin in out dir exists, else create it
-        inoutDir     = setupDirInOpendbcopyUserHome(getApplicationProperty(APM.PLUGIN_IN_OUT_DIR));
+        inoutDir = setupDirInOpendbcopyUserHome(getApplicationProperty(APM.PLUGIN_IN_OUT_DIR));
 
         // check that local plugins folder exists, else create it
-        personalPluginsDir     = setupDirInOpendbcopyUserHome(getApplicationProperty(APM.PLUGINS_DIRECTORY));
+        personalPluginsDir = setupDirInOpendbcopyUserHome(getApplicationProperty(APM.PLUGINS_DIRECTORY));
 
         // check that local projects folder exists, else create it
-        personalJobsDir     = setupDirInOpendbcopyUserHome(getApplicationProperty(APM.JOBS_DIRECTORY));
+        personalJobsDir = setupDirInOpendbcopyUserHome(getApplicationProperty(APM.JOBS_DIRECTORY));
 
         // create path filenames for console output
         pathFilenameConsoleOut = logDir.getAbsolutePath() + APM.FILE_SEP + APM.APPLICATION_LOG_FILE_NAME;
 
         // check if opendbcopy user home dir contains sql driver file, if not, copy a standard copy into this directory
-        File   standardSQLDriverFile = FileHandling.getFile(getApplicationProperty(APM.DRIVERS_CONF_FILE));
+        File standardSQLDriverFile = FileHandling.getFile(getApplicationProperty(APM.DRIVERS_CONF_FILE));
         String standardSQLDriverFilename = standardSQLDriverFile.getName();
         String personalSQLDriverPathFilename = opendbcopyUserHomeDir.getAbsolutePath() + APM.FILE_SEP + getApplicationProperty(APM.DRIVERS_CONF_FILE);
 
@@ -314,7 +302,6 @@ public class ConfigManager {
      * DOCUMENT ME!
      *
      * @param dirName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     private File setupDirInOpendbcopyUserHome(String dirName) {

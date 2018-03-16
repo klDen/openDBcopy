@@ -22,15 +22,12 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.action;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
-
 import opendbcopy.controller.MainController;
 import opendbcopy.gui.FrameMain;
-
 import org.apache.log4j.Level;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 
 /**
@@ -40,25 +37,25 @@ import org.apache.log4j.Level;
  * @version $Revision$
  */
 public class NewPluginAction extends AbstractAction {
-    private FrameMain      frame;
+    private FrameMain frame;
     private MainController controller;
-    private String         pluginIdentifier;
+    private String pluginIdentifier;
 
     /**
      * Creates a new NewPluginAction object.
      *
-     * @param command DOCUMENT ME!
+     * @param command          DOCUMENT ME!
      * @param pluginIdentifier DOCUMENT ME!
-     * @param name DOCUMENT ME!
-     * @param imageIcon DOCUMENT ME!
-     * @param frame DOCUMENT ME!
-     * @param controller DOCUMENT ME!
+     * @param name             DOCUMENT ME!
+     * @param imageIcon        DOCUMENT ME!
+     * @param frame            DOCUMENT ME!
+     * @param controller       DOCUMENT ME!
      */
-    public NewPluginAction(String         command,
-                           String         pluginIdentifier,
-                           String         name,
-                           ImageIcon      imageIcon,
-                           FrameMain      frame,
+    public NewPluginAction(String command,
+                           String pluginIdentifier,
+                           String name,
+                           ImageIcon imageIcon,
+                           FrameMain frame,
                            MainController controller) {
         putValue(AbstractAction.NAME, name);
         putValue(AbstractAction.ACTION_COMMAND_KEY, command);
@@ -67,9 +64,9 @@ public class NewPluginAction extends AbstractAction {
             putValue(AbstractAction.SMALL_ICON, imageIcon);
         }
 
-        this.pluginIdentifier     = pluginIdentifier;
-        this.frame                = frame;
-        this.controller           = controller;
+        this.pluginIdentifier = pluginIdentifier;
+        this.frame = frame;
+        this.controller = controller;
 
         this.setEnabled(true);
     }

@@ -1,1 +1,8 @@
-ant.importBuild 'build.xml'
+dependencies {
+    implementation project(':opendbcopy')
+}
+
+//prepare : mkdir dist/
+//compile depends on prepare debug on : put opendbcopy installer
+//clean : delete out/
+//rebuild : clean and compile

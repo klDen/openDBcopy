@@ -25,7 +25,7 @@ package opendbcopy.config;
 /**
  * class description
  *
- * @author  Anthony Smith
+ * @author Anthony Smith
  * @version $Revision$
  */
 public final class HelperTags {

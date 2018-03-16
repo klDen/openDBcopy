@@ -22,10 +22,9 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.io;
 
-import org.jdom.Document;
-import org.jdom.JDOMException;
-
-import org.jdom.input.SAXBuilder;
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,20 +42,18 @@ public final class ImportFromXML {
      * DOCUMENT ME!
      *
      * @param pathFilename DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws FileNotFoundException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
-     * @throws JDOMException DOCUMENT ME!
+     * @throws FileNotFoundException    DOCUMENT ME!
+     * @throws IOException              DOCUMENT ME!
+     * @throws JDOMException            DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
-    public static final Document importFile(String pathFilename) throws FileNotFoundException, IOException, JDOMException {
+    public static Document importFile(String pathFilename) throws IOException, JDOMException {
         if ((pathFilename == null) || (pathFilename.length() == 0)) {
             throw new IllegalArgumentException("Missing pathFilename");
         }
 
-        Document   doc = null;
+        Document doc;
 
         SAXBuilder parser = new SAXBuilder();
         doc = parser.build(FileHandling.getFile(pathFilename));
@@ -68,20 +65,18 @@ public final class ImportFromXML {
      * DOCUMENT ME!
      *
      * @param file DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws FileNotFoundException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
-     * @throws JDOMException DOCUMENT ME!
+     * @throws FileNotFoundException    DOCUMENT ME!
+     * @throws IOException              DOCUMENT ME!
+     * @throws JDOMException            DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
-    public static final Document importFile(File file) throws FileNotFoundException, IOException, JDOMException {
+    public static Document importFile(File file) throws IOException, JDOMException {
         if (file == null) {
             throw new IllegalArgumentException("Missing file");
         }
 
-        Document   doc = null;
+        Document doc;
 
         SAXBuilder parser = new SAXBuilder();
         doc = parser.build(file);

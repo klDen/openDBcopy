@@ -24,6 +24,6 @@
 -->
 
 <working_mode identifier="standard_working_mode_reference">
-	<standard_working_mode identifier="dual" />
+    <standard_working_mode identifier="dual"/>
 </working_mode>
 

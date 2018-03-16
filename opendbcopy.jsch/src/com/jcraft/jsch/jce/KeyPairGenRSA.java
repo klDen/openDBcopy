@@ -29,49 +29,71 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch.jce;
 
-import java.math.BigInteger;
 import java.security.*;
-import java.security.spec.*;
-import java.security.interfaces.*;
-import javax.crypto.*;
-import javax.crypto.spec.*;
-import javax.crypto.interfaces.*;
+import java.security.interfaces.RSAKey;
+import java.security.interfaces.RSAPrivateCrtKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 
-public class KeyPairGenRSA implements com.jcraft.jsch.KeyPairGenRSA{
-  byte[] d;  // private
-  byte[] e;  // public
-  byte[] n;
+public class KeyPairGenRSA implements com.jcraft.jsch.KeyPairGenRSA {
+    byte[] d;  // private
+    byte[] e;  // public
+    byte[] n;
 
-  byte[] c; //  coefficient
-  byte[] ep; // exponent p
-  byte[] eq; // exponent q
-  byte[] p;  // prime p
-  byte[] q;  // prime q
+    byte[] c; //  coefficient
+    byte[] ep; // exponent p
+    byte[] eq; // exponent q
+    byte[] p;  // prime p
+    byte[] q;  // prime q
 
-  public void init(int key_size) throws Exception{
-    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-    keyGen.initialize(key_size, new SecureRandom());
-    KeyPair pair = keyGen.generateKeyPair();
+    public void init(int key_size) throws Exception {
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(key_size, new SecureRandom());
+        KeyPair pair = keyGen.generateKeyPair();
 
-    PublicKey pubKey=pair.getPublic();
-    PrivateKey prvKey=pair.getPrivate();
+        PublicKey pubKey = pair.getPublic();
+        PrivateKey prvKey = pair.getPrivate();
 
-    d=((RSAPrivateKey)prvKey).getPrivateExponent().toByteArray();
-    e=((RSAPublicKey)pubKey).getPublicExponent().toByteArray();
-    n=((RSAKey)prvKey).getModulus().toByteArray();
+        d = ((RSAPrivateKey) prvKey).getPrivateExponent().toByteArray();
+        e = ((RSAPublicKey) pubKey).getPublicExponent().toByteArray();
+        n = ((RSAKey) prvKey).getModulus().toByteArray();
 
-    c=((RSAPrivateCrtKey)prvKey).getCrtCoefficient().toByteArray();
-    ep=((RSAPrivateCrtKey)prvKey).getPrimeExponentP().toByteArray();
-    eq=((RSAPrivateCrtKey)prvKey).getPrimeExponentQ().toByteArray();
-    p=((RSAPrivateCrtKey)prvKey).getPrimeP().toByteArray();
-    q=((RSAPrivateCrtKey)prvKey).getPrimeQ().toByteArray();
-  }
-  public byte[] getD(){return d;}
-  public byte[] getE(){return e;}
-  public byte[] getN(){return n;}
-  public byte[] getC(){return c;}
-  public byte[] getEP(){return ep;}
-  public byte[] getEQ(){return eq;}
-  public byte[] getP(){return p;}
-  public byte[] getQ(){return q;}
+        c = ((RSAPrivateCrtKey) prvKey).getCrtCoefficient().toByteArray();
+        ep = ((RSAPrivateCrtKey) prvKey).getPrimeExponentP().toByteArray();
+        eq = ((RSAPrivateCrtKey) prvKey).getPrimeExponentQ().toByteArray();
+        p = ((RSAPrivateCrtKey) prvKey).getPrimeP().toByteArray();
+        q = ((RSAPrivateCrtKey) prvKey).getPrimeQ().toByteArray();
+    }
+
+    public byte[] getD() {
+        return d;
+    }
+
+    public byte[] getE() {
+        return e;
+    }
+
+    public byte[] getN() {
+        return n;
+    }
+
+    public byte[] getC() {
+        return c;
+    }
+
+    public byte[] getEP() {
+        return ep;
+    }
+
+    public byte[] getEQ() {
+        return eq;
+    }
+
+    public byte[] getP() {
+        return p;
+    }
+
+    public byte[] getQ() {
+        return q;
+    }
 }

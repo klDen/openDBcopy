@@ -23,24 +23,17 @@
 package opendbcopy.gui;
 
 import opendbcopy.controller.MainController;
-
 import opendbcopy.resource.ResourceManager;
 
-import java.awt.GridLayout;
-import java.awt.SystemColor;
+import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.rtf.RTFEditorKit;
+import java.awt.*;
 import java.awt.event.WindowEvent;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.rtf.RTFEditorKit;
 
 
 /**
@@ -50,35 +43,34 @@ import javax.swing.text.rtf.RTFEditorKit;
  * @version $Revision$
  */
 public class FrameShowRTF extends JFrame {
-    private MainController  controller;
+    private MainController controller;
     private ResourceManager rm;
-    private JPanel          panelMain;
-    private JPanel          panelControl;
-    private JScrollPane     scrollPane;
-    private JEditorPane     editorPane;
-    private File            file;
-    private String          title;
+    private JPanel panelMain;
+    private JPanel panelControl;
+    private JScrollPane scrollPane;
+    private JEditorPane editorPane;
+    private File file;
+    private String title;
 
     /**
      * Creates a new FrameLaunchingProgress object.
      *
-     * @param controller DOCUMENT ME!
-     * @param frameWidth DOCUMENT ME!
+     * @param controller  DOCUMENT ME!
+     * @param frameWidth  DOCUMENT ME!
      * @param frameHeight DOCUMENT ME!
-     * @param file DOCUMENT ME!
-     * @param title DOCUMENT ME!
-     *
+     * @param file        DOCUMENT ME!
+     * @param title       DOCUMENT ME!
      * @throws Exception DOCUMENT ME!
      */
     public FrameShowRTF(MainController controller,
-                        int            frameWidth,
-                        int            frameHeight,
-                        File           file,
-                        String         title) throws Exception {
-        this.controller     = controller;
-        this.rm             = controller.getResourceManager();
-        this.file           = file;
-        this.title          = title;
+                        int frameWidth,
+                        int frameHeight,
+                        File file,
+                        String title) throws Exception {
+        this.controller = controller;
+        this.rm = controller.getResourceManager();
+        this.file = file;
+        this.title = title;
         this.setSize(frameWidth, frameHeight);
 
         guiInit();
@@ -88,8 +80,8 @@ public class FrameShowRTF extends JFrame {
      * DOCUMENT ME!
      *
      * @throws FileNotFoundException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
-     * @throws BadLocationException DOCUMENT ME!
+     * @throws IOException           DOCUMENT ME!
+     * @throws BadLocationException  DOCUMENT ME!
      */
     private void guiInit() throws FileNotFoundException, IOException, BadLocationException {
         RTFEditorKit rtf = new RTFEditorKit();

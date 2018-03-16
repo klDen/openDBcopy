@@ -22,41 +22,26 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.plugin.schemageneration.gui;
 
-import info.clearthought.layout.TableLayout;
 
+import info.clearthought.layout.TableLayout;
 import opendbcopy.config.GUI;
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.controller.MainController;
-
 import opendbcopy.gui.DynamicPanel;
 import opendbcopy.gui.PluginGui;
+import org.jdom2.Element;
 
-import org.jdom.Element;
-
-import java.awt.GridLayout;
-import java.awt.SystemColor;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import java.io.File;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Observable;
-
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Observable;
 
 
 /**
@@ -67,43 +52,42 @@ import javax.swing.event.DocumentListener;
  */
 public class PanelConfiguration extends DynamicPanel implements ActionListener, DocumentListener {
     private boolean guiLoaded = false;
-    private Element     conf;
-    private HashMap     hashMapDialects;
-    private HashMap     hashMapKeyGenerators;
-    private JPanel      panelMain;
-    private JPanel      panelOpendbcopy;
-    private JPanel      panelHibernateOptions;
-    private JPanel      panelKeyGeneration;
-    private JLabel      labelOutputDir;
-    private JLabel      labelPackageName;
-    private JLabel      labelHibernateDialect;
-    private JLabel      labelOuterJoin;
-    private JLabel      labelLazy;
-    private JLabel      labelInverse;
-    private JLabel      labelOutputFilelist;
-    private JButton     buttonApply;
-    private JButton     buttonBrowseDirectory;
-    private JComboBox   comboBoxHibernateDialect;
-    private JComboBox   comboBoxLazy;
-    private JComboBox   comboBoxInverse;
-    private JTextField  textFieldOutputDir;
-    private JTextField  textFieldPackageName;
-    private JTextField  textFieldOuterJoin;
-    private JTextField  textFieldOutputFilelist;
+    private Element conf;
+    private HashMap hashMapDialects;
+    private HashMap hashMapKeyGenerators;
+    private JPanel panelMain;
+    private JPanel panelOpendbcopy;
+    private JPanel panelHibernateOptions;
+    private JPanel panelKeyGeneration;
+    private JLabel labelOutputDir;
+    private JLabel labelPackageName;
+    private JLabel labelHibernateDialect;
+    private JLabel labelOuterJoin;
+    private JLabel labelLazy;
+    private JLabel labelInverse;
+    private JLabel labelOutputFilelist;
+    private JButton buttonApply;
+    private JButton buttonBrowseDirectory;
+    private JComboBox comboBoxHibernateDialect;
+    private JComboBox comboBoxLazy;
+    private JComboBox comboBoxInverse;
+    private JTextField textFieldOutputDir;
+    private JTextField textFieldPackageName;
+    private JTextField textFieldOuterJoin;
+    private JTextField textFieldOutputFilelist;
     private ButtonGroup buttonGroupKeyGeneration;
 
     /**
      * Creates a new PanelConfiguration object.
      *
-     * @param controller DOCUMENT ME!
-     * @param workingMode DOCUMENT ME!
+     * @param controller         DOCUMENT ME!
+     * @param workingMode        DOCUMENT ME!
      * @param registerAsObserver DOCUMENT ME!
-     *
      * @throws Exception DOCUMENT ME!
      */
     public PanelConfiguration(MainController controller,
-                              PluginGui      workingMode,
-                              Boolean        registerAsObserver) throws Exception {
+                              PluginGui workingMode,
+                              Boolean registerAsObserver) throws Exception {
         super(controller, workingMode, registerAsObserver);
 
         conf = model.getConf();
@@ -114,20 +98,20 @@ public class PanelConfiguration extends DynamicPanel implements ActionListener, 
     /**
      * DOCUMENT ME!
      *
-     * @param o DOCUMENT ME!
+     * @param o   DOCUMENT ME!
      * @param obj DOCUMENT ME!
      */
     public final void update(Observable o,
-                             Object     obj) {
-    	guiLoaded = false;
-    	onSelect();
+                             Object obj) {
+        guiLoaded = false;
+        onSelect();
     }
 
     /**
      * Set default values from model
      */
     public void onSelect() {
-    	guiLoaded = false;
+        guiLoaded = false;
         textFieldOutputDir.setText(conf.getChild(XMLTags.DIR).getAttributeValue(XMLTags.VALUE));
         textFieldOutputFilelist.setText(conf.getChild(XMLTags.OUTPUT).getChild(XMLTags.FILELIST).getAttributeValue(XMLTags.VALUE));
         textFieldPackageName.setText(conf.getChild(XMLTags.PACKAGE_NAME).getAttributeValue(XMLTags.VALUE));
@@ -150,23 +134,23 @@ public class PanelConfiguration extends DynamicPanel implements ActionListener, 
      */
     private void guiInit() {
         double[][] sizeMain = {
-                                  { GUI.B, GUI.F, GUI.B }, // Columns
-        { GUI.B, GUI.P, GUI.VG, GUI.P, GUI.VG, GUI.P, GUI.B }
+                {GUI.B, GUI.F, GUI.B}, // Columns
+                {GUI.B, GUI.P, GUI.VG, GUI.P, GUI.VG, GUI.P, GUI.B}
         }; // Rows
 
         double[][] sizeOpendbcopy = {
-                                        { GUI.B, GUI.P, GUI.HG, 400, GUI.HG, GUI.P, GUI.B }, // Columns
-        { GUI.B, GUI.P, GUI.VS, GUI.P, GUI.B }
+                {GUI.B, GUI.P, GUI.HG, 400, GUI.HG, GUI.P, GUI.B}, // Columns
+                {GUI.B, GUI.P, GUI.VS, GUI.P, GUI.B}
         }; // Rows
 
         double[][] sizeHibernateOptions = {
-                                              { GUI.B, GUI.P, GUI.HG, GUI.P, GUI.B }, // Columns
-        { GUI.B, GUI.P, GUI.VS, GUI.P, GUI.VS, GUI.P, GUI.VS, GUI.P, GUI.VS, GUI.P, GUI.B }
+                {GUI.B, GUI.P, GUI.HG, GUI.P, GUI.B}, // Columns
+                {GUI.B, GUI.P, GUI.VS, GUI.P, GUI.VS, GUI.P, GUI.VS, GUI.P, GUI.VS, GUI.P, GUI.B}
         }; // Rows
 
         this.setLayout(new GridLayout(1, 1));
 
-        panelMain     = new JPanel(new TableLayout(sizeMain));
+        panelMain = new JPanel(new TableLayout(sizeMain));
 
         panelOpendbcopy = new JPanel(new TableLayout(sizeOpendbcopy));
         panelOpendbcopy.setBorder(BorderFactory.createCompoundBorder(new TitledBorder(BorderFactory.createLineBorder(SystemColor.controlText, 1), " " + rm.getString("plugin.opendbcopy.schemageneration.conf.title.opendbcopy") + " "), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
@@ -175,11 +159,11 @@ public class PanelConfiguration extends DynamicPanel implements ActionListener, 
         panelHibernateOptions.setBorder(BorderFactory.createCompoundBorder(new TitledBorder(BorderFactory.createLineBorder(SystemColor.controlText, 1), " " + rm.getString("plugin.opendbcopy.schemageneration.conf.title.hibernateOptions") + " "), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
         // outputDir
-        labelOutputDir            = new JLabel(rm.getString("plugin.opendbcopy.schemageneration.conf.outputDir"));
-        textFieldOutputDir        = new JTextField();
+        labelOutputDir = new JLabel(rm.getString("plugin.opendbcopy.schemageneration.conf.outputDir"));
+        textFieldOutputDir = new JTextField();
         textFieldOutputDir.getDocument().addDocumentListener(this);
-        
-        buttonBrowseDirectory     = new JButton(rm.getString("plugin.opendbcopy.schemageneration.conf.outputDir.browse"));
+
+        buttonBrowseDirectory = new JButton(rm.getString("plugin.opendbcopy.schemageneration.conf.outputDir.browse"));
         buttonBrowseDirectory.addActionListener(new PanelConfiguration_buttonBrowseDirectory_actionAdapter(this));
         panelOpendbcopy.add(labelOutputDir, "1, 1");
         panelOpendbcopy.add(textFieldOutputDir, "3, 1");
@@ -189,15 +173,15 @@ public class PanelConfiguration extends DynamicPanel implements ActionListener, 
         panelMain.add(panelOpendbcopy, "1, 1");
 
         // output filelist
-        labelOutputFilelist         = new JLabel(rm.getString("plugin.opendbcopy.schemageneration.conf.output.filelistIdentifier"));
-        textFieldOutputFilelist     = new JTextField();
+        labelOutputFilelist = new JLabel(rm.getString("plugin.opendbcopy.schemageneration.conf.output.filelistIdentifier"));
+        textFieldOutputFilelist = new JTextField();
         textFieldOutputFilelist.getDocument().addDocumentListener(this);
         panelOpendbcopy.add(labelOutputFilelist, "1, 3");
         panelOpendbcopy.add(textFieldOutputFilelist, "3, 3");
 
         // hibernate dialect
-        labelHibernateDialect        = new JLabel(rm.getString("plugin.opendbcopy.schemageneration.hibernateDialect"));
-        comboBoxHibernateDialect     = new JComboBox();
+        labelHibernateDialect = new JLabel(rm.getString("plugin.opendbcopy.schemageneration.hibernateDialect"));
+        comboBoxHibernateDialect = new JComboBox();
 
         List listHibernateDialects = conf.getChild(XMLTags.HIBERNATE_DIALECT).getChildren();
 
@@ -206,8 +190,8 @@ public class PanelConfiguration extends DynamicPanel implements ActionListener, 
 
             for (int i = 0; i < listHibernateDialects.size(); i++) {
                 Element hibernateDialect = (Element) listHibernateDialects.get(i);
-                String  className = hibernateDialect.getAttributeValue(XMLTags.CLASS);
-                String  rdbmsName = hibernateDialect.getAttributeValue(XMLTags.NAME);
+                String className = hibernateDialect.getAttributeValue(XMLTags.CLASS);
+                String rdbmsName = hibernateDialect.getAttributeValue(XMLTags.NAME);
 
                 // store class name for later retrieval
                 hashMapDialects.put(rdbmsName, className);
@@ -220,22 +204,22 @@ public class PanelConfiguration extends DynamicPanel implements ActionListener, 
         panelHibernateOptions.add(comboBoxHibernateDialect, "3, 1");
 
         // package name
-        labelPackageName         = new JLabel(rm.getString("plugin.opendbcopy.schemageneration.conf.packageName"));
-        textFieldPackageName     = new JTextField();
+        labelPackageName = new JLabel(rm.getString("plugin.opendbcopy.schemageneration.conf.packageName"));
+        textFieldPackageName = new JTextField();
         textFieldPackageName.getDocument().addDocumentListener(this);
         panelHibernateOptions.add(labelPackageName, "1, 3");
         panelHibernateOptions.add(textFieldPackageName, "3, 3");
 
         // outer join
-        labelOuterJoin         = new JLabel(rm.getString("plugin.opendbcopy.schemageneration.conf.outerJoin"));
-        textFieldOuterJoin     = new JTextField();
+        labelOuterJoin = new JLabel(rm.getString("plugin.opendbcopy.schemageneration.conf.outerJoin"));
+        textFieldOuterJoin = new JTextField();
         textFieldOuterJoin.getDocument().addDocumentListener(this);
         panelHibernateOptions.add(labelOuterJoin, "1, 5");
         panelHibernateOptions.add(textFieldOuterJoin, "3, 5");
 
         // lazy
-        labelLazy        = new JLabel(rm.getString("plugin.opendbcopy.schemageneration.conf.lazy"));
-        comboBoxLazy     = new JComboBox();
+        labelLazy = new JLabel(rm.getString("plugin.opendbcopy.schemageneration.conf.lazy"));
+        comboBoxLazy = new JComboBox();
         comboBoxLazy.addItem(new Boolean(false));
         comboBoxLazy.addItem(new Boolean(true));
         comboBoxLazy.addActionListener(this);
@@ -243,8 +227,8 @@ public class PanelConfiguration extends DynamicPanel implements ActionListener, 
         panelHibernateOptions.add(comboBoxLazy, "3, 7");
 
         // inverse
-        labelInverse        = new JLabel(rm.getString("plugin.opendbcopy.schemageneration.conf.inverse"));
-        comboBoxInverse     = new JComboBox();
+        labelInverse = new JLabel(rm.getString("plugin.opendbcopy.schemageneration.conf.inverse"));
+        comboBoxInverse = new JComboBox();
         comboBoxInverse.addItem(new Boolean(false));
         comboBoxInverse.addItem(new Boolean(true));
         comboBoxInverse.addActionListener(this);
@@ -257,18 +241,18 @@ public class PanelConfiguration extends DynamicPanel implements ActionListener, 
         // unique key generation
         Element generatorClasses = conf.getChild(XMLTags.GENERATOR_CLASS);
 
-        List    listGeneratorClasses = generatorClasses.getChildren();
+        List listGeneratorClasses = generatorClasses.getChildren();
 
         if ((listGeneratorClasses != null) && (listGeneratorClasses.size() > 0)) {
-            hashMapKeyGenerators         = new HashMap();
-            buttonGroupKeyGeneration     = new ButtonGroup();
-            panelKeyGeneration           = new JPanel(new GridLayout(listGeneratorClasses.size(), 1));
+            hashMapKeyGenerators = new HashMap();
+            buttonGroupKeyGeneration = new ButtonGroup();
+            panelKeyGeneration = new JPanel(new GridLayout(listGeneratorClasses.size(), 1));
             panelKeyGeneration.setBorder(BorderFactory.createCompoundBorder(new TitledBorder(BorderFactory.createLineBorder(SystemColor.controlText, 1), " " + rm.getString("plugin.opendbcopy.schemageneration.conf.title.generator_class") + " "), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
             for (int i = 0; i < listGeneratorClasses.size(); i++) {
-                Element      generatorClass = (Element) listGeneratorClasses.get(i);
-                String       description = rm.getString(generatorClass.getAttributeValue(XMLTags.DESCRIPTION));
-                String       className = generatorClass.getAttributeValue(XMLTags.CLASS);
+                Element generatorClass = (Element) listGeneratorClasses.get(i);
+                String description = rm.getString(generatorClass.getAttributeValue(XMLTags.DESCRIPTION));
+                String className = generatorClass.getAttributeValue(XMLTags.CLASS);
                 JRadioButton radioButton = new JRadioButton(className);
                 radioButton.setActionCommand(className);
                 radioButton.setToolTipText(description);
@@ -284,18 +268,16 @@ public class PanelConfiguration extends DynamicPanel implements ActionListener, 
         }
 
         this.add(new JScrollPane(panelMain, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
-        
+
         // call as user may not have imported model and panelConfiguration is default panel shown - and therefore not clicked first
         onSelect();
     }
 
     /**
      * DOCUMENT ME!
-     *
-     * @param e DOCUMENT ME!
      */
     private void applyChanges() {
-    	if (guiLoaded) {
+        if (guiLoaded) {
             conf.getChild(XMLTags.DIR).setAttribute(XMLTags.VALUE, textFieldOutputDir.getText());
             conf.getChild(XMLTags.OUTPUT).getChild(XMLTags.FILELIST).setAttribute(XMLTags.VALUE, textFieldOutputFilelist.getText());
             conf.getChild(XMLTags.PACKAGE_NAME).setAttribute(XMLTags.VALUE, textFieldPackageName.getText());
@@ -305,7 +287,7 @@ public class PanelConfiguration extends DynamicPanel implements ActionListener, 
             conf.getChild(XMLTags.GENERATOR_CLASS).setAttribute(XMLTags.VALUE, buttonGroupKeyGeneration.getSelection().getActionCommand());
             conf.getChild(XMLTags.HIBERNATE_DIALECT).setAttribute(XMLTags.NAME, (String) comboBoxHibernateDialect.getSelectedItem());
             conf.getChild(XMLTags.HIBERNATE_DIALECT).setAttribute(XMLTags.CLASS, (String) hashMapDialects.get(comboBoxHibernateDialect.getSelectedItem()));
-    	}
+        }
     }
 
     /**
@@ -324,19 +306,19 @@ public class PanelConfiguration extends DynamicPanel implements ActionListener, 
     }
 
     public void actionPerformed(ActionEvent e) {
-    	applyChanges();
+        applyChanges();
     }
-    
+
     public void insertUpdate(DocumentEvent e) {
-    	applyChanges();
+        applyChanges();
     }
 
     public void removeUpdate(DocumentEvent e) {
-    	applyChanges();
+        applyChanges();
     }
 
     public void changedUpdate(DocumentEvent e) {
-    	applyChanges();
+        applyChanges();
     }
 }
 

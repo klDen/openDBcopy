@@ -31,8 +31,7 @@ import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.PluginException;
 import opendbcopy.plugin.model.simple.SimpleModel;
-
-import org.jdom.Element;
+import org.jdom2.Element;
 
 
 /**
@@ -42,22 +41,21 @@ import org.jdom.Element;
  * @version $Revision$
  */
 public class JschPlugin extends DynamicPluginThread {
-    private Model   model;
+    private Model model;
     private Element conf;
     private Element input;
     private Element output;
-    private String  operation;
+    private String operation;
 
     /**
      * Creates a new ZipPluign object.
      *
      * @param controller DOCUMENT ME!
-     * @param baseModel DOCUMENT ME!
-     *
+     * @param baseModel  DOCUMENT ME!
      * @throws PluginException DOCUMENT ME!
      */
     public JschPlugin(MainController controller,
-                      Model          baseModel) throws PluginException {
+                      Model baseModel) throws PluginException {
         super(controller, baseModel);
         this.model = (SimpleModel) baseModel;
     }
@@ -81,11 +79,11 @@ public class JschPlugin extends DynamicPluginThread {
             if (conf.getChild(XMLTags.OPERATION).getAttributeValue(XMLTags.VALUE) == null) {
                 throw new PluginException(new MissingAttributeException(conf.getChild(XMLTags.OPERATION), XMLTags.VALUE));
             } else {
-            	if (conf.getChild(XMLTags.OPERATION).getAttributeValue(XMLTags.VALUE).length() == 0) {
-            		throw new PluginException("Missing Operation");
-            	} else {
+                if (conf.getChild(XMLTags.OPERATION).getAttributeValue(XMLTags.VALUE).length() == 0) {
+                    throw new PluginException("Missing Operation");
+                } else {
                     operation = conf.getChild(XMLTags.OPERATION).getAttributeValue(XMLTags.VALUE);
-            	}
+                }
             }
         }
 
@@ -107,8 +105,8 @@ public class JschPlugin extends DynamicPluginThread {
      * @throws PluginException DOCUMENT ME!
      */
     public final void execute() throws PluginException {
-    	if (operation.compareToIgnoreCase(Operation.SCP_TO) == 0) {
-    		ScpTo.execute(logger, conf.getChild(operation.toLowerCase().trim()), input, output);
-    	}
+        if (operation.compareToIgnoreCase(Operation.SCP_TO) == 0) {
+            ScpTo.execute(logger, conf.getChild(operation.toLowerCase().trim()), input, output);
+        }
     }
 }

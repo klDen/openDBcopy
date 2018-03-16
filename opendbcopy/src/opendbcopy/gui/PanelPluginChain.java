@@ -23,29 +23,6 @@
 package opendbcopy.gui;
 
 import info.clearthought.layout.TableLayout;
-
-import java.awt.GridLayout;
-import java.awt.SystemColor;
-import java.awt.event.ActionEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.Observable;
-import java.util.Observer;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
 import opendbcopy.config.GUI;
 import opendbcopy.config.OperationType;
 import opendbcopy.controller.MainController;
@@ -53,6 +30,15 @@ import opendbcopy.gui.model.PluginListModel;
 import opendbcopy.plugin.PluginManager;
 import opendbcopy.plugin.model.exception.PluginException;
 import opendbcopy.resource.ResourceManager;
+
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.Observable;
+import java.util.Observer;
 
 
 /**
@@ -64,40 +50,40 @@ import opendbcopy.resource.ResourceManager;
 public class PanelPluginChain extends JPanel implements ItemListener, FocusListener, Observer {
     private static final String SHIFT_LEFT = "shift_left";
     private static final String SHIFT_RIGHT = "shift_right";
-    private FrameMain           frameMain;
-    private MainController      controller;
-    private PluginGuiManager    pluginGuiManager;
-    private PluginManager       pluginManager;
-    private ResourceManager     rm;
-    private JPanel              panelLeft;
-    private JPanel              panelRight;
-    private JScrollPane         scrollPaneLeft;
-    private JScrollPane         scrollPaneRight;
-    private JButton             buttonShift;
-    private JButton             buttonShiftUp;
-    private JButton             buttonShiftDown;
-    private JButton             buttonRemoveSelection;
-    private JButton             buttonExecute;
-    private JList               listLoaded;
-    private JList               listToExecute;
-    private JCheckBox           checkBoxShutdown;
-    private PluginListModel     modelsLoaded;
-    private PluginListModel     modelsToExecute;
-    private boolean             executionStarted = false;
+    private FrameMain frameMain;
+    private MainController controller;
+    private PluginGuiManager pluginGuiManager;
+    private PluginManager pluginManager;
+    private ResourceManager rm;
+    private JPanel panelLeft;
+    private JPanel panelRight;
+    private JScrollPane scrollPaneLeft;
+    private JScrollPane scrollPaneRight;
+    private JButton buttonShift;
+    private JButton buttonShiftUp;
+    private JButton buttonShiftDown;
+    private JButton buttonRemoveSelection;
+    private JButton buttonExecute;
+    private JList listLoaded;
+    private JList listToExecute;
+    private JCheckBox checkBoxShutdown;
+    private PluginListModel modelsLoaded;
+    private PluginListModel modelsToExecute;
+    private boolean executionStarted = false;
 
     /**
      * Creates a new PanelPluginChain object.
      *
-     * @param frameMain DOCUMENT ME!
+     * @param frameMain  DOCUMENT ME!
      * @param controller DOCUMENT ME!
      */
-    public PanelPluginChain(FrameMain      frameMain,
+    public PanelPluginChain(FrameMain frameMain,
                             MainController controller) {
-        this.frameMain            = frameMain;
-        this.controller           = controller;
-        this.pluginGuiManager     = controller.getPluginGuiManager();
-        this.pluginManager        = controller.getJobManager().getPluginManager();
-        this.rm                   = controller.getResourceManager();
+        this.frameMain = frameMain;
+        this.controller = controller;
+        this.pluginGuiManager = controller.getPluginGuiManager();
+        this.pluginManager = controller.getJobManager().getPluginManager();
+        this.rm = controller.getResourceManager();
 
         guiInit();
 
@@ -108,11 +94,11 @@ public class PanelPluginChain extends JPanel implements ItemListener, FocusListe
     /**
      * DOCUMENT ME!
      *
-     * @param o DOCUMENT ME!
+     * @param o   DOCUMENT ME!
      * @param arg DOCUMENT ME!
      */
     public void update(Observable o,
-                       Object     arg) {
+                       Object arg) {
         if (pluginManager.isDone() || pluginManager.isInterrupted() || pluginManager.isExceptionOccured()) {
             buttonExecute.setText(OperationType.EXECUTE);
             buttonExecute.setActionCommand(OperationType.EXECUTE);
@@ -181,19 +167,19 @@ public class PanelPluginChain extends JPanel implements ItemListener, FocusListe
      */
     private void guiInit() {
         double[][] sizeMain = {
-                                  { 0, GUI.F, GUI.HG, GUI.P, GUI.HG, GUI.F, 0 }, // Columns
-        { GUI.B, 25, 93, GUI.F, GUI.B }
+                {0, GUI.F, GUI.HG, GUI.P, GUI.HG, GUI.F, 0}, // Columns
+                {GUI.B, 25, 93, GUI.F, GUI.B}
         }; // Rows
 
         this.setLayout(new TableLayout(sizeMain));
 
         double[][] sizeRight = {
-                                   { GUI.B, GUI.F, GUI.HG, GUI.P, GUI.B }, // Colums
-        { GUI.B, 30, 1, 30, 1, 30, 3, GUI.P, 3, GUI.P, GUI.B }
+                {GUI.B, GUI.F, GUI.HG, GUI.P, GUI.B}, // Colums
+                {GUI.B, 30, 1, 30, 1, 30, 3, GUI.P, 3, GUI.P, GUI.B}
         }; // Rows
 
-        panelLeft      = new JPanel(new GridLayout(1, 1));
-        panelRight     = new JPanel();
+        panelLeft = new JPanel(new GridLayout(1, 1));
+        panelRight = new JPanel();
         panelRight.setLayout(new TableLayout(sizeRight));
 
         panelLeft.setBorder(BorderFactory.createCompoundBorder(new TitledBorder(BorderFactory.createLineBorder(SystemColor.controlText, 1), " " + rm.getString("text.pluginChain.modelsLoaded") + " "), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
@@ -206,38 +192,38 @@ public class PanelPluginChain extends JPanel implements ItemListener, FocusListe
         // set up linked list for models loaded
         modelsLoaded = new PluginListModel(controller.getJobManager().getPluginManager().getModelsLoaded());
         modelsLoaded.addListDataListener(new javax.swing.event.ListDataListener() {
-                public void intervalAdded(javax.swing.event.ListDataEvent e) {
-                }
+            public void intervalAdded(javax.swing.event.ListDataEvent e) {
+            }
 
-                public void intervalRemoved(javax.swing.event.ListDataEvent e) {
-                }
+            public void intervalRemoved(javax.swing.event.ListDataEvent e) {
+            }
 
-                public void contentsChanged(javax.swing.event.ListDataEvent e) {
-                    listLoaded.updateUI();
-                }
-            });
+            public void contentsChanged(javax.swing.event.ListDataEvent e) {
+                listLoaded.updateUI();
+            }
+        });
 
         pluginManager.registerObserver(modelsLoaded);
 
         // set up linked list for models to execute
         modelsToExecute = new PluginListModel(controller.getJobManager().getPluginManager().getModelsToExecute());
         modelsToExecute.addListDataListener(new javax.swing.event.ListDataListener() {
-                public void intervalAdded(javax.swing.event.ListDataEvent e) {
-                }
+            public void intervalAdded(javax.swing.event.ListDataEvent e) {
+            }
 
-                public void intervalRemoved(javax.swing.event.ListDataEvent e) {
-                }
+            public void intervalRemoved(javax.swing.event.ListDataEvent e) {
+            }
 
-                public void contentsChanged(javax.swing.event.ListDataEvent e) {
-                    listToExecute.updateUI();
-                    listToExecute.setSelectedIndex(controller.getJobManager().getPluginManager().getCurrentExecuteIndex());
-                }
-            });
+            public void contentsChanged(javax.swing.event.ListDataEvent e) {
+                listToExecute.updateUI();
+                listToExecute.setSelectedIndex(controller.getJobManager().getPluginManager().getCurrentExecuteIndex());
+            }
+        });
 
         pluginManager.registerObserver(modelsToExecute);
 
-        listLoaded        = new JList(modelsLoaded);
-        listToExecute     = new JList(modelsToExecute);
+        listLoaded = new JList(modelsLoaded);
+        listToExecute = new JList(modelsToExecute);
 
         listLoaded.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         listToExecute.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);

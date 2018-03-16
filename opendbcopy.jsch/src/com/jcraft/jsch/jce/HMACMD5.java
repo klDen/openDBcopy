@@ -30,39 +30,50 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jcraft.jsch.jce;
 
 import com.jcraft.jsch.MAC;
-import javax.crypto.*;
-import javax.crypto.spec.*;
 
-public class HMACMD5 implements MAC{
-  private String name="hmac-md5";
-  private int bsize=16;
-  private Mac mac;
-  private byte[] tmp=new byte[4];
-  public int getBlockSize(){return bsize;};
-  public void init(byte[] key) throws Exception{
-    if(key.length>bsize){
-      byte[] tmp=new byte[bsize];
-      System.arraycopy(key, 0, tmp, 0, bsize);	  
-      key=tmp;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
+public class HMACMD5 implements MAC {
+    private String name = "hmac-md5";
+    private int bsize = 16;
+    private Mac mac;
+    private byte[] tmp = new byte[4];
+
+    public int getBlockSize() {
+        return bsize;
     }
-    SecretKeySpec skey=new SecretKeySpec(key, "HmacMD5");
-    mac=Mac.getInstance("HmacMD5");
-    mac.init(skey);
-  } 
-  public void update(int i){
-    tmp[0]=(byte)(i>>>24);
-    tmp[1]=(byte)(i>>>16);
-    tmp[2]=(byte)(i>>>8);
-    tmp[3]=(byte)i;
-    update(tmp, 0, 4);
-  }
-  public void update(byte foo[], int s, int l){
-    mac.update(foo, s, l);      
-  }
-  public byte[] doFinal(){
-    return mac.doFinal();
-  }
-  public String getName(){
-    return name;
-  }
+
+    ;
+
+    public void init(byte[] key) throws Exception {
+        if (key.length > bsize) {
+            byte[] tmp = new byte[bsize];
+            System.arraycopy(key, 0, tmp, 0, bsize);
+            key = tmp;
+        }
+        SecretKeySpec skey = new SecretKeySpec(key, "HmacMD5");
+        mac = Mac.getInstance("HmacMD5");
+        mac.init(skey);
+    }
+
+    public void update(int i) {
+        tmp[0] = (byte) (i >>> 24);
+        tmp[1] = (byte) (i >>> 16);
+        tmp[2] = (byte) (i >>> 8);
+        tmp[3] = (byte) i;
+        update(tmp, 0, 4);
+    }
+
+    public void update(byte foo[], int s, int l) {
+        mac.update(foo, s, l);
+    }
+
+    public byte[] doFinal() {
+        return mac.doFinal();
+    }
+
+    public String getName() {
+        return name;
+    }
 }

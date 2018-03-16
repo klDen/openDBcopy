@@ -23,22 +23,6 @@
 package opendbcopy.gui.database;
 
 import info.clearthought.layout.TableLayout;
-
-import java.awt.SystemColor;
-import java.awt.event.ActionEvent;
-import java.util.Iterator;
-import java.util.Observable;
-import java.util.TreeMap;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-import javax.swing.border.TitledBorder;
-
 import opendbcopy.config.Driver;
 import opendbcopy.config.GUI;
 import opendbcopy.config.OperationType;
@@ -50,8 +34,15 @@ import opendbcopy.plugin.model.database.DatabaseModel;
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.UnsupportedAttributeValueException;
+import org.jdom2.Element;
 
-import org.jdom.Element;
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.Iterator;
+import java.util.Observable;
+import java.util.TreeMap;
 
 
 /**
@@ -61,47 +52,46 @@ import org.jdom.Element;
  * @version $Revision$
  */
 public class PanelConnection extends DynamicPanel {
-    private DatabaseModel  model;
-    private boolean        sourceConnectionTested = false;
-    private boolean        destinationConnectionTested = false;
-    private JPanel         panelSource = new JPanel();
-    private JPanel         panelDestination = new JPanel();
-    private JButton        buttonTestS = new JButton();
-    private JButton        buttonTestD = new JButton();
-    private JTextField     tfDriverClassNameS = new JTextField();
-    private JTextField     tfURLS = new JTextField();
-    private JTextField     tfUserNameS = new JTextField();
+    private DatabaseModel model;
+    private boolean sourceConnectionTested = false;
+    private boolean destinationConnectionTested = false;
+    private JPanel panelSource = new JPanel();
+    private JPanel panelDestination = new JPanel();
+    private JButton buttonTestS = new JButton();
+    private JButton buttonTestD = new JButton();
+    private JTextField tfDriverClassNameS = new JTextField();
+    private JTextField tfURLS = new JTextField();
+    private JTextField tfUserNameS = new JTextField();
     private JPasswordField tfPasswordS = new JPasswordField();
-    private JTextField     tfDriverClassNameD = new JTextField();
-    private JTextField     tfURLD = new JTextField();
-    private JTextField     tfUserNameD = new JTextField();
+    private JTextField tfDriverClassNameD = new JTextField();
+    private JTextField tfURLD = new JTextField();
+    private JTextField tfUserNameD = new JTextField();
     private JPasswordField tfPasswordD = new JPasswordField();
-    private JComboBox      comboBoxDriverS = new JComboBox();
-    private JComboBox      comboBoxDriverD = new JComboBox();
-    private JLabel         labelDriverNameS = new JLabel();
-    private JLabel         labelDriverNameD = new JLabel();
-    private JLabel         labelDriverS = new JLabel();
-    private JLabel         labelURLS = new JLabel();
-    private JLabel         labelUserNameS = new JLabel();
-    private JLabel         labelPasswordS = new JLabel();
-    private JLabel         labelURLD = new JLabel();
-    private JLabel         labelDriverD = new JLabel();
-    private JLabel         labelUserNameD = new JLabel();
-    private JLabel         labelPasswordD = new JLabel();
-    private TreeMap        drivers = null;
+    private JComboBox comboBoxDriverS = new JComboBox();
+    private JComboBox comboBoxDriverD = new JComboBox();
+    private JLabel labelDriverNameS = new JLabel();
+    private JLabel labelDriverNameD = new JLabel();
+    private JLabel labelDriverS = new JLabel();
+    private JLabel labelURLS = new JLabel();
+    private JLabel labelUserNameS = new JLabel();
+    private JLabel labelPasswordS = new JLabel();
+    private JLabel labelURLD = new JLabel();
+    private JLabel labelDriverD = new JLabel();
+    private JLabel labelUserNameD = new JLabel();
+    private JLabel labelPasswordD = new JLabel();
+    private TreeMap drivers = null;
 
     /**
      * Creates a new PanelConnection object.
      *
-     * @param controller DOCUMENT ME!
-     * @param pluginGui DOCUMENT ME!
+     * @param controller         DOCUMENT ME!
+     * @param workingMode        DOCUMENT ME!
      * @param registerAsObserver DOCUMENT ME!
-     *
      * @throws Exception DOCUMENT ME!
      */
     public PanelConnection(MainController controller,
-                           PluginGui    workingMode,
-                           Boolean        registerAsObserver) throws Exception {
+                           PluginGui workingMode,
+                           Boolean registerAsObserver) throws Exception {
         super(controller, workingMode, registerAsObserver);
 
         model = (DatabaseModel) super.model;
@@ -114,11 +104,11 @@ public class PanelConnection extends DynamicPanel {
     /**
      * DOCUMENT ME!
      *
-     * @param o DOCUMENT ME!
+     * @param o   DOCUMENT ME!
      * @param obj DOCUMENT ME!
      */
     public final void update(Observable o,
-                             Object     obj) {
+                             Object obj) {
         //onSelect();
     }
 
@@ -137,8 +127,8 @@ public class PanelConnection extends DynamicPanel {
      * must check if default values must be overridden by attributes from project model
      *
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
      */
     private void updateTextFields() throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException {
         // source connection
@@ -238,19 +228,19 @@ public class PanelConnection extends DynamicPanel {
      */
     protected final void guiInit() {
         double[][] sizeMain = {
-                { GUI.B, GUI.F, GUI.B }, // Columns
-				{ GUI.B, GUI.F, GUI.VG, GUI.F, GUI.B } // Rows
-        		};
+                {GUI.B, GUI.F, GUI.B}, // Columns
+                {GUI.B, GUI.F, GUI.VG, GUI.F, GUI.B} // Rows
+        };
 
         double[][] sizeConnectionDetails = {
-                { GUI.B, GUI.P, GUI.HG, 0.6, 20, GUI.P, GUI.HG, 0.4, GUI.B }, // Columns
-				{ GUI.B, GUI.P, GUI.VG, GUI.P, GUI.VG, GUI.P, GUI.VG, GUI.P, GUI.VG, GUI.P, GUI.B } // Rows
-        		};
+                {GUI.B, GUI.P, GUI.HG, 0.6, 20, GUI.P, GUI.HG, 0.4, GUI.B}, // Columns
+                {GUI.B, GUI.P, GUI.VG, GUI.P, GUI.VG, GUI.P, GUI.VG, GUI.P, GUI.VG, GUI.P, GUI.B} // Rows
+        };
 
         this.setLayout(new TableLayout(sizeMain));
-        
-		panelSource.setLayout(new TableLayout(sizeConnectionDetails));
-		panelDestination.setLayout(new TableLayout(sizeConnectionDetails));
+
+        panelSource.setLayout(new TableLayout(sizeConnectionDetails));
+        panelDestination.setLayout(new TableLayout(sizeConnectionDetails));
 
         panelSource.setBorder(BorderFactory.createCompoundBorder(new TitledBorder(BorderFactory.createLineBorder(SystemColor.controlText, 1), " " + rm.getString("text.connection.sourceDatabaseConnection") + " "), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         panelDestination.setBorder(BorderFactory.createCompoundBorder(new TitledBorder(BorderFactory.createLineBorder(SystemColor.controlText, 1), " " + rm.getString("text.connection.destinationDatabaseConnection") + " "), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
@@ -346,14 +336,14 @@ public class PanelConnection extends DynamicPanel {
                 Element operation = new Element(XMLTags.OPERATION);
                 operation.setAttribute(XMLTags.NAME, OperationType.TEST_SOURCE_CONNECTION);
 
-                String[] param = { tfURLS.getText() };
+                String[] param = {tfURLS.getText()};
 
                 execute(operation, rm.getString("message.connection.successful", param));
 
                 // now, if successful, register this driver as default for source_db
                 if (comboBoxDriverS.getSelectedIndex() > 0) {
-                    driver     = (Driver) drivers.get(comboBoxDriverS.getSelectedItem());
-                    driver     = controller.getSqlDriverManager().saveDriver(driver.getName(), tfDriverClassNameS.getText(), tfURLS.getText());
+                    driver = (Driver) drivers.get(comboBoxDriverS.getSelectedItem());
+                    driver = controller.getSqlDriverManager().saveDriver(driver.getName(), tfDriverClassNameS.getText(), tfURLS.getText());
                 } else {
                     driver = controller.getSqlDriverManager().saveDriver(null, tfDriverClassNameS.getText(), tfURLS.getText());
                 }
@@ -395,14 +385,14 @@ public class PanelConnection extends DynamicPanel {
                 Element operation = new Element(XMLTags.OPERATION);
                 operation.setAttribute(XMLTags.NAME, OperationType.TEST_DESTINATION_CONNECTION);
 
-                String[] param = { tfURLD.getText() };
+                String[] param = {tfURLD.getText()};
 
                 execute(operation, rm.getString("message.connection.successful", param));
 
                 // now, if successful, register this driver as default for destination_db
                 if (comboBoxDriverD.getSelectedIndex() > 0) {
-                    driver     = (Driver) drivers.get(comboBoxDriverD.getSelectedItem());
-                    driver     = controller.getSqlDriverManager().saveDriver(driver.getName(), tfDriverClassNameD.getText(), tfURLD.getText());
+                    driver = (Driver) drivers.get(comboBoxDriverD.getSelectedItem());
+                    driver = controller.getSqlDriverManager().saveDriver(driver.getName(), tfDriverClassNameD.getText(), tfURLD.getText());
                 } else {
                     driver = controller.getSqlDriverManager().saveDriver(null, tfDriverClassNameD.getText(), tfURLD.getText());
                 }
@@ -428,17 +418,17 @@ public class PanelConnection extends DynamicPanel {
                 Driver driver = (Driver) drivers.get(comboBoxDriverS.getSelectedItem());
 
                 if (driver != null) {
-                	if (driver.getDefault(XMLTags.SOURCE_DB) != null) {
-                		if (driver.getDefaultURL(XMLTags.SOURCE_DB) != null) {
-                    		tfURLS.setText(driver.getDefaultURL(XMLTags.SOURCE_DB));
-                		}
-                		if (driver.getDefaultUsername(XMLTags.SOURCE_DB) != null) {
-                			tfUserNameS.setText(driver.getDefaultUsername(XMLTags.SOURCE_DB));
-                		}
-                	} else {
+                    if (driver.getDefault(XMLTags.SOURCE_DB) != null) {
+                        if (driver.getDefaultURL(XMLTags.SOURCE_DB) != null) {
+                            tfURLS.setText(driver.getDefaultURL(XMLTags.SOURCE_DB));
+                        }
+                        if (driver.getDefaultUsername(XMLTags.SOURCE_DB) != null) {
+                            tfUserNameS.setText(driver.getDefaultUsername(XMLTags.SOURCE_DB));
+                        }
+                    } else {
                         tfURLS.setText(driver.getUrl());
-                	}
-            		tfDriverClassNameS.setText(driver.getClassName());
+                    }
+                    tfDriverClassNameS.setText(driver.getClassName());
                 }
             }
         }

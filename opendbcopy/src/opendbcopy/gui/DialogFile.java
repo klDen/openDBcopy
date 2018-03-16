@@ -23,17 +23,12 @@
 package opendbcopy.gui;
 
 import opendbcopy.config.FileType;
-
 import org.apache.log4j.Logger;
 
-import java.awt.Component;
-
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
-
 import java.util.StringTokenizer;
-
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 
 
 /**
@@ -43,12 +38,12 @@ import javax.swing.JFrame;
  * @version $Revision$
  */
 public class DialogFile extends JFrame {
-    private static Logger       logger = Logger.getLogger(DialogFile.class.getName());
     private static final String POINT = ".";
     private static final String EMPTY_STRING = "";
-    private Component           parent;
-    private String              fileName = "";
-    private JFileChooser        chooser;
+    private static Logger logger = Logger.getLogger(DialogFile.class.getName());
+    private Component parent;
+    private String fileName = "";
+    private JFileChooser chooser;
 
     /**
      * Creates a new DialogFile object.
@@ -56,7 +51,7 @@ public class DialogFile extends JFrame {
      * @param parent DOCUMENT ME!
      */
     public DialogFile(Component parent) {
-        this.parent     = parent;
+        this.parent = parent;
 
         // this is a workaround for http://developer.java.sun.com/developer/bugParade/bugs/4458949.html, fixed in jre 1.4.0
         /*      SecurityManager backup = System.getSecurityManager();
@@ -71,20 +66,19 @@ public class DialogFile extends JFrame {
     /**
      * DOCUMENT ME!
      *
-     * @param title DOCUMENT ME!
-     * @param fileType DOCUMENT ME!
+     * @param title      DOCUMENT ME!
+     * @param fileType   DOCUMENT ME!
      * @param currentDir DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public final String openDialog(String title,
                                    String fileType,
-                                   File   currentDir) {
+                                   File currentDir) {
         boolean fileEndingOk = false;
-        int     DialogReturnValue = 0;
+        int DialogReturnValue = 0;
 
         chooser.setDialogTitle(title);
-    	chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
         if (currentDir != null) {
             chooser.setCurrentDirectory(currentDir);
@@ -121,20 +115,19 @@ public class DialogFile extends JFrame {
     /**
      * DOCUMENT ME!
      *
-     * @param title DOCUMENT ME!
-     * @param fileType DOCUMENT ME!
+     * @param title      DOCUMENT ME!
+     * @param fileType   DOCUMENT ME!
      * @param currentDir DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public final String saveDialog(String title,
                                    String fileType,
-                                   File   currentDir) {
+                                   File currentDir) {
         boolean fileEndingOk = false;
-        int     dialogReturnValue = 0;
+        int dialogReturnValue = 0;
 
         chooser.setDialogTitle(title);
-    	chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
         if (currentDir != null) {
             chooser.setCurrentDirectory(currentDir);
@@ -171,16 +164,15 @@ public class DialogFile extends JFrame {
     /**
      * DOCUMENT ME!
      *
-     * @param title DOCUMENT ME!
-     * @param fileType DOCUMENT ME!
-     * @param currentDir DOCUMENT ME!
-     *
+     * @param title           DOCUMENT ME!
+     * @param directoriesOnly DOCUMENT ME!
+     * @param currentDir      DOCUMENT ME!
      * @return DOCUMENT ME!
      */
     public final String saveDialogAnyFile(String title,
-                                   boolean directoriesOnly,
-                                   File   currentDir) {
-        int     dialogReturnValue = 0;
+                                          boolean directoriesOnly,
+                                          File currentDir) {
+        int dialogReturnValue = 0;
 
         chooser.setDialogTitle(title);
 
@@ -189,11 +181,11 @@ public class DialogFile extends JFrame {
         }
 
         if (directoriesOnly) {
-        	chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         } else {
-        	chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         }
-        
+
         dialogReturnValue = chooser.showSaveDialog(this.parent);
 
         if (dialogReturnValue == JFileChooser.APPROVE_OPTION) {
@@ -207,12 +199,11 @@ public class DialogFile extends JFrame {
      * DOCUMENT ME!
      *
      * @param fileType DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     private boolean checkFileEnding(String fileType) {
-        boolean         validFileEnding = false;
-        String          token = "";
+        boolean validFileEnding = false;
+        String token = "";
 
         StringTokenizer st = new StringTokenizer(this.fileName, POINT);
 

@@ -35,24 +35,24 @@ public class UnsupportedJDBCActionException extends SQLException {
     private String unsupportedAction;
     private String message;
     private String sqlState;
-    private int    errorCode;
+    private int errorCode;
 
     /**
      * Creates a new UnsupportedJDBCActionException object.
      *
      * @param unsupportedAction DOCUMENT ME!
-     * @param message DOCUMENT ME!
-     * @param sqlState DOCUMENT ME!
-     * @param errorCode DOCUMENT ME!
+     * @param message           DOCUMENT ME!
+     * @param sqlState          DOCUMENT ME!
+     * @param errorCode         DOCUMENT ME!
      */
     public UnsupportedJDBCActionException(String unsupportedAction,
                                           String message,
                                           String sqlState,
-                                          int    errorCode) {
-        this.unsupportedAction     = unsupportedAction;
-        this.message               = message;
-        this.sqlState              = sqlState;
-        this.errorCode             = errorCode;
+                                          int errorCode) {
+        this.unsupportedAction = unsupportedAction;
+        this.message = message;
+        this.sqlState = sqlState;
+        this.errorCode = errorCode;
     }
 
     /**

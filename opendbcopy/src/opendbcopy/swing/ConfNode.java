@@ -23,8 +23,7 @@
 package opendbcopy.swing;
 
 import opendbcopy.config.XMLTags;
-
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -37,13 +36,13 @@ import java.util.Iterator;
  * @version $Revision$
  */
 public class ConfNode {
-    ConfNode        parent;
-    ArrayList       children;
+    ConfNode parent;
+    ArrayList children;
     private Element element;
-    private String  elementName;
-    private String  elementDescription;
-    private String  attributeValue;
-    private String  attributeType;
+    private String elementName;
+    private String elementDescription;
+    private String attributeValue;
+    private String attributeType;
     private boolean required;
     private boolean editable;
 
@@ -53,11 +52,11 @@ public class ConfNode {
      * @param element DOCUMENT ME!
      */
     public ConfNode(Element element) {
-        this.element                = element;
-        this.elementName            = element.getName();
-        this.attributeValue         = element.getAttributeValue(XMLTags.VALUE);
-        this.attributeType          = element.getAttributeValue(XMLTags.TYPE);
-        this.elementDescription     = element.getAttributeValue(XMLTags.DESCRIPTION);
+        this.element = element;
+        this.elementName = element.getName();
+        this.attributeValue = element.getAttributeValue(XMLTags.VALUE);
+        this.attributeType = element.getAttributeValue(XMLTags.TYPE);
+        this.elementDescription = element.getAttributeValue(XMLTags.DESCRIPTION);
 
         // set default values if not provided by element
         if (attributeType == null) {
@@ -146,7 +145,6 @@ public class ConfNode {
      * DOCUMENT ME!
      *
      * @param index DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public ConfNode getChildAt(int index) {
@@ -157,7 +155,6 @@ public class ConfNode {
      * DOCUMENT ME!
      *
      * @param confNodeChild DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public int getIndexOfChild(ConfNode confNodeChild) {

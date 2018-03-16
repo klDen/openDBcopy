@@ -25,7 +25,7 @@ package opendbcopy.plugin.schemageneration.bean;
 /**
  * class description
  *
- * @author  Anthony Smith
+ * @author Anthony Smith
  * @version $Revision$
  */
 public class HibernateDialectBean {
@@ -40,8 +40,8 @@ public class HibernateDialectBean {
      */
     public HibernateDialectBean(String className,
                                 String rdbmsName) {
-        this.className     = className;
-        this.rdbmsName     = rdbmsName;
+        this.className = className;
+        this.rdbmsName = rdbmsName;
     }
 
     /**

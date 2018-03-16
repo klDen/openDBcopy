@@ -1,39 +1,51 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <document>
     <properties>
-    	<author email="smith[at]puzzle.ch">Anthony Smith</author>
+        <author email="smith[at]puzzle.ch">Anthony Smith</author>
         <title>Download</title>
     </properties>
     <body>
         <section name="Download">
-			<p>
-				openDBcopy requires a Java Runtime Environment 1.4 or higher to be installed.
-				If you do not have Java installed then first download it <a href="http://java.sun.com/j2ee/1.4/download-dr.html">here</a>.
-			</p>
-			<subsection name="Binaries">
-			<p>
-				openDBcopy binaries are distributed as installable jar files using <a href="http://www.izforge.com/izpack/">IzPack</a>
-				<br/><br/>
-				<a href="http://sourceforge.net/project/showfiles.php?group_id=91406">Click here to download openDBcopy</a> from a nearby mirror.
-				<br/><br/>
-				To install openDBcopy enter the following command in a console window:
-				<br/>
-				<b>java -jar opendbcopy-xx-install.jar</b> (replace xx with the current version)
-				<br/><br/>
-				You are then guided through the installation process. Windows users can create Shortcuts
-				for their desktop and Start Menu.
-				<br/><br/>
-				Please ensure that you have the required JDBC database drivers ready for your migration project.
-				For further documentation please see the <a href="user-manual.pdf">user manual</a>.
-			</p>
-			</subsection>
-			<subsection name="Sources">
-				<p>
-					The latest openDBcopy sources can be checked out from the CVS <a href="cvs-usage.html">source repository</a>. Released
-					sources can be installed optionally using the installable archive file. Please note that plugin sources are within
-					the appropriate plugin jar libraries for simpler debugging.
-				</p>
-			</subsection>
-		</section>
+            <p>
+                openDBcopy requires a Java Runtime Environment 1.4 or higher to be installed.
+                If you do not have Java installed then first download it <a
+                    href="http://java.sun.com/j2ee/1.4/download-dr.html">here</a>.
+            </p>
+            <subsection name="Binaries">
+                <p>
+                    openDBcopy binaries are distributed as installable jar files using
+                    <a href="http://www.izforge.com/izpack/">IzPack</a>
+                    <br/>
+                    <br/>
+                    <a href="http://sourceforge.net/project/showfiles.php?group_id=91406">Click here to download
+                        openDBcopy
+                    </a>
+                    from a nearby mirror.
+                    <br/>
+                    <br/>
+                    To install openDBcopy enter the following command in a console window:
+                    <br/>
+                    <b>java -jar opendbcopy-xx-install.jar</b>
+                    (replace xx with the current version)
+                    <br/>
+                    <br/>
+                    You are then guided through the installation process. Windows users can create Shortcuts
+                    for their desktop and Start Menu.
+                    <br/>
+                    <br/>
+                    Please ensure that you have the required JDBC database drivers ready for your migration project.
+                    For further documentation please see the <a href="user-manual.pdf">user manual</a>.
+                </p>
+            </subsection>
+            <subsection name="Sources">
+                <p>
+                    The latest openDBcopy sources can be checked out from the CVS <a href="cvs-usage.html">source
+                    repository</a>. Released
+                    sources can be installed optionally using the installable archive file. Please note that plugin
+                    sources are within
+                    the appropriate plugin jar libraries for simpler debugging.
+                </p>
+            </subsection>
+        </section>
     </body>
 </document>

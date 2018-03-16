@@ -23,10 +23,8 @@
 package opendbcopy.plugin.model.database.beans;
 
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.plugin.model.exception.MissingAttributeException;
-
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,12 +33,12 @@ import java.util.List;
 /**
  * class description
  *
- * @author  Anthony Smith
+ * @author Anthony Smith
  * @version $Revision$
  */
 public class Table {
-    private Element   table;
-    private String    name;
+    private Element table;
+    private String name;
     private ArrayList columns;
     private ArrayList primaryKeys;
     private ArrayList exportedKeys;
@@ -66,12 +64,11 @@ public class Table {
      * Creates a new Table object.
      *
      * @param table DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
      */
     public Table(Element table) throws MissingAttributeException {
-        this.table     = table;
-        columns        = new ArrayList();
+        this.table = table;
+        columns = new ArrayList();
 
         name = table.getAttributeValue(XMLTags.NAME);
 
@@ -104,28 +101,27 @@ public class Table {
             parseIndexes(table.getChildren(XMLTags.INDEX));
         }
     }
-    
+
     public void addColumn(int index, Column column) {
-    	if (columns.contains(column)) {
-    		throw new RuntimeException("table " + getName() + " already contains column " + column.getName());
-    	} else {
-        	columns.add(index, column);
-    	}
+        if (columns.contains(column)) {
+            throw new RuntimeException("table " + getName() + " already contains column " + column.getName());
+        } else {
+            columns.add(index, column);
+        }
     }
 
     public void removeColumn(Column column) {
-    	if (columns.contains(column)) {
-    		columns.remove(column);
-    	} else {
-    		throw new RuntimeException("table " + getName() + " does not contain column " + column.getName());
-    	}
+        if (columns.contains(column)) {
+            columns.remove(column);
+        } else {
+            throw new RuntimeException("table " + getName() + " does not contain column " + column.getName());
+        }
     }
 
     /**
      * DOCUMENT ME!
      *
      * @param columnList DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
      */
     private void parseColumns(List columnList) throws MissingAttributeException {
@@ -139,7 +135,6 @@ public class Table {
      * DOCUMENT ME!
      *
      * @param primaryKeyList DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
      */
     private void parsePrimaryKeys(List primaryKeyList) throws MissingAttributeException {
@@ -153,7 +148,6 @@ public class Table {
      * DOCUMENT ME!
      *
      * @param importedKeyList DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
      */
     private void parseImportedKeys(List importedKeyList) throws MissingAttributeException {
@@ -167,7 +161,6 @@ public class Table {
      * DOCUMENT ME!
      *
      * @param exportedKeyList DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
      */
     private void parseExportedKeys(List exportedKeyList) throws MissingAttributeException {
@@ -181,7 +174,6 @@ public class Table {
      * DOCUMENT ME!
      *
      * @param indexList DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
      */
     private void parseIndexes(List indexList) throws MissingAttributeException {
@@ -190,16 +182,18 @@ public class Table {
             indexes.add(index);
         }
     }
-	/**
-	 * @return Returns the name.
-	 */
-	public String getName() {
-		return name;
-	}
-	/**
-	 * @param name The name to set.
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+
+    /**
+     * @return Returns the name.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name The name to set.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 }

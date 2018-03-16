@@ -23,12 +23,10 @@
 package opendbcopy.plugin.model.database.beans;
 
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.plugin.model.database.DatabaseModel;
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.UnsupportedAttributeValueException;
-
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,19 +40,19 @@ import java.util.List;
  */
 public class BeanManager {
     private DatabaseModel dbProject;
-    private Element       modelElement;
-    private ArrayList     tables;
+    private Element modelElement;
+    private ArrayList tables;
 
     /**
      * Creates a new BeanManager object.
      *
-     * @param dbProject DOCUMENT ME!
+     * @param dbProject    DOCUMENT ME!
      * @param modelElement DOCUMENT ME!
      */
     public BeanManager(DatabaseModel dbProject,
-                       Element       modelElement) {
-        this.dbProject        = dbProject;
-        this.modelElement     = modelElement;
+                       Element modelElement) {
+        this.dbProject = dbProject;
+        this.modelElement = modelElement;
     }
 
     /**
@@ -72,7 +70,6 @@ public class BeanManager {
      * DOCUMENT ME!
      *
      * @param tableName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public Table findTable(String tableName) {
@@ -101,7 +98,7 @@ public class BeanManager {
     /**
      * DOCUMENT ME!
      *
-     * @throws MissingAttributeException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
      */
     public void parseTables() throws MissingAttributeException, UnsupportedAttributeValueException {

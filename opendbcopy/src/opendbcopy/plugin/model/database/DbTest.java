@@ -23,19 +23,14 @@
 package opendbcopy.plugin.model.database;
 
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.connection.DBConnection;
-
 import opendbcopy.connection.exception.CloseConnectionException;
 import opendbcopy.connection.exception.DriverNotFoundException;
 import opendbcopy.connection.exception.OpenConnectionException;
-
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
-
 import opendbcopy.sql.SQL;
-
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -54,27 +49,26 @@ public final class DbTest {
      * DOCUMENT ME!
      *
      * @param pluginModel DOCUMENT ME!
-     * @param tableName DOCUMENT ME!
-     *
+     * @param tableName   DOCUMENT ME!
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws OpenConnectionException DOCUMENT ME!
-     * @throws CloseConnectionException DOCUMENT ME!
-     * @throws DriverNotFoundException DOCUMENT ME!
-     * @throws SQLException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws OpenConnectionException   DOCUMENT ME!
+     * @throws CloseConnectionException  DOCUMENT ME!
+     * @throws DriverNotFoundException   DOCUMENT ME!
+     * @throws SQLException              DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
      */
     public static final void testTableFilter(DatabaseModel pluginModel,
-                                             String        tableName) throws MissingAttributeException, MissingElementException, OpenConnectionException, CloseConnectionException, DriverNotFoundException, SQLException {
+                                             String tableName) throws MissingAttributeException, MissingElementException, OpenConnectionException, CloseConnectionException, DriverNotFoundException, SQLException {
         if ((pluginModel == null) || (tableName == null)) {
             throw new IllegalArgumentException("Missing arguments values: pluginModel=" + pluginModel + " tableName=" + tableName);
         }
 
-        String     stm = "";
+        String stm = "";
 
         Connection conn = null;
-        Statement  stmSource = null;
-        ResultSet  rs = null;
+        Statement stmSource = null;
+        ResultSet rs = null;
 
         try {
             conn = DBConnection.getConnection(pluginModel.getSourceConnection());
@@ -82,9 +76,9 @@ public final class DbTest {
             Element tableFilter = pluginModel.getTableFilter(tableName);
 
             if (tableFilter != null) {
-                stm     = SQL.SELECT_COUNT + SQL.LPAREN + "*" + SQL.RPAREN + SQL.FROM + SQL.SPACE + pluginModel.getQualifiedSourceTableName(tableName) + SQL.SPACE + SQL.WHERE + SQL.SPACE + tableFilter.getAttributeValue(XMLTags.VALUE);
+                stm = SQL.SELECT_COUNT + SQL.LPAREN + "*" + SQL.RPAREN + SQL.FROM + SQL.SPACE + pluginModel.getQualifiedSourceTableName(tableName) + SQL.SPACE + SQL.WHERE + SQL.SPACE + tableFilter.getAttributeValue(XMLTags.VALUE);
 
-                stmSource     = conn.createStatement();
+                stmSource = conn.createStatement();
 
                 rs = stmSource.executeQuery(stm);
 

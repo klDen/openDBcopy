@@ -23,14 +23,11 @@
 package opendbcopy.plugin.model;
 
 import opendbcopy.controller.MainController;
-
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.PluginException;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import org.jdom.Document;
+import org.jdom2.Document;
 
 
 /**
@@ -41,24 +38,23 @@ import org.jdom.Document;
  * @version $Revision$
  */
 public class DynamicPluginThread extends Thread implements IExecute {
-    protected static Logger  logger;
+    protected static Logger logger;
     protected MainController controller;
-    protected Document       typeMapping;
-    protected Model          baseModel;
+    protected Document typeMapping;
+    protected Model baseModel;
 
     /**
      * Creates a new DynamicPlugin object.
      *
      * @param controller DOCUMENT ME!
-     * @param baseModel DOCUMENT ME!
-     *
+     * @param baseModel  DOCUMENT ME!
      * @throws PluginException DOCUMENT ME!
      */
     public DynamicPluginThread(MainController controller,
-                               Model          baseModel) throws PluginException {
-        this.controller      = controller;
-        this.baseModel       = baseModel;
-        this.typeMapping     = controller.getJobManager().getTypeMapping();
+                               Model baseModel) throws PluginException {
+        this.controller = controller;
+        this.baseModel = baseModel;
+        this.typeMapping = controller.getJobManager().getTypeMapping();
 
         try {
             logger = Logger.getLogger(baseModel.getThreadClassName());
@@ -125,11 +121,11 @@ public class DynamicPluginThread extends Thread implements IExecute {
     /**
      * Use this method to post an exception and an appropriate Log Level (log4j) to the next higher level
      *
-     * @param e DOCUMENT ME!
+     * @param e     DOCUMENT ME!
      * @param level DOCUMENT ME!
      */
     protected final void postException(Exception e,
-                                       Level     level) {
+                                       Level level) {
         baseModel.setExceptionOccured();
         controller.postException(e, level);
     }

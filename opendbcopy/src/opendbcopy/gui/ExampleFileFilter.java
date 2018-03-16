@@ -22,12 +22,10 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.gui;
 
+import javax.swing.filechooser.FileFilter;
 import java.io.File;
-
 import java.util.Enumeration;
 import java.util.Hashtable;
-
-import javax.swing.filechooser.FileFilter;
 
 
 /**
@@ -42,9 +40,9 @@ import javax.swing.filechooser.FileFilter;
  */
 public class ExampleFileFilter extends FileFilter {
     private Hashtable filters = null;
-    private String    description = null;
-    private String    fullDescription = null;
-    private boolean   useExtensionsInDescription = true;
+    private String description = null;
+    private String fullDescription = null;
+    private boolean useExtensionsInDescription = true;
 
     /**
      * Creates a file filter. If no filters are added, then all files are accepted.
@@ -66,7 +64,7 @@ public class ExampleFileFilter extends FileFilter {
      * Creates a file filter that accepts the given file type. Example: new ExampleFileFilter("jpg", "JPEG Image Images"); Note that the "." before
      * the extension is not needed. If provided, it will be ignored.
      *
-     * @param extension DOCUMENT ME!
+     * @param extension   DOCUMENT ME!
      * @param description DOCUMENT ME!
      */
     public ExampleFileFilter(String extension,
@@ -96,11 +94,11 @@ public class ExampleFileFilter extends FileFilter {
      * Creates a file filter from the given string array and description. Example: new ExampleFileFilter(String {"gif", "jpg"}, "Gif and JPG
      * Images"); Note that the "." before the extension is not needed and will be ignored.
      *
-     * @param filters DOCUMENT ME!
+     * @param filters     DOCUMENT ME!
      * @param description DOCUMENT ME!
      */
     public ExampleFileFilter(String[] filters,
-                             String   description) {
+                             String description) {
         this();
 
         for (int i = 0; i < filters.length; i++) {
@@ -117,7 +115,6 @@ public class ExampleFileFilter extends FileFilter {
      * Return true if this file should be shown in the directory pane, false if it shouldn't. Files that begin with "." are ignored.
      *
      * @param f DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public boolean accept(File f) {
@@ -142,13 +139,12 @@ public class ExampleFileFilter extends FileFilter {
      * Return the extension portion of the file's name .
      *
      * @param f DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public String getExtension(File f) {
         if (f != null) {
             String filename = f.getName();
-            int    i = filename.lastIndexOf('.');
+            int i = filename.lastIndexOf('.');
 
             if ((i > 0) && (i < (filename.length() - 1))) {
                 return filename.substring(i + 1).toLowerCase();
@@ -212,19 +208,8 @@ public class ExampleFileFilter extends FileFilter {
      * @param description DOCUMENT ME!
      */
     public void setDescription(String description) {
-        this.description     = description;
-        fullDescription      = null;
-    }
-
-    /**
-     * Determines whether the extension list (.jpg, .gif, etc) should show up in the human readable description. Only relevent if a description was
-     * provided in the constructor or using setDescription();
-     *
-     * @param b DOCUMENT ME!
-     */
-    public void setExtensionListInDescription(boolean b) {
-        useExtensionsInDescription     = b;
-        fullDescription                = null;
+        this.description = description;
+        fullDescription = null;
     }
 
     /**
@@ -235,5 +220,16 @@ public class ExampleFileFilter extends FileFilter {
      */
     public boolean isExtensionListInDescription() {
         return useExtensionsInDescription;
+    }
+
+    /**
+     * Determines whether the extension list (.jpg, .gif, etc) should show up in the human readable description. Only relevent if a description was
+     * provided in the constructor or using setDescription();
+     *
+     * @param b DOCUMENT ME!
+     */
+    public void setExtensionListInDescription(boolean b) {
+        useExtensionsInDescription = b;
+        fullDescription = null;
     }
 }

@@ -23,24 +23,15 @@
 package opendbcopy.gui;
 
 import opendbcopy.controller.MainController;
-
 import opendbcopy.resource.ResourceManager;
 
-import java.awt.GridLayout;
-import java.awt.SystemColor;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowEvent;
-
 import java.io.File;
 import java.io.IOException;
-
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 
 /**
@@ -50,36 +41,35 @@ import javax.swing.JScrollPane;
  * @version $Revision$
  */
 public class FrameShowURL extends JFrame {
-    private MainController  controller;
+    private MainController controller;
     private ResourceManager rm;
-    private JPanel          panelMain;
-    private JPanel          panelControl;
-    private JScrollPane     scrollPane;
-    private JEditorPane     editorPaneURL;
-    private String          urlString;
-    private URL             url;
-    private String          title;
+    private JPanel panelMain;
+    private JPanel panelControl;
+    private JScrollPane scrollPane;
+    private JEditorPane editorPaneURL;
+    private String urlString;
+    private URL url;
+    private String title;
 
     /**
      * Creates a new FrameLaunchingProgress object.
      *
-     * @param controller DOCUMENT ME!
-     * @param frameWidth DOCUMENT ME!
+     * @param controller  DOCUMENT ME!
+     * @param frameWidth  DOCUMENT ME!
      * @param frameHeight DOCUMENT ME!
-     * @param urlString DOCUMENT ME!
-     * @param title DOCUMENT ME!
-     *
+     * @param urlString   DOCUMENT ME!
+     * @param title       DOCUMENT ME!
      * @throws Exception DOCUMENT ME!
      */
     public FrameShowURL(MainController controller,
-                        int            frameWidth,
-                        int            frameHeight,
-                        String         urlString,
-                        String         title) throws Exception {
-        this.controller     = controller;
-        this.rm             = controller.getResourceManager();
-        this.urlString      = urlString;
-        this.title          = title;
+                        int frameWidth,
+                        int frameHeight,
+                        String urlString,
+                        String title) throws Exception {
+        this.controller = controller;
+        this.rm = controller.getResourceManager();
+        this.urlString = urlString;
+        this.title = title;
         this.setSize(frameWidth, frameHeight);
     }
 
@@ -91,7 +81,7 @@ public class FrameShowURL extends JFrame {
             this.setTitle(title);
 
             try {
-            	File urlFile = new File(urlString);
+                File urlFile = new File(urlString);
                 url = urlFile.toURL();
             } catch (MalformedURLException e) {
                 // see message below
@@ -102,8 +92,8 @@ public class FrameShowURL extends JFrame {
                     editorPaneURL = new JEditorPane(url);
                 }
             } catch (IOException e) {
-                editorPaneURL     = null; // giving up
-                url               = null; // see message below
+                editorPaneURL = null; // giving up
+                url = null; // see message below
             }
 
             if (editorPaneURL != null) {

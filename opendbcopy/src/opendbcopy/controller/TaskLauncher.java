@@ -25,7 +25,6 @@ package opendbcopy.controller;
 import opendbcopy.swing.SwingWorker;
 
 import java.lang.reflect.Constructor;
-
 import java.util.Observable;
 import java.util.Observer;
 
@@ -38,38 +37,38 @@ import java.util.Observer;
  */
 public class TaskLauncher extends Observable {
     private MainController controller;
-    private int            lengthOfTask;
-    private int            currentTask;
-    private String         statMessage;
-    private SwingWorker    worker = null;
-    private Integer        frameConsoleWidth;
-    private Integer        frameConsoleHeight;
-    private String         pathFilenameConsoleOut;
-    private String         pathFilenameLogo;
+    private int lengthOfTask;
+    private int currentTask;
+    private String statMessage;
+    private SwingWorker worker = null;
+    private Integer frameConsoleWidth;
+    private Integer frameConsoleHeight;
+    private String pathFilenameConsoleOut;
+    private String pathFilenameLogo;
 
     /**
      * Creates a new TaskLauncher object.
      *
-     * @param controller DOCUMENT ME!
-     * @param lengthOfTask DOCUMENT ME!
-     * @param frameConsoleWidth DOCUMENT ME!
-     * @param frameConsoleHeight DOCUMENT ME!
+     * @param controller             DOCUMENT ME!
+     * @param lengthOfTask           DOCUMENT ME!
+     * @param frameConsoleWidth      DOCUMENT ME!
+     * @param frameConsoleHeight     DOCUMENT ME!
      * @param pathFilenameConsoleOut DOCUMENT ME!
-     * @param pathFilenameLogo DOCUMENT ME!
+     * @param pathFilenameLogo       DOCUMENT ME!
      */
     public TaskLauncher(MainController controller,
-                        int            lengthOfTask,
-                        int            frameConsoleWidth,
-                        int            frameConsoleHeight,
-                        String         pathFilenameConsoleOut,
-                        String         pathFilenameLogo) {
-        this.controller                 = controller;
-        this.lengthOfTask               = lengthOfTask;
-        this.frameConsoleWidth          = new Integer(frameConsoleWidth);
-        this.frameConsoleHeight         = new Integer(frameConsoleHeight);
-        this.pathFilenameConsoleOut     = pathFilenameConsoleOut;
-        this.pathFilenameLogo           = pathFilenameLogo;
-        currentTask                     = 0;
+                        int lengthOfTask,
+                        int frameConsoleWidth,
+                        int frameConsoleHeight,
+                        String pathFilenameConsoleOut,
+                        String pathFilenameLogo) {
+        this.controller = controller;
+        this.lengthOfTask = lengthOfTask;
+        this.frameConsoleWidth = new Integer(frameConsoleWidth);
+        this.frameConsoleHeight = new Integer(frameConsoleHeight);
+        this.pathFilenameConsoleOut = pathFilenameConsoleOut;
+        this.pathFilenameLogo = pathFilenameLogo;
+        currentTask = 0;
     }
 
     /**
@@ -87,29 +86,29 @@ public class TaskLauncher extends Observable {
      */
     public final void go() throws Exception {
         worker = new SwingWorker() {
-                    public Object construct() {
-                        try {
-                            Class         dynClass = Class.forName("opendbcopy.gui.FrameConsole");
+            public Object construct() {
+                try {
+                    Class dynClass = Class.forName("opendbcopy.gui.FrameConsole");
 
-                            Constructor[] constructors = dynClass.getConstructors();
+                    Constructor[] constructors = dynClass.getConstructors();
 
-                            Object[]      params = new Object[6];
-                            params[0]     = TaskLauncher.this;
-                            params[1]     = controller;
-                            params[2]     = frameConsoleWidth;
-                            params[3]     = frameConsoleHeight;
-                            params[4]     = pathFilenameConsoleOut;
-                            params[5]     = pathFilenameLogo;
+                    Object[] params = new Object[6];
+                    params[0] = TaskLauncher.this;
+                    params[1] = controller;
+                    params[2] = frameConsoleWidth;
+                    params[3] = frameConsoleHeight;
+                    params[4] = pathFilenameConsoleOut;
+                    params[5] = pathFilenameLogo;
 
-                            // works as long there is only one constructor
-                            return constructors[0].newInstance(params);
-                        } catch (Exception e) {
-                            System.err.println(e.fillInStackTrace());
+                    // works as long there is only one constructor
+                    return constructors[0].newInstance(params);
+                } catch (Exception e) {
+                    System.err.println(e.fillInStackTrace());
 
-                            return null;
-                        }
-                    }
-                };
+                    return null;
+                }
+            }
+        };
 
         try {
             worker.start();
@@ -122,7 +121,6 @@ public class TaskLauncher extends Observable {
      * DOCUMENT ME!
      *
      * @param observer DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final void registerObserver(Observer observer) {

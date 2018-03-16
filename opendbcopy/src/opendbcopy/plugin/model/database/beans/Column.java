@@ -23,10 +23,8 @@
 package opendbcopy.plugin.model.database.beans;
 
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.plugin.model.exception.MissingAttributeException;
-
-import org.jdom.Element;
+import org.jdom2.Element;
 
 
 /**
@@ -37,8 +35,8 @@ import org.jdom.Element;
  */
 public class Column {
     private Element columnElement;
-    private String  name;
-    private String  typeName;
+    private String name;
+    private String typeName;
     private Integer dataType;
     private Integer columnSize;
     private Integer decimalDigits;
@@ -63,7 +61,6 @@ public class Column {
      * Creates a new Column object.
      *
      * @param columnElement DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
      */
     public Column(Element columnElement) throws MissingAttributeException {

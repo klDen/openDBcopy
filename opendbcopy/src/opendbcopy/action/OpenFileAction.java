@@ -23,23 +23,16 @@
 package opendbcopy.action;
 
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.controller.MainController;
-
 import opendbcopy.gui.DialogFile;
 import opendbcopy.gui.FrameMain;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.jdom2.Element;
 
-import org.jdom.Element;
-
+import javax.swing.*;
 import java.awt.event.ActionEvent;
-
 import java.io.File;
-
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 
 
 /**
@@ -49,30 +42,30 @@ import javax.swing.ImageIcon;
  * @version $Revision$
  */
 public class OpenFileAction extends AbstractAction {
-    private static Logger  logger = Logger.getLogger(OpenFileAction.class.getName());
+    private static Logger logger = Logger.getLogger(OpenFileAction.class.getName());
     private MainController controller;
-    private FrameMain      frame;
-    private Element        operation;
-    private DialogFile     dialogFile;
-    private File           currentDir;
+    private FrameMain frame;
+    private Element operation;
+    private DialogFile dialogFile;
+    private File currentDir;
 
     /**
      * Creates a new OpenFileAction object.
      *
-     * @param command DOCUMENT ME!
-     * @param name DOCUMENT ME!
-     * @param imageIcon DOCUMENT ME!
-     * @param fileType DOCUMENT ME!
+     * @param command    DOCUMENT ME!
+     * @param name       DOCUMENT ME!
+     * @param imageIcon  DOCUMENT ME!
+     * @param fileType   DOCUMENT ME!
      * @param currentDir DOCUMENT ME!
-     * @param frame DOCUMENT ME!
+     * @param frame      DOCUMENT ME!
      * @param controller DOCUMENT ME!
      */
-    public OpenFileAction(String         command,
-                          String         name,
-                          ImageIcon      imageIcon,
-                          String         fileType,
-                          File           currentDir,
-                          FrameMain      frame,
+    public OpenFileAction(String command,
+                          String name,
+                          ImageIcon imageIcon,
+                          String fileType,
+                          File currentDir,
+                          FrameMain frame,
                           MainController controller) {
         putValue(AbstractAction.NAME, name);
         putValue(AbstractAction.ACTION_COMMAND_KEY, command);
@@ -83,10 +76,10 @@ public class OpenFileAction extends AbstractAction {
         this.operation.setAttribute(XMLTags.TITLE, name);
         this.operation.setAttribute(XMLTags.FILE_TYPE, fileType);
 
-        this.currentDir     = currentDir;
-        this.controller     = controller;
-        this.frame          = frame;
-        this.dialogFile     = frame.getDialogFile();
+        this.currentDir = currentDir;
+        this.controller = controller;
+        this.frame = frame;
+        this.dialogFile = frame.getDialogFile();
     }
 
     /**

@@ -24,16 +24,11 @@ package opendbcopy.plugin.script;
 
 import opendbcopy.config.APM;
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.connection.DBConnection;
-
 import opendbcopy.connection.exception.DriverNotFoundException;
 import opendbcopy.connection.exception.OpenConnectionException;
-
 import opendbcopy.controller.MainController;
-
 import opendbcopy.io.Writer;
-
 import opendbcopy.plugin.model.DynamicPluginThread;
 import opendbcopy.plugin.model.Model;
 import opendbcopy.plugin.model.database.DatabaseModel;
@@ -44,22 +39,17 @@ import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.PluginException;
 import opendbcopy.plugin.model.exception.UnsupportedAttributeValueException;
-
 import opendbcopy.sql.Helper;
-
 import opendbcopy.util.InputOutputHelper;
 import opendbcopy.util.IntHashMap;
-
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -74,28 +64,27 @@ import java.util.List;
  */
 public class InsertScriptPlugin extends DynamicPluginThread {
     private DatabaseModel model;
-    private Connection    connSource;
-    private Statement     stmSource;
-    private ResultSet     rs;
-    private StringBuffer  sbScript;
-    private File          outputPath;
-    private String        database = "";
-    private String        identifierQuoteStringOut = "";
-    private List          processTables = null;
-    private boolean       show_qualified_table_name = false;
-    private int           counterRecords = 0;
-    private int           counterTables = 0;
+    private Connection connSource;
+    private Statement stmSource;
+    private ResultSet rs;
+    private StringBuffer sbScript;
+    private File outputPath;
+    private String database = "";
+    private String identifierQuoteStringOut = "";
+    private List processTables = null;
+    private boolean show_qualified_table_name = false;
+    private int counterRecords = 0;
+    private int counterTables = 0;
 
     /**
      * Creates a new InsertScriptPlugin object.
      *
      * @param controller DOCUMENT ME!
-     * @param baseModel DOCUMENT ME!
-     *
+     * @param baseModel  DOCUMENT ME!
      * @throws PluginException DOCUMENT ME!
      */
     public InsertScriptPlugin(MainController controller,
-                              Model          baseModel) throws PluginException {
+                              Model baseModel) throws PluginException {
         super(controller, baseModel);
         this.model = (DatabaseModel) baseModel;
     }
@@ -122,11 +111,11 @@ public class InsertScriptPlugin extends DynamicPluginThread {
             show_qualified_table_name = Boolean.valueOf(conf.getChild(XMLTags.SHOW_QUALIFIED_TABLE_NAME).getAttributeValue(XMLTags.VALUE)).booleanValue();
 
             if (model.getDbMode() == model.DUAL_MODE) {
-                identifierQuoteStringOut     = model.getDestinationMetadata().getChild(XMLTags.IDENTIFIER_QUOTE_STRING).getAttributeValue(XMLTags.VALUE);
-                database                     = model.getDestinationDb().getName();
+                identifierQuoteStringOut = model.getDestinationMetadata().getChild(XMLTags.IDENTIFIER_QUOTE_STRING).getAttributeValue(XMLTags.VALUE);
+                database = model.getDestinationDb().getName();
             } else {
-                identifierQuoteStringOut     = model.getSourceMetadata().getChild(XMLTags.IDENTIFIER_QUOTE_STRING).getAttributeValue(XMLTags.VALUE);
-                database                     = model.getSourceDb().getName();
+                identifierQuoteStringOut = model.getSourceMetadata().getChild(XMLTags.IDENTIFIER_QUOTE_STRING).getAttributeValue(XMLTags.VALUE);
+                database = model.getSourceDb().getName();
             }
 
             // get connection
@@ -167,25 +156,25 @@ public class InsertScriptPlugin extends DynamicPluginThread {
 
             ArrayList generatedFiles = new ArrayList();
 
-            String    sourceTableName = "";
-            String    destinationTableName = "";
-            String    qualifiedTableName = "";
-            String    tableName = "";
-            String    fileName = "";
-            String    selectStm = "";
-            Iterator  itProcessTables = processTables.iterator();
+            String sourceTableName = "";
+            String destinationTableName = "";
+            String qualifiedTableName = "";
+            String tableName = "";
+            String fileName = "";
+            String selectStm = "";
+            Iterator itProcessTables = processTables.iterator();
 
             while (itProcessTables.hasNext() && !isInterrupted()) {
                 Element tableProcess = (Element) itProcessTables.next();
-                List    processColumns = null;
+                List processColumns = null;
                 counterRecords = 0;
 
                 if (model.getDbMode() == model.DUAL_MODE) {
-                    sourceTableName          = tableProcess.getAttributeValue(XMLTags.SOURCE_DB);
-                    destinationTableName     = tableProcess.getAttributeValue(XMLTags.DESTINATION_DB);
-                    processColumns           = model.getMappingColumnsToProcessByDestinationTable(destinationTableName);
-                    fileName                 = counterTables + "_" + destinationTableName + ".sql";
-                    selectStm                = Helper.getSelectStatement(model, sourceTableName, XMLTags.SOURCE_DB, processColumns);
+                    sourceTableName = tableProcess.getAttributeValue(XMLTags.SOURCE_DB);
+                    destinationTableName = tableProcess.getAttributeValue(XMLTags.DESTINATION_DB);
+                    processColumns = model.getMappingColumnsToProcessByDestinationTable(destinationTableName);
+                    fileName = counterTables + "_" + destinationTableName + ".sql";
+                    selectStm = Helper.getSelectStatement(model, sourceTableName, XMLTags.SOURCE_DB, processColumns);
 
                     if (show_qualified_table_name) {
                         qualifiedTableName = model.getQualifiedDestinationTableName(destinationTableName);
@@ -195,10 +184,10 @@ public class InsertScriptPlugin extends DynamicPluginThread {
 
                     tableName = destinationTableName;
                 } else {
-                    sourceTableName     = tableProcess.getAttributeValue(XMLTags.NAME);
-                    processColumns      = model.getSourceColumnsToProcess(sourceTableName);
-                    fileName            = counterTables + "_" + sourceTableName + ".sql";
-                    selectStm           = Helper.getSelectStatement(model, sourceTableName, XMLTags.NAME, processColumns);
+                    sourceTableName = tableProcess.getAttributeValue(XMLTags.NAME);
+                    processColumns = model.getSourceColumnsToProcess(sourceTableName);
+                    fileName = counterTables + "_" + sourceTableName + ".sql";
+                    selectStm = Helper.getSelectStatement(model, sourceTableName, XMLTags.NAME, processColumns);
 
                     if (show_qualified_table_name) {
                         qualifiedTableName = model.getQualifiedSourceTableName(sourceTableName);
@@ -265,28 +254,27 @@ public class InsertScriptPlugin extends DynamicPluginThread {
     /**
      * DOCUMENT ME!
      *
-     * @param srcResult DOCUMENT ME!
-     * @param tableName DOCUMENT ME!
+     * @param srcResult          DOCUMENT ME!
+     * @param tableName          DOCUMENT ME!
      * @param qualifiedTableName DOCUMENT ME!
-     * @param processColumns DOCUMENT ME!
-     * @param sbScript DOCUMENT ME!
-     *
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @param processColumns     DOCUMENT ME!
+     * @param sbScript           DOCUMENT ME!
+     * @throws IllegalArgumentException           DOCUMENT ME!
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws SQLException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
+     * @throws SQLException                       DOCUMENT ME!
      */
-    private void genInserts(ResultSet    srcResult,
-                            String       tableName,
-                            String       qualifiedTableName,
-                            List         processColumns,
+    private void genInserts(ResultSet srcResult,
+                            String tableName,
+                            String qualifiedTableName,
+                            List processColumns,
                             StringBuffer sbScript) throws IllegalArgumentException, UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, SQLException {
-        Iterator     itProcessColumns = processColumns.iterator();
+        Iterator itProcessColumns = processColumns.iterator();
         StringBuffer sbColumnNames = new StringBuffer();
 
-        int          nbrCols = 1;
-        IntHashMap   colTypeInfo = new IntHashMap();
+        int nbrCols = 1;
+        IntHashMap colTypeInfo = new IntHashMap();
 
         while (itProcessColumns.hasNext()) {
             Element column = (Element) itProcessColumns.next();
@@ -338,11 +326,11 @@ public class InsertScriptPlugin extends DynamicPluginThread {
     /**
      * DOCUMENT ME!
      *
-     * @param tableName DOCUMENT ME!
+     * @param tableName    DOCUMENT ME!
      * @param processOrder DOCUMENT ME!
      */
     private void initScriptHeader(String tableName,
-                                  int    processOrder) {
+                                  int processOrder) {
         sbScript = new StringBuffer();
 
         sbScript.append("#############################################################################" + APM.LINE_SEP);

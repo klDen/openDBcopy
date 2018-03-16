@@ -24,7 +24,7 @@ package opendbcopy.config;
 
 import info.clearthought.layout.TableLayout;
 
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
 
 /**
@@ -34,7 +34,25 @@ import javax.swing.ImageIcon;
  * @version $Revision$
  */
 public final class GUI {
-    /** Images */
+    /**
+     * GUI constants for layout
+     */
+
+    // border
+    public final static double B = 5;
+    // fill
+    public final static double F = TableLayout.FILL;
+    // preferred
+    public final static double P = TableLayout.PREFERRED;
+    // vertical space
+    public final static double VS = 5;
+    // vertical gap
+    public final static double VG = 10;
+    // horizontal gap
+    public final static double HG = 10;
+    /**
+     * Images
+     */
     private static final ImageIcon openIcon = new ImageIcon("resource/images/Open16.gif");
     private static final ImageIcon saveAsIcon = new ImageIcon("resource/images/SaveAs16.gif");
     private static final ImageIcon newIcon = new ImageIcon("resource/images/New16.gif");
@@ -47,26 +65,6 @@ public final class GUI {
     private static final ImageIcon imageIconFile = new ImageIcon("resource/images/Save24.gif");
     private static final ImageIcon imageIconDir = new ImageIcon("resource/images/Open24.gif");
     private static final ImageIcon imageIconConfig = new ImageIcon("resource/images/Preferences24.gif");
-
-    /** GUI constants for layout */
-
-    // border
-    public final static double B = 5;
-
-    // fill
-    public final static double F = TableLayout.FILL;
-
-    // preferred
-    public final static double P = TableLayout.PREFERRED;
-
-    // vertical space
-    public final static double VS = 5;
-
-    // vertical gap
-    public final static double VG = 10;
-
-    // horizontal gap
-    public final static double HG = 10;
 
     /**
      * DOCUMENT ME!

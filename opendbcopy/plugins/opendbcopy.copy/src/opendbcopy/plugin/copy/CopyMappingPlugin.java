@@ -7,7 +7,7 @@ import opendbcopy.plugin.exception.PluginException;
 
 public class CopyMappingPlugin extends DynamicPluginThread {
 
-	public CopyMappingPlugin(MainController controller, PluginMetadata plugin) throws PluginException {
-		super(controller, plugin);
-	}
+    public CopyMappingPlugin(MainController controller, PluginMetadata plugin) throws PluginException {
+        super(controller, plugin);
+    }
 }

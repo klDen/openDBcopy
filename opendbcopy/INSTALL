@@ -4,9 +4,6 @@ opendbcopy is distributed using an IzPack installer. You can choose to install s
 and API Docs additionally.
 
 To run opendbcopy you can either:
-USING ANT:
-ant run
-
 USING start.bat/start.sh
 
 USING JAVA directly:

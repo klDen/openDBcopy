@@ -25,296 +25,296 @@
 
 <project name="plugin" default="deploy" basedir=".">
 
-	<property file="build.properties"/>
+    <property file="build.properties"/>
 
-   	<property name="basedir" value="."/>
+    <property name="basedir" value="."/>
 
-   	<!-- ============================================================= -->
-   	<!-- Classpath with libraries needed to compile this application   -->
-   	<!-- ============================================================= -->
-   	<path id="plugin.classpath">
-   	   	<fileset dir="${lib.dir}">
-         	<include name="**/*.zip"/>
-         	<include name="**/*.jar"/>
-         	<include name="**/*.properties"/>
-      	</fileset>
-   	</path>
-   	
-	<path id="hibernate.classpath">
-      	<fileset dir="${hbm.dir}/classes">
-         	<include name="**/*.class"/>
-      	</fileset>
-   	</path>
+    <!-- ============================================================= -->
+    <!-- Classpath with libraries needed to compile this application   -->
+    <!-- ============================================================= -->
+    <path id="plugin.classpath">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.zip"/>
+            <include name="**/*.jar"/>
+            <include name="**/*.properties"/>
+        </fileset>
+    </path>
 
-   	<!-- ============================================================= -->
-   	<!-- Prepares the project                                          -->
-   	<!-- ============================================================= -->
-   	<target name="prepare">
-   		<mkdir dir="${lib.dir}"/>
-      	<mkdir dir="${build.dir}"/>
-      	<mkdir dir="${dist.dir}/${plugin.name}"/>
-      	<mkdir dir="${javadoc.dir}"/>
-      	<mkdir dir="${resource.dir}"/>
-   	</target>
+    <path id="hibernate.classpath">
+        <fileset dir="${hbm.dir}/classes">
+            <include name="**/*.class"/>
+        </fileset>
+    </path>
 
-	<target name="preparehbm">
-      	<mkdir dir="${hbm.dir}"/>
-      	<mkdir dir="${hbm.dir}/src"/>
-      	<mkdir dir="${hbm.dir}/classes"/>
-   	</target>
+    <!-- ============================================================= -->
+    <!-- Prepares the project                                          -->
+    <!-- ============================================================= -->
+    <target name="prepare">
+        <mkdir dir="${lib.dir}"/>
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${dist.dir}/${plugin.name}"/>
+        <mkdir dir="${javadoc.dir}"/>
+        <mkdir dir="/resources"/>
+    </target>
 
-   	<!-- ============================================================= -->
-   	<!-- Compiles the source code                                      -->
-   	<!-- ============================================================= -->
-   	<target name="compile" depends="prepare">
-   		<!-- copy resource dir into build dir -->
-	   	<copy todir="${build.dir}">
-    		<fileset dir="${resource.dir}"/>
-		</copy>
-   		
-    	<javac srcdir="${sources.dir}"
-         	destdir="${build.dir}"
-         	debug="on"
-         	optimize="on">
-         	<classpath refid="plugin.classpath"/>
-      	</javac>
-   	</target>
+    <target name="preparehbm">
+        <mkdir dir="${hbm.dir}"/>
+        <mkdir dir="${hbm.dir}/src"/>
+        <mkdir dir="${hbm.dir}/classes"/>
+    </target>
 
-   	<!-- ============================================================= -->
-   	<!-- Clean up all files that are generated.                        -->
-   	<!-- ============================================================= -->
-   	<target name="clean">
-      	<delete quiet="true" dir="${build.dir}"/>
-   		
-   		<!-- delete possible older versions of the plugins jar -->
-      	<delete>
-		    <fileset dir="${lib.dir}" includes="**/*${plugin.name}*.jar"/>
-		</delete>
-   	</target>
-   	
-	<target name="cleanhbm" depends="preparehbm">
-      	<delete quiet="true">
-           	<fileset dir="${hbm.dir}">
-               <include name="**/*.java"/>
-               <include name="**/*.class"/>
-           </fileset>
-      	</delete>
-   	</target>
-	
-   	<!-- ============================================================= -->
-   	<!-- Clean and then compile the project                            -->
-   	<!-- ============================================================= -->
-   	<target name="rebuild">
-      	<antcall target="clean"/>
-      	<antcall target="compile"/>
-   	</target>
+    <!-- ============================================================= -->
+    <!-- Compiles the source code                                      -->
+    <!-- ============================================================= -->
+    <target name="compile" depends="prepare">
+        <!-- copy resource dir into build dir -->
+        <copy todir="${build.dir}">
+            <fileset dir="/resources"/>
+        </copy>
 
-   	<!-- ============================================================= -->
-   	<!-- Create the jar file containing binaries and sources           -->
-   	<!-- ============================================================= -->
-   	<target name="jar" depends="compile">
-      	<jar jarfile="${lib.dir}/${package.name}.jar">
-         	<fileset dir="${build.dir}"/>
-         	<fileset dir="${sources.dir}"/>
-      	</jar>
-   	</target>
-   	
-   	<!-- ============================================================= -->
-   	<!-- Copies plugin configuration and binaries into destination lib -->
-   	<!-- NOTE: contains path to opendbcopy! Change in build.properties -->
-   	<!-- ============================================================= -->
-   	<target name="deploy" depends="clean, jar">
-   		<!-- delete destination dir -->
-   		<delete quiet="true" dir="${OPENDBCOPY_HOME}/plugins/${plugin.name}"/>
-   		
-   		<!-- copy configuration to destination dir -->
-	   	<copy file="${plugin.file}" todir="${OPENDBCOPY_HOME}/plugins/${plugin.name}"/>
-		<copy file="${gui.file}" todir="${OPENDBCOPY_HOME}/plugins/${plugin.name}"/>
-		
-   		<!-- copy code generation configuration to destination dir -->
-		<copy file="${codegen.config}" todir="${OPENDBCOPY_HOME}/plugins/${plugin.name}"/>
+        <javac srcdir="${sources.dir}"
+               destdir="${build.dir}"
+               debug="on"
+               optimize="on">
+            <classpath refid="plugin.classpath"/>
+        </javac>
+    </target>
 
-   		<!-- copy README to destination dir -->
-		<copy file="README" todir="${OPENDBCOPY_HOME}/plugins/${plugin.name}"/>
+    <!-- ============================================================= -->
+    <!-- Clean up all files that are generated.                        -->
+    <!-- ============================================================= -->
+    <target name="clean">
+        <delete quiet="true" dir="${build.dir}"/>
 
-		<!-- copy lib dir to destination dir -->
-	   	<copy todir="${OPENDBCOPY_HOME}/plugins/${plugin.name}/lib">
-    		<fileset dir="${lib.dir}"/>
-		</copy>
-   		
-		<!-- copy hbm dir to destination dir -->
-	   	<copy todir="${OPENDBCOPY_HOME}/plugins/${plugin.name}/hbm">
-    		<fileset dir="${hbm.dir}"/>
-		</copy>
-		
-		<!-- deploy ant build stuff -->
-	   	<copy file="build.properties" todir="${OPENDBCOPY_HOME}/plugins/${plugin.name}"/>
-		<copy file="build.xml" todir="${OPENDBCOPY_HOME}/plugins/${plugin.name}"/>
-   	</target>
+        <!-- delete possible older versions of the plugins jar -->
+        <delete>
+            <fileset dir="${lib.dir}" includes="**/*${plugin.name}*.jar"/>
+        </delete>
+    </target>
 
-   	<!-- ============================================================= -->
-   	<!-- Creates a package for distribution                            -->
-   	<!-- ============================================================= -->
-	<target name="dist" depends="clean, jar, javadoc">
-		<!-- clean dist and javadoc -->
-	   	<delete quiet="true" dir="${dist.dir}"/>
-	
-		<!-- copy plugin configuration and working mode into distribution -->
-	   	<copy file="${plugin.file}" todir="${dist.dir}/${plugin.name}"/>
-		<copy file="${gui.file}" todir="${dist.dir}/${plugin.name}"/>
+    <target name="cleanhbm" depends="preparehbm">
+        <delete quiet="true">
+            <fileset dir="${hbm.dir}">
+                <include name="**/*.java"/>
+                <include name="**/*.class"/>
+            </fileset>
+        </delete>
+    </target>
 
-   		<!-- copy code generation configuration to destination dir -->
-		<copy file="${codegen.config}" todir="${dist.dir}/${plugin.name}"/>
+    <!-- ============================================================= -->
+    <!-- Clean and then compile the project                            -->
+    <!-- ============================================================= -->
+    <target name="rebuild">
+        <antcall target="clean"/>
+        <antcall target="compile"/>
+    </target>
 
-   		<!-- copy README to destination dir -->
-		<copy file="README" todir="${dist.dir}/${plugin.name}"/>
-		
-		<!-- copy lib dir into distribution -->
-	   	<copy todir="${dist.dir}/${plugin.name}/lib">
-    		<fileset dir="${lib.dir}"/>
-		</copy>
+    <!-- ============================================================= -->
+    <!-- Create the jar file containing binaries and sources           -->
+    <!-- ============================================================= -->
+    <target name="jar" depends="compile">
+        <jar jarfile="${lib.dir}/${package.name}.jar">
+            <fileset dir="${build.dir}"/>
+            <fileset dir="${sources.dir}"/>
+        </jar>
+    </target>
 
-		<!-- copy sources dir into distribution -->
-	   	<copy todir="${dist.dir}/${plugin.name}/src">
-    		<fileset dir="${sources.dir}"/>
-		</copy>
+    <!-- ============================================================= -->
+    <!-- Copies plugin configuration and binaries into destination lib -->
+    <!-- NOTE: contains path to opendbcopy! Change in build.properties -->
+    <!-- ============================================================= -->
+    <target name="deploy" depends="clean, jar">
+        <!-- delete destination dir -->
+        <delete quiet="true" dir="${OPENDBCOPY_HOME}/plugins/${plugin.name}"/>
 
-		<!-- copy resource dir into distribution -->
-	   	<copy todir="${dist.dir}/${plugin.name}/resource">
-    		<fileset dir="${resource.dir}"/>
-		</copy>
+        <!-- copy configuration to destination dir -->
+        <copy file="${plugin.file}" todir="${OPENDBCOPY_HOME}/plugins/${plugin.name}"/>
+        <copy file="${gui.file}" todir="${OPENDBCOPY_HOME}/plugins/${plugin.name}"/>
 
-		<!-- copy apidocs dir into distribution -->
-	   	<copy todir="${dist.dir}/${plugin.name}/apidocs">
-    		<fileset dir="${javadoc.dir}"/>
-		</copy>
-		<zip zipfile="${dist.dir}/${package.name}.zip" basedir="${dist.dir}"/>		
-	</target>
-	
-   	<!-- ============================================================= -->
-   	<!-- Creates the API documentation                                 -->
-   	<!-- ============================================================= -->
-   	<target name="javadoc" depends="compile">
-      	<javadoc packagenames="${packages}"
-         	sourcepath="${sources.dir}"
-         	destdir="${javadoc.dir}"
-         	author="true"
-         	version="true"
-         	windowtitle="${plugin.name} API"
-         	doctitle="${plugin.name}"
-         	bottom="Copyright &#169; ${plugin.copyright}"
+        <!-- copy code generation configuration to destination dir -->
+        <copy file="${codegen.config}" todir="${OPENDBCOPY_HOME}/plugins/${plugin.name}"/>
+
+        <!-- copy README to destination dir -->
+        <copy file="README" todir="${OPENDBCOPY_HOME}/plugins/${plugin.name}"/>
+
+        <!-- copy lib dir to destination dir -->
+        <copy todir="${OPENDBCOPY_HOME}/plugins/${plugin.name}/lib">
+            <fileset dir="${lib.dir}"/>
+        </copy>
+
+        <!-- copy hbm dir to destination dir -->
+        <copy todir="${OPENDBCOPY_HOME}/plugins/${plugin.name}/hbm">
+            <fileset dir="${hbm.dir}"/>
+        </copy>
+
+        <!-- deploy ant build stuff -->
+        <copy file="build.properties" todir="${OPENDBCOPY_HOME}/plugins/${plugin.name}"/>
+        <copy file="build.xml" todir="${OPENDBCOPY_HOME}/plugins/${plugin.name}"/>
+    </target>
+
+    <!-- ============================================================= -->
+    <!-- Creates a package for distribution                            -->
+    <!-- ============================================================= -->
+    <target name="dist" depends="clean, jar, javadoc">
+        <!-- clean dist and javadoc -->
+        <delete quiet="true" dir="${dist.dir}"/>
+
+        <!-- copy plugin configuration and working mode into distribution -->
+        <copy file="${plugin.file}" todir="${dist.dir}/${plugin.name}"/>
+        <copy file="${gui.file}" todir="${dist.dir}/${plugin.name}"/>
+
+        <!-- copy code generation configuration to destination dir -->
+        <copy file="${codegen.config}" todir="${dist.dir}/${plugin.name}"/>
+
+        <!-- copy README to destination dir -->
+        <copy file="README" todir="${dist.dir}/${plugin.name}"/>
+
+        <!-- copy lib dir into distribution -->
+        <copy todir="${dist.dir}/${plugin.name}/lib">
+            <fileset dir="${lib.dir}"/>
+        </copy>
+
+        <!-- copy sources dir into distribution -->
+        <copy todir="${dist.dir}/${plugin.name}/src">
+            <fileset dir="${sources.dir}"/>
+        </copy>
+
+        <!-- copy resource dir into distribution -->
+        <copy todir="${dist.dir}/${plugin.name}/resource">
+            <fileset dir="/resources"/>
+        </copy>
+
+        <!-- copy apidocs dir into distribution -->
+        <copy todir="${dist.dir}/${plugin.name}/apidocs">
+            <fileset dir="${javadoc.dir}"/>
+        </copy>
+        <zip zipfile="${dist.dir}/${package.name}.zip" basedir="${dist.dir}"/>
+    </target>
+
+    <!-- ============================================================= -->
+    <!-- Creates the API documentation                                 -->
+    <!-- ============================================================= -->
+    <target name="javadoc" depends="compile">
+        <javadoc packagenames="${packages}"
+                 sourcepath="${sources.dir}"
+                 destdir="${javadoc.dir}"
+                 author="true"
+                 version="true"
+                 windowtitle="${plugin.name} API"
+                 doctitle="${plugin.name}"
+                 bottom="Copyright &#169; ${plugin.copyright}"
         />
-   </target>
-   
-   	<!-- ============================================================= -->
-   	<!-- Compile Hibernate Mapping Files                               -->
-   	<!-- ============================================================= -->
-   	<target name="hbm2java" depends="cleanhbm">        
+    </target>
+
+    <!-- ============================================================= -->
+    <!-- Compile Hibernate Mapping Files                               -->
+    <!-- ============================================================= -->
+    <target name="hbm2java" depends="cleanhbm">
         <taskdef name="hbm2java"
-            classname="net.sf.hibernate.tool.hbm2java.Hbm2JavaTask">
+                 classname="net.sf.hibernate.tool.hbm2java.Hbm2JavaTask">
             <classpath>
-                <path refid="plugin.classpath" />
-                <path refid="hibernate.classpath" />                
+                <path refid="plugin.classpath"/>
+                <path refid="hibernate.classpath"/>
             </classpath>
-		</taskdef>            
-      
-        <hbm2java 
-    	    output="${hbm.dir}/src"
-    	    config="${codegen.config}">
-           	<fileset dir="${hbm.dir}">
-               <include name="**/*.hbm.xml"/>
-           </fileset>
+        </taskdef>
+
+        <hbm2java
+                output="${hbm.dir}/src"
+                config="${codegen.config}">
+            <fileset dir="${hbm.dir}">
+                <include name="**/*.hbm.xml"/>
+            </fileset>
         </hbm2java>
-        
+
         <!-- compile classes -->
         <javac srcdir="${hbm.dir}/src"
-         	destdir="${hbm.dir}/classes"
-         	debug="on"
-         	optimize="on">
-         	<classpath>
-                <path refid="plugin.classpath" />
-                <path refid="hibernate.classpath" />                
+               destdir="${hbm.dir}/classes"
+               debug="on"
+               optimize="on">
+            <classpath>
+                <path refid="plugin.classpath"/>
+                <path refid="hibernate.classpath"/>
             </classpath>
-      	</javac>
-      	
-      	<!-- generate jar file of classes and copy it to standard build dir -->
-      	<jar jarfile="${lib.dir}/schema.jar">
-         	<fileset dir="${hbm.dir}/classes"/>
-      	</jar>     	
-        
+        </javac>
+
+        <!-- generate jar file of classes and copy it to standard build dir -->
+        <jar jarfile="${lib.dir}/schema.jar">
+            <fileset dir="${hbm.dir}/classes"/>
+        </jar>
+
         <echo message="If no errors occured, very well! For debug, info and warnings see file hbm2java_code_generation.log"/>
     </target>
 
-   	<!-- ============================================================= -->
-   	<!-- Create the Database schema                                    -->
-   	<!-- ============================================================= -->
-   	<target name="schema-create">        
-	    <taskdef name="schema-create"
-	        classname="net.sf.hibernate.tool.hbm2ddl.SchemaExportTask">
-	        <classpath>
-                <path refid="plugin.classpath" />
-	        </classpath>
-		</taskdef>            
-  
-      	<mkdir dir="${sql.dir}"/>
-  		<property file="${hbm.dir}/hibernate.properties"/>
-  
-	    <schema-create 
-	    	properties="${hbm.dir}/hibernate.properties"
-	    	quiet="no" 
-	        text="no" 
-		    drop="no"
-		    delimiter=";" 
-		    output="${sql.dir}/${db_product_name}_schema_create.sql">
-	       	<fileset dir="${hbm.dir}">
-	           <include name="**/*.hbm.xml"/>
-	        </fileset>
-	    </schema-create>
-	</target>
-    
-   	<!-- ============================================================= -->
-   	<!-- Update the Database schema (not all JDBC drivers support this -->
-   	<!-- ============================================================= -->
-	<target name="schema-update" depends="prepare">
-	    <taskdef name="schema-update"
-	        classname="net.sf.hibernate.tool.hbm2ddl.SchemaUpdateTask">
-	        <classpath>
-                <path refid="plugin.classpath" />
-	        </classpath>
-		</taskdef>            
-    
-	    <schema-update
-	    	properties="${hbm.dir}/hibernate.properties"
-	        quiet="no">
-	       	<fileset dir="${hbm.dir}">
-	           <include name="**/*.hbm.xml"/>
-	       </fileset>
-	    </schema-update>
-	</target>        
+    <!-- ============================================================= -->
+    <!-- Create the Database schema                                    -->
+    <!-- ============================================================= -->
+    <target name="schema-create">
+        <taskdef name="schema-create"
+                 classname="net.sf.hibernate.tool.hbm2ddl.SchemaExportTask">
+            <classpath>
+                <path refid="plugin.classpath"/>
+            </classpath>
+        </taskdef>
 
-   	<!-- ============================================================= -->
-   	<!-- Drop the Database schema                                      -->
-   	<!-- ============================================================= -->
-	<target name="schema-drop">        
-	    <taskdef name="schemaexport"
-	        classname="net.sf.hibernate.tool.hbm2ddl.SchemaExportTask">
-	        <classpath>
-                <path refid="plugin.classpath" />
-	        </classpath>
-		</taskdef>            
+        <mkdir dir="${sql.dir}"/>
+        <property file="${hbm.dir}/hibernate.properties"/>
 
-      	<mkdir dir="${sql.dir}"/>
-  		<property file="${hbm.dir}/hibernate.properties"/>
-	  
-	    <schemaexport 
-	    	properties="${hbm.dir}/hibernate.properties"
-	    	quiet="no" 
-	        text="no" 
-		    drop="yes"
-		    output="${sql.dir}/${db_product_name}_schema_drop.sql">
-	       	<fileset dir="${hbm.dir}">
-	           <include name="**/*.hbm.xml"/>
-	       </fileset>
-	    </schemaexport>
-	</target>
+        <schema-create
+                properties="${hbm.dir}/hibernate.properties"
+                quiet="no"
+                text="no"
+                drop="no"
+                delimiter=";"
+                output="${sql.dir}/${db_product_name}_schema_create.sql">
+            <fileset dir="${hbm.dir}">
+                <include name="**/*.hbm.xml"/>
+            </fileset>
+        </schema-create>
+    </target>
+
+    <!-- ============================================================= -->
+    <!-- Update the Database schema (not all JDBC drivers support this -->
+    <!-- ============================================================= -->
+    <target name="schema-update" depends="prepare">
+        <taskdef name="schema-update"
+                 classname="net.sf.hibernate.tool.hbm2ddl.SchemaUpdateTask">
+            <classpath>
+                <path refid="plugin.classpath"/>
+            </classpath>
+        </taskdef>
+
+        <schema-update
+                properties="${hbm.dir}/hibernate.properties"
+                quiet="no">
+            <fileset dir="${hbm.dir}">
+                <include name="**/*.hbm.xml"/>
+            </fileset>
+        </schema-update>
+    </target>
+
+    <!-- ============================================================= -->
+    <!-- Drop the Database schema                                      -->
+    <!-- ============================================================= -->
+    <target name="schema-drop">
+        <taskdef name="schemaexport"
+                 classname="net.sf.hibernate.tool.hbm2ddl.SchemaExportTask">
+            <classpath>
+                <path refid="plugin.classpath"/>
+            </classpath>
+        </taskdef>
+
+        <mkdir dir="${sql.dir}"/>
+        <property file="${hbm.dir}/hibernate.properties"/>
+
+        <schemaexport
+                properties="${hbm.dir}/hibernate.properties"
+                quiet="no"
+                text="no"
+                drop="yes"
+                output="${sql.dir}/${db_product_name}_schema_drop.sql">
+            <fileset dir="${hbm.dir}">
+                <include name="**/*.hbm.xml"/>
+            </fileset>
+        </schemaexport>
+    </target>
 </project>

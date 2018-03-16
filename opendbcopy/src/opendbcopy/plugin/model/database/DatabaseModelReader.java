@@ -23,27 +23,21 @@
 package opendbcopy.plugin.model.database;
 
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.connection.DBConnection;
-
 import opendbcopy.connection.exception.CloseConnectionException;
 import opendbcopy.connection.exception.DriverNotFoundException;
 import opendbcopy.connection.exception.OpenConnectionException;
-
 import opendbcopy.plugin.model.database.exception.UnsupportedJDBCActionException;
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.UnsupportedAttributeValueException;
-
 import org.apache.log4j.Logger;
-
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -63,14 +57,13 @@ public abstract class DatabaseModelReader {
      * DOCUMENT ME!
      *
      * @param pluginModel DOCUMENT ME!
-     *
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws OpenConnectionException DOCUMENT ME!
-     * @throws CloseConnectionException DOCUMENT ME!
-     * @throws DriverNotFoundException DOCUMENT ME!
-     * @throws SQLException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
+     * @throws OpenConnectionException            DOCUMENT ME!
+     * @throws CloseConnectionException           DOCUMENT ME!
+     * @throws DriverNotFoundException            DOCUMENT ME!
+     * @throws SQLException                       DOCUMENT ME!
      */
     public static void readDatabasesMetaData(DatabaseModel pluginModel) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, OpenConnectionException, CloseConnectionException, DriverNotFoundException, SQLException {
         if (pluginModel.getDbMode() == pluginModel.DUAL_MODE) {
@@ -96,15 +89,14 @@ public abstract class DatabaseModelReader {
      * DOCUMENT ME!
      *
      * @param connection DOCUMENT ME!
-     * @param driver DOCUMENT ME!
-     * @param metadata DOCUMENT ME!
-     *
+     * @param driver     DOCUMENT ME!
+     * @param metadata   DOCUMENT ME!
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws DriverNotFoundException DOCUMENT ME!
-     * @throws OpenConnectionException DOCUMENT ME!
-     * @throws CloseConnectionException DOCUMENT ME!
-     * @throws SQLException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws DriverNotFoundException   DOCUMENT ME!
+     * @throws OpenConnectionException   DOCUMENT ME!
+     * @throws CloseConnectionException  DOCUMENT ME!
+     * @throws SQLException              DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
      */
     private static void readDatabaseMetaData(Element connection,
                                              Element driver,
@@ -113,48 +105,48 @@ public abstract class DatabaseModelReader {
             throw new IllegalArgumentException("Missing arguments values: connection=" + connection + " driver=" + driver + " metadata=" + metadata);
         }
 
-        Connection       conn = null;
+        Connection conn = null;
         DatabaseMetaData meta = null;
-        ResultSet        rs = null;
+        ResultSet rs = null;
 
         try {
-            conn     = DBConnection.getConnection(connection);
-            meta     = conn.getMetaData();
+            conn = DBConnection.getConnection(connection);
+            meta = conn.getMetaData();
 
             try {
-            	String driverName = meta.getDriverName();
-            	
-            	if (driverName != null) {
+                String driverName = meta.getDriverName();
+
+                if (driverName != null) {
                     driver.setAttribute(XMLTags.NAME, driverName);
-            	} else {
-            		driver.setAttribute(XMLTags.NAME, "");
-            	}
-            	
+                } else {
+                    driver.setAttribute(XMLTags.NAME, "");
+                }
+
             } catch (SQLException e) {
                 logger.warn("Driver does not support reading DriverName");
             }
 
             try {
-            	String driverVersion = meta.getDriverVersion();
-            	
-            	if (driverVersion != null) {
-            		driver.setAttribute(XMLTags.DRIVER_VERSION, driverVersion);
-            	} else {
-            		driver.setAttribute(XMLTags.DRIVER_VERSION, "");
-            	}
+                String driverVersion = meta.getDriverVersion();
+
+                if (driverVersion != null) {
+                    driver.setAttribute(XMLTags.DRIVER_VERSION, driverVersion);
+                } else {
+                    driver.setAttribute(XMLTags.DRIVER_VERSION, "");
+                }
             } catch (SQLException e) {
                 logger.warn("Driver does not support reading Driver Version");
             }
 
             try {
                 Element dbProductName = new Element(XMLTags.DB_PRODUCT_NAME);
-                
+
                 String databaseProductName = meta.getDatabaseProductName();
-                
+
                 if (databaseProductName != null) {
-                	dbProductName.setAttribute(XMLTags.VALUE, databaseProductName);
+                    dbProductName.setAttribute(XMLTags.VALUE, databaseProductName);
                 } else {
-                	dbProductName.setAttribute(XMLTags.VALUE, "");
+                    dbProductName.setAttribute(XMLTags.VALUE, "");
                 }
                 metadata.addContent(dbProductName);
             } catch (SQLException e) {
@@ -163,9 +155,9 @@ public abstract class DatabaseModelReader {
 
             try {
                 Element db_product_version = new Element(XMLTags.DB_PRODUCT_VERSION);
-                
+
                 String dbProductVersion = meta.getDatabaseProductVersion();
-                
+
                 if (dbProductVersion != null) {
                     db_product_version.setAttribute(XMLTags.VALUE, dbProductVersion);
                 } else {
@@ -178,9 +170,9 @@ public abstract class DatabaseModelReader {
 
             try {
                 Element catalogSeparator = new Element(XMLTags.CATALOG_SEPARATOR);
-                
+
                 String catSep = meta.getCatalogSeparator();
-                
+
                 if (catSep != null) {
                     catalogSeparator.setAttribute(XMLTags.VALUE, meta.getCatalogSeparator());
                 } else {
@@ -193,14 +185,14 @@ public abstract class DatabaseModelReader {
 
             try {
                 Element identifierQuoteString = new Element(XMLTags.IDENTIFIER_QUOTE_STRING);
-                
+
                 String idQuoteString = meta.getIdentifierQuoteString();
-                
+
                 if (idQuoteString != null) {
                     identifierQuoteString.setAttribute(XMLTags.VALUE, idQuoteString);
                 } else {
                     identifierQuoteString.setAttribute(XMLTags.VALUE, "");
-                }                
+                }
                 metadata.addContent(identifierQuoteString);
             } catch (SQLException e) {
                 logger.warn("Driver does not support reading Identifier Quote String");
@@ -210,7 +202,7 @@ public abstract class DatabaseModelReader {
 
             // read catalogs
             try {
-                catalog     = new Element(XMLTags.CATALOG);
+                catalog = new Element(XMLTags.CATALOG);
 
                 rs = meta.getCatalogs();
 
@@ -232,7 +224,7 @@ public abstract class DatabaseModelReader {
 
             // read schemas
             try {
-                schema     = new Element(XMLTags.SCHEMA);
+                schema = new Element(XMLTags.SCHEMA);
 
                 rs = meta.getSchemas();
 
@@ -277,15 +269,13 @@ public abstract class DatabaseModelReader {
      * DOCUMENT ME!
      *
      * @param db_element DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws DriverNotFoundException DOCUMENT ME!
-     * @throws OpenConnectionException DOCUMENT ME!
-     * @throws CloseConnectionException DOCUMENT ME!
-     * @throws SQLException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws DriverNotFoundException   DOCUMENT ME!
+     * @throws OpenConnectionException   DOCUMENT ME!
+     * @throws CloseConnectionException  DOCUMENT ME!
+     * @throws SQLException              DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
      */
     public static Element readModel(Element db_element) throws MissingAttributeException, DriverNotFoundException, OpenConnectionException, CloseConnectionException, SQLException {
         if (db_element == null) {
@@ -293,9 +283,9 @@ public abstract class DatabaseModelReader {
         }
 
         DatabaseMetaData metadata = null;
-        Connection       conn = null;
-        Element          model = null;
-        Element          connection = null;
+        Connection conn = null;
+        Element model = null;
+        Element connection = null;
 
         /** The following variables are disabled in case the driver does not support a certain feature. Enabling / disabling  is set by the user */
         boolean primary_keys_enabled = true;
@@ -306,12 +296,12 @@ public abstract class DatabaseModelReader {
             connection = db_element.getChild(XMLTags.CONNECTION);
 
             if (connection.getAttributes().size() > 0) {
-                conn         = DBConnection.getConnection(connection);
-                metadata     = conn.getMetaData();
+                conn = DBConnection.getConnection(connection);
+                metadata = conn.getMetaData();
 
-                String[]  tables = { "TABLE" };
-                String[]  tables_and_views = { "TABLE", "VIEW" };
-                String    dbProductName = db_element.getChild(XMLTags.METADATA).getChild(XMLTags.DB_PRODUCT_NAME).getAttributeValue(XMLTags.VALUE);
+                String[] tables = {"TABLE"};
+                String[] tables_and_views = {"TABLE", "VIEW"};
+                String dbProductName = db_element.getChild(XMLTags.METADATA).getChild(XMLTags.DB_PRODUCT_NAME).getAttributeValue(XMLTags.VALUE);
 
                 ResultSet rs = null;
 
@@ -322,10 +312,10 @@ public abstract class DatabaseModelReader {
                 }
 
                 if (db_element.getChild(XMLTags.MODEL) != null) {
-                	model = db_element.getChild(XMLTags.MODEL);
-                	
-                	// remove tables which maybe have been captured in a previous action
-                	model.removeChildren(XMLTags.TABLE);
+                    model = db_element.getChild(XMLTags.MODEL);
+
+                    // remove tables which maybe have been captured in a previous action
+                    model.removeChildren(XMLTags.TABLE);
                 }
 
                 while (rs.next()) {
@@ -342,7 +332,7 @@ public abstract class DatabaseModelReader {
 
                 while (iterator.hasNext()) {
                     Element table = ((Element) iterator.next());
-                    String  tableName = table.getAttributeValue(XMLTags.NAME);
+                    String tableName = table.getAttributeValue(XMLTags.NAME);
                     readTableColumns(metadata, table, dbProductName, db_element.getChild(XMLTags.SCHEMA).getAttributeValue(XMLTags.VALUE), db_element.getChild(XMLTags.CATALOG).getAttributeValue(XMLTags.VALUE));
 
                     // now only read what is requested
@@ -401,20 +391,19 @@ public abstract class DatabaseModelReader {
     /**
      * DOCUMENT ME!
      *
-     * @param meta java.sql.DatabaseMetaData
-     * @param table opendbcopy.plugin.DbTable
-     * @param dbProductName DOCUMENT ME!
+     * @param meta           java.sql.DatabaseMetaData
+     * @param table          opendbcopy.plugin.DbTable
+     * @param dbProductName  DOCUMENT ME!
      * @param schema_pattern DOCUMENT ME!
      * @param catalogPattern DOCUMENT ME!
-     *
-     * @throws SQLException DOCUMENT ME!
+     * @throws SQLException             DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     private static void readTableColumns(DatabaseMetaData meta,
-                                         Element          table,
-                                         String           dbProductName,
-                                         String           schema_pattern,
-                                         String           catalogPattern) throws SQLException {
+                                         Element table,
+                                         String dbProductName,
+                                         String schema_pattern,
+                                         String catalogPattern) throws SQLException {
         if ((meta == null) || (table == null) || (dbProductName == null) || (schema_pattern == null) || (catalogPattern == null)) {
             throw new IllegalArgumentException("Missing arguments values: meta=" + meta + " table=" + table + " dbProductName=" + dbProductName + " schema_pattern=" + schema_pattern + " catalogPattern=" + catalogPattern);
         }
@@ -452,20 +441,19 @@ public abstract class DatabaseModelReader {
     /**
      * DOCUMENT ME!
      *
-     * @param meta DOCUMENT ME!
-     * @param table DOCUMENT ME!
-     * @param dbProductName DOCUMENT ME!
+     * @param meta           DOCUMENT ME!
+     * @param table          DOCUMENT ME!
+     * @param dbProductName  DOCUMENT ME!
      * @param schema_pattern DOCUMENT ME!
      * @param catalogPattern DOCUMENT ME!
-     *
      * @throws UnsupportedJDBCActionException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws IllegalArgumentException       DOCUMENT ME!
      */
     private static void readTablePrimaryKeys(DatabaseMetaData meta,
-                                             Element          table,
-                                             String           dbProductName,
-                                             String           schema_pattern,
-                                             String           catalogPattern) throws UnsupportedJDBCActionException {
+                                             Element table,
+                                             String dbProductName,
+                                             String schema_pattern,
+                                             String catalogPattern) throws UnsupportedJDBCActionException {
         if ((meta == null) || (table == null) || (dbProductName == null) || (catalogPattern == null)) {
             throw new IllegalArgumentException("Missing arguments values: meta=" + meta + " table=" + table + " dbProductName=" + dbProductName + " schema_pattern=" + schema_pattern + " catalogPattern=" + catalogPattern);
         }
@@ -493,20 +481,19 @@ public abstract class DatabaseModelReader {
     /**
      * DOCUMENT ME!
      *
-     * @param meta DOCUMENT ME!
-     * @param table DOCUMENT ME!
-     * @param dbProductName DOCUMENT ME!
+     * @param meta           DOCUMENT ME!
+     * @param table          DOCUMENT ME!
+     * @param dbProductName  DOCUMENT ME!
      * @param schema_pattern DOCUMENT ME!
      * @param catalogPattern DOCUMENT ME!
-     *
      * @throws UnsupportedJDBCActionException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws IllegalArgumentException       DOCUMENT ME!
      */
     private static void readTableForeignKeys(DatabaseMetaData meta,
-                                             Element          table,
-                                             String           dbProductName,
-                                             String           schema_pattern,
-                                             String           catalogPattern) throws UnsupportedJDBCActionException {
+                                             Element table,
+                                             String dbProductName,
+                                             String schema_pattern,
+                                             String catalogPattern) throws UnsupportedJDBCActionException {
         if ((meta == null) || (table == null) || (dbProductName == null) || (catalogPattern == null)) {
             throw new IllegalArgumentException("Missing arguments values: meta=" + meta + " table=" + table + " dbProductName=" + dbProductName + " schema_pattern=" + schema_pattern + " catalogPattern=" + catalogPattern);
         }
@@ -547,20 +534,19 @@ public abstract class DatabaseModelReader {
     /**
      * DOCUMENT ME!
      *
-     * @param meta DOCUMENT ME!
-     * @param table DOCUMENT ME!
-     * @param dbProductName DOCUMENT ME!
+     * @param meta           DOCUMENT ME!
+     * @param table          DOCUMENT ME!
+     * @param dbProductName  DOCUMENT ME!
      * @param schema_pattern DOCUMENT ME!
      * @param catalogPattern DOCUMENT ME!
-     *
      * @throws UnsupportedJDBCActionException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws IllegalArgumentException       DOCUMENT ME!
      */
     private static void readIndexInfo(DatabaseMetaData meta,
-                                      Element          table,
-                                      String           dbProductName,
-                                      String           schema_pattern,
-                                      String           catalogPattern) throws UnsupportedJDBCActionException {
+                                      Element table,
+                                      String dbProductName,
+                                      String schema_pattern,
+                                      String catalogPattern) throws UnsupportedJDBCActionException {
         if ((meta == null) || (table == null) || (dbProductName == null) || (catalogPattern == null)) {
             throw new IllegalArgumentException("Missing arguments values: meta=" + meta + " table=" + table + " dbProductName=" + dbProductName + " schema_pattern=" + schema_pattern + " catalogPattern=" + catalogPattern);
         }
@@ -577,11 +563,11 @@ public abstract class DatabaseModelReader {
 
         /*
          * Parameters:
-        * catalog - a catalog name; must match the catalog name as it is stored in this database; "" retrieves those without a catalog; null means that the catalog name should not be used to narrow the search
-        * schema - a schema name; must match the schema name as it is stored in this database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
-        * table - a table name; must match the table name as it is stored in this database
-        * unique - when true, return only indices for unique values; when false, return indices regardless of whether unique or not
-        * approximate - when true, result is allowed to reflect approximate or out of data values; when false, results are requested to be accurate
+         * catalog - a catalog name; must match the catalog name as it is stored in this database; "" retrieves those without a catalog; null means that the catalog name should not be used to narrow the search
+         * schema - a schema name; must match the schema name as it is stored in this database; "" retrieves those without a schema; null means that the schema name should not be used to narrow the search
+         * table - a table name; must match the table name as it is stored in this database
+         * unique - when true, return only indices for unique values; when false, return indices regardless of whether unique or not
+         * approximate - when true, result is allowed to reflect approximate or out of data values; when false, results are requested to be accurate
          */
         try {
             // only read and add indexes which are not of type statistics, which can be identified when INDEX_NAME is not null
@@ -614,14 +600,13 @@ public abstract class DatabaseModelReader {
     /**
      * DOCUMENT ME!
      *
-     * @param meta DOCUMENT ME!
+     * @param meta            DOCUMENT ME!
      * @param typeInfoElement DOCUMENT ME!
-     *
      * @throws UnsupportedJDBCActionException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws IllegalArgumentException       DOCUMENT ME!
      */
     private static void readTypeInfo(DatabaseMetaData meta,
-                                     Element          typeInfoElement) throws UnsupportedJDBCActionException {
+                                     Element typeInfoElement) throws UnsupportedJDBCActionException {
         if ((meta == null) || (typeInfoElement == null)) {
             throw new IllegalArgumentException("Missing arguments values: meta=" + meta + " typeInfoElement=" + typeInfoElement);
         }
@@ -668,14 +653,13 @@ public abstract class DatabaseModelReader {
     /**
      * DOCUMENT ME!
      *
-     * @param table DOCUMENT ME!
-     * @param primaryKey DOCUMENT ME!
+     * @param table                DOCUMENT ME!
+     * @param primaryKey           DOCUMENT ME!
      * @param primaryKeysResultSet DOCUMENT ME!
-     *
      * @throws SQLException DOCUMENT ME!
      */
-    private static void setPkAttributes(Element   table,
-                                        Element   primaryKey,
+    private static void setPkAttributes(Element table,
+                                        Element primaryKey,
                                         ResultSet primaryKeysResultSet) throws SQLException {
         primaryKey.setAttribute(XMLTags.TABLE_CAT, transformNull(primaryKeysResultSet.getString(XMLTags.TABLE_CAT)));
         primaryKey.setAttribute(XMLTags.TABLE_SCHEM, transformNull(primaryKeysResultSet.getString(XMLTags.TABLE_SCHEM)));
@@ -690,14 +674,13 @@ public abstract class DatabaseModelReader {
     /**
      * DOCUMENT ME!
      *
-     * @param table DOCUMENT ME!
-     * @param foreignKey DOCUMENT ME!
+     * @param table                DOCUMENT ME!
+     * @param foreignKey           DOCUMENT ME!
      * @param foreignKeysResultSet DOCUMENT ME!
-     *
      * @throws SQLException DOCUMENT ME!
      */
-    private static void setFkAttributes(Element   table,
-                                        Element   foreignKey,
+    private static void setFkAttributes(Element table,
+                                        Element foreignKey,
                                         ResultSet foreignKeysResultSet) throws SQLException {
         foreignKey.setAttribute(XMLTags.PKTABLE_CAT, transformNull(foreignKeysResultSet.getString(XMLTags.PKTABLE_CAT)));
         foreignKey.setAttribute(XMLTags.PKTABLE_SCHEM, transformNull(foreignKeysResultSet.getString(XMLTags.PKTABLE_SCHEM)));
@@ -720,14 +703,13 @@ public abstract class DatabaseModelReader {
     /**
      * // only read and add indexes which are not of type statistics, which can be identified when INDEX_NAME is not null
      *
-     * @param table DOCUMENT ME!
-     * @param index DOCUMENT ME!
+     * @param table          DOCUMENT ME!
+     * @param index          DOCUMENT ME!
      * @param indexResultSet DOCUMENT ME!
-     *
      * @throws SQLException DOCUMENT ME!
      */
-    private static void setIndexAttributes(Element   table,
-                                           Element   index,
+    private static void setIndexAttributes(Element table,
+                                           Element index,
                                            ResultSet indexResultSet) throws SQLException {
         String indexName = indexResultSet.getString(XMLTags.INDEX_NAME);
 
@@ -794,14 +776,13 @@ public abstract class DatabaseModelReader {
      * DOCUMENT ME!
      *
      * @param itCatalogs DOCUMENT ME!
-     * @param url DOCUMENT ME!
-     *
+     * @param url        DOCUMENT ME!
      * @return DOCUMENT ME!
      */
     private static String findCatalog(Iterator itCatalogs,
-                                      String   url) {
+                                      String url) {
         StringTokenizer st = new StringTokenizer(url, "/");
-        String          lastElement = "";
+        String lastElement = "";
 
         // get last element
         while (st.hasMoreElements()) {
@@ -823,12 +804,11 @@ public abstract class DatabaseModelReader {
      * DOCUMENT ME!
      *
      * @param itSchemas DOCUMENT ME!
-     * @param userName DOCUMENT ME!
-     *
+     * @param userName  DOCUMENT ME!
      * @return DOCUMENT ME!
      */
     private static String findSchema(Iterator itSchemas,
-                                     String   userName) {
+                                     String userName) {
         while (itSchemas.hasNext()) {
             Element schemaElement = (Element) itSchemas.next();
 
@@ -844,7 +824,6 @@ public abstract class DatabaseModelReader {
      * DOCUMENT ME!
      *
      * @param in DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     private static String transformNull(String in) {

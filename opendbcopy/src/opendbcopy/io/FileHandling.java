@@ -22,12 +22,7 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.io;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
+import java.io.*;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -42,17 +37,16 @@ public final class FileHandling {
     /**
      * code borrowed from http://www.ragnon.com/javadetails/java-0064.html
      *
-     * @param in DOCUMENT ME!
+     * @param in  DOCUMENT ME!
      * @param out DOCUMENT ME!
-     *
      * @throws IOException DOCUMENT ME!
      */
     public static void copyFile(File in,
                                 File out) throws IOException {
-        FileInputStream  fis = new FileInputStream(in);
+        FileInputStream fis = new FileInputStream(in);
         FileOutputStream fos = new FileOutputStream(out);
-        byte[]           buf = new byte[1024];
-        int              i = 0;
+        byte[] buf = new byte[1024];
+        int i = 0;
 
         while ((i = fis.read(buf)) != -1) {
             fos.write(buf, 0, i);
@@ -66,10 +60,8 @@ public final class FileHandling {
      * DOCUMENT ME!
      *
      * @param pathFilename may be relative or absolute
-     *
      * @return valid file or directory
-     *
-     * @throws FileNotFoundException DOCUMENT ME!
+     * @throws FileNotFoundException    DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public static File getFile(String pathFilename) throws FileNotFoundException {
@@ -90,14 +82,12 @@ public final class FileHandling {
      * DOCUMENT ME!
      *
      * @param directory DOCUMENT ME!
-     * @param filename just the filename with file type extension
-     *
+     * @param filename  just the filename with file type extension
      * @return DOCUMENT ME!
-     *
-     * @throws FileNotFoundException DOCUMENT ME!
+     * @throws FileNotFoundException    DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
-    public static File getFileInDirectory(File   directory,
+    public static File getFileInDirectory(File directory,
                                           String filename) throws FileNotFoundException {
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException("File directory must be a directory, which it isn't");
@@ -121,16 +111,14 @@ public final class FileHandling {
     /**
      * DOCUMENT ME!
      *
-     * @param directory DOCUMENT ME!
-     * @param fileType DOCUMENT ME!
+     * @param directory       DOCUMENT ME!
+     * @param fileType        DOCUMENT ME!
      * @param excludeFilename DOCUMENT ME!
-     *
      * @return returns array of valid files, if such exist, else return an empty array
-     *
-     * @throws FileNotFoundException DOCUMENT ME!
+     * @throws FileNotFoundException    DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
-    public static File[] getFilesInDirectory(File   directory,
+    public static File[] getFilesInDirectory(File directory,
                                              String fileType,
                                              String excludeFilename) throws FileNotFoundException {
         Vector filesVector = new Vector();
@@ -167,9 +155,7 @@ public final class FileHandling {
      * DOCUMENT ME!
      *
      * @param filename can be a simple file name or complete path with filename.
-     *
      * @return last token separated by a dot "."
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public static String getFileEnding(String filename) {
@@ -177,7 +163,7 @@ public final class FileHandling {
             throw new IllegalArgumentException("Missing filename");
         }
 
-        String          fileEnding = "";
+        String fileEnding = "";
         StringTokenizer st = new StringTokenizer(filename, ".");
 
         while (st.hasMoreElements()) {

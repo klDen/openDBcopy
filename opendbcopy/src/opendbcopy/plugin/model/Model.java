@@ -23,20 +23,15 @@
 package opendbcopy.plugin.model;
 
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.controller.MainController;
-
 import opendbcopy.io.ExportToXML;
-
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.UnsupportedAttributeValueException;
-
-import org.jdom.Document;
-import org.jdom.Element;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 import java.io.IOException;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Observable;
@@ -50,40 +45,39 @@ import java.util.Observer;
  * @version $Revision$
  */
 public class Model extends Observable {
+    protected HashMap registeredObservers;
+    protected Element root;
+    protected Element conf;
+    protected Element threads;
+    protected Element input;
+    protected Element output;
     private MainController controller;
-    protected HashMap      registeredObservers;
-    protected Element      root;
-    protected Element      conf;
-    protected Element      threads;
-    protected Element      input;
-    protected Element      output;
-    private String         title;
-    private String         identifier;
-    private String         threadClassName;
-    private String         modelClassName;
-    private String         pluginStatus;
-    private int            processIndex;
-    private int            lengthProgressTable = 0;
-    private int            lengthProgressRecord = 0;
-    private int            currentProgressTable = 0;
-    private int            currentProgressRecord = 0;
-    private String         progressMessage;
-    private HashMap        threadsMap;
+    private String title;
+    private String identifier;
+    private String threadClassName;
+    private String modelClassName;
+    private String pluginStatus;
+    private int processIndex;
+    private int lengthProgressTable = 0;
+    private int lengthProgressRecord = 0;
+    private int currentProgressTable = 0;
+    private int currentProgressRecord = 0;
+    private String progressMessage;
+    private HashMap threadsMap;
 
     /**
      * Creates a new PluginMetadata object.
      *
      * @param controller DOCUMENT ME!
-     * @param root DOCUMENT ME!
-     *
+     * @param root       DOCUMENT ME!
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
      */
     public Model(MainController controller,
-                 Element        root) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException {
-        this.controller     = controller;
-        this.root           = root;
+                 Element root) throws MissingAttributeException, MissingElementException {
+        this.controller = controller;
+        this.root = root;
 
         processIndex = -1; // to denote that processIndex is not yet set
 
@@ -94,7 +88,6 @@ public class Model extends Observable {
      * Override this method in subclass if operations shall be executed on model, passed in by Controller -> JobManager
      *
      * @param operation DOCUMENT ME!
-     *
      * @throws Exception DOCUMENT ME!
      */
     public void execute(Element operation) throws Exception {
@@ -104,12 +97,11 @@ public class Model extends Observable {
      * DOCUMENT ME!
      *
      * @param plugin DOCUMENT ME!
-     *
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
      */
-    private void loadPlugin(Element plugin) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException {
+    private void loadPlugin(Element plugin) throws MissingAttributeException, MissingElementException {
         if (plugin == null) {
             throw new MissingElementException(new Element("plugin"), "plugin");
         }
@@ -199,7 +191,6 @@ public class Model extends Observable {
      * DOCUMENT ME!
      *
      * @param observer DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final void registerObserver(Observer observer) {
@@ -221,7 +212,6 @@ public class Model extends Observable {
      * DOCUMENT ME!
      *
      * @param pathFilename DOCUMENT ME!
-     *
      * @throws IOException DOCUMENT ME!
      */
     public final void saveModel(String pathFilename) throws IOException {
@@ -255,17 +245,15 @@ public class Model extends Observable {
      * DOCUMENT ME!
      *
      * @return DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
      */
     public String getWorkingMode() throws MissingAttributeException {
         return getAttributeValue(getElement(root, "root"), XMLTags.GUI);
     }
 
+
     /**
-     * DOCUMENT ME!
-     *
-     * @param pluginGui DOCUMENT ME!
+     * @param workingMode
      */
     public void setWorkingMode(String workingMode) {
         getElement(root, "root").setAttribute(XMLTags.GUI, workingMode);
@@ -275,7 +263,6 @@ public class Model extends Observable {
      * DOCUMENT ME!
      *
      * @return Returns the className.
-     *
      * @throws MissingAttributeException DOCUMENT ME!
      */
     public String getThreadClassName() throws MissingAttributeException {
@@ -283,10 +270,23 @@ public class Model extends Observable {
     }
 
     /**
+     * Can be set at runtime
+     *
+     * @param threadClassName DOCUMENT ME!
+     * @throws IllegalArgumentException DOCUMENT ME!
+     */
+    public final void setThreadClassName(String threadClassName) {
+        if (threadClassName == null) {
+            throw new IllegalArgumentException("Missing threadClassName");
+        }
+
+        root.setAttribute(XMLTags.THREAD_CLASS, threadClassName);
+    }
+
+    /**
      * DOCUMENT ME!
      *
      * @return DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
      */
     public String getCurrentThreadDescription() throws MissingAttributeException {
@@ -313,25 +313,9 @@ public class Model extends Observable {
     }
 
     /**
-     * Can be set at runtime
-     *
-     * @param threadClassName DOCUMENT ME!
-     *
-     * @throws IllegalArgumentException DOCUMENT ME!
-     */
-    public final void setThreadClassName(String threadClassName) {
-        if (threadClassName == null) {
-            throw new IllegalArgumentException("Missing threadClassName");
-        }
-
-        root.setAttribute(XMLTags.THREAD_CLASS, threadClassName);
-    }
-
-    /**
      * DOCUMENT ME!
      *
      * @return DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
      */
     public String getModelClassName() throws MissingAttributeException {
@@ -648,9 +632,9 @@ public class Model extends Observable {
         }
 
         if (output == null) {
-        	output = new Element(XMLTags.OUTPUT);
+            output = new Element(XMLTags.OUTPUT);
         }
-        
+
         output.addContent(element);
     }
 
@@ -676,17 +660,15 @@ public class Model extends Observable {
     /**
      * get an element
      *
-     * @param iterator to parse
-     * @param elementName String
+     * @param iterator      to parse
+     * @param elementName   String
      * @param attributeName String
-     *
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     protected Element getElement(Iterator iterator,
-                                 String   elementName,
-                                 String   attributeName) {
+                                 String elementName,
+                                 String attributeName) {
         if ((iterator == null) || (elementName == null) || (attributeName == null)) {
             throw new IllegalArgumentException("Missing arguments to get Element (given: iterator=" + iterator + " elementName=" + elementName + " attributeName=" + attributeName);
         }
@@ -707,15 +689,13 @@ public class Model extends Observable {
     /**
      * DOCUMENT ME!
      *
-     * @param element DOCUMENT ME!
+     * @param element     DOCUMENT ME!
      * @param elementName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     protected Element getElement(Element element,
-                                 String  elementName) {
+                                 String elementName) {
         if ((element == null) || (elementName == null)) {
             throw new IllegalArgumentException("Missing arguments values: element=" + element + " elementName=" + elementName);
         }
@@ -726,16 +706,14 @@ public class Model extends Observable {
     /**
      * DOCUMENT ME!
      *
-     * @param parent DOCUMENT ME!
+     * @param parent           DOCUMENT ME!
      * @param childElementName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     protected Element getChildElement(Element parent,
-                                      String  childElementName) throws MissingElementException {
+                                      String childElementName) throws MissingElementException {
         if ((parent == null) || (childElementName == null)) {
             throw new IllegalArgumentException("Missing arguments values: parent=" + parent + " childElementName=" + childElementName);
         }
@@ -752,16 +730,14 @@ public class Model extends Observable {
     /**
      * DOCUMENT ME!
      *
-     * @param element DOCUMENT ME!
+     * @param element       DOCUMENT ME!
      * @param attributeName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
      */
     protected String getAttributeValue(Element element,
-                                       String  attributeName) throws MissingAttributeException {
+                                       String attributeName) throws MissingAttributeException {
         if ((element == null) || (attributeName == null)) {
             throw new IllegalArgumentException("Missing element or attributeName values: element=" + element + " attributeName=" + attributeName);
         }

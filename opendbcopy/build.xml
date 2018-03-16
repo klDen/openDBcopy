@@ -6,187 +6,188 @@
 
 <project name="opendbcopy" default="deployjar2plugins" basedir=".">
 
-	<property file="build.properties"/>
+    <property file="build.properties"/>
 
-   	<property name="basedir" value="."/>
+    <property name="basedir" value="."/>
 
-   	<property name="hbm.dir" value="${basedir}/hbm"/>
+    <property name="hbm.dir" value="${basedir}/hbm"/>
 
-   	<!-- ============================================================= -->
-   	<!-- Classpath with libraries needed to compile this application   -->
-   	<!-- ============================================================= -->
-   	<path id="build.classpath">
-      	<fileset dir="${build.dir}">
-         	<include name="**/*.zip"/>
-         	<include name="**/*.jar"/>
-         	<include name="**/*.properties"/>
-      	</fileset>
-   	</path>
+    <!-- ============================================================= -->
+    <!-- Classpath with libraries needed to compile this application   -->
+    <!-- ============================================================= -->
+    <path id="build.classpath">
+        <fileset dir="${build.dir}">
+            <include name="**/*.zip"/>
+            <include name="**/*.jar"/>
+            <include name="**/*.properties"/>
+        </fileset>
+    </path>
 
-   	<path id="lib.classpath">
-      	<fileset dir="${lib.dir}">
-         	<include name="**/*.zip"/>
-         	<include name="**/*.jar"/>
-         	<include name="**/*.properties"/>
-      	</fileset>
-   	</path>
+    <path id="lib.classpath">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.zip"/>
+            <include name="**/*.jar"/>
+            <include name="**/*.properties"/>
+        </fileset>
+    </path>
 
-   	<!-- ============================================================= -->
-   	<!-- Prepares the project                                          -->
-   	<!-- ============================================================= -->
-   	<target name="prepare">
-      	<mkdir dir="${build.dir}"/>
-      	<mkdir dir="${lib.dir}"/>
-      	<mkdir dir="${dist.dir}"/>
-   	</target>
+    <!-- ============================================================= -->
+    <!-- Prepares the project                                          -->
+    <!-- ============================================================= -->
+    <target name="prepare">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${lib.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+    </target>
 
-   	<!-- ============================================================= -->
-   	<!-- Compiles the source code                                      -->
-   	<!-- ============================================================= -->
-   	<target name="compile" depends="prepare">
-   		<!-- copy resource dir into build dir -->
-	   	<copy todir="${build.dir}/resource">
-    		<fileset dir="${resource.dir}"/>
-		</copy>
-   	
-    	<javac srcdir="${sources.dir}"
-         	destdir="${build.dir}"
-         	debug="on"
-         	optimize="on">
-         	<classpath refid="build.classpath"/>
-         	<classpath refid="lib.classpath"/>
-      	</javac>
-   	</target>
+    <!-- ============================================================= -->
+    <!-- Compiles the source code                                      -->
+    <!-- ============================================================= -->
+    <target name="compile" depends="prepare">
+        <!-- copy resource dir into build dir -->
+        <copy todir="${build.dir}/resource">
+            <fileset dir="${resource.dir}"/>
+        </copy>
 
-   	<!-- ============================================================= -->
-   	<!-- Clean up all files that are generated.                        -->
-   	<!-- ============================================================= -->
-   	<target name="clean">
-      	<delete quiet="true" dir="${build.dir}"/>
-   	</target>
+        <javac srcdir="${sources.dir}"
+               destdir="${build.dir}"
+               debug="on"
+               optimize="on">
+            <classpath refid="build.classpath"/>
+            <classpath refid="lib.classpath"/>
+        </javac>
+    </target>
 
-   	<!-- ============================================================= -->
-   	<!-- Clean and then compile the project                            -->
-   	<!-- ============================================================= -->
-   	<target name="rebuild">
-      	<antcall target="clean"/>
-      	<antcall target="compile"/>
-   	</target>
+    <!-- ============================================================= -->
+    <!-- Clean up all files that are generated.                        -->
+    <!-- ============================================================= -->
+    <target name="clean">
+        <delete quiet="true" dir="${build.dir}"/>
+    </target>
 
-   	<!-- ============================================================= -->
-   	<!-- Create the jar file                                           -->
-   	<!-- ============================================================= -->
-   	<target name="jar" depends="rebuild">
-      	<jar jarfile="${lib.dir}/${application.jar}">
-         	<fileset dir="${build.dir}"/>
-      	</jar>
-   	</target>
+    <!-- ============================================================= -->
+    <!-- Clean and then compile the project                            -->
+    <!-- ============================================================= -->
+    <target name="rebuild">
+        <antcall target="clean"/>
+        <antcall target="compile"/>
+    </target>
 
-   	<!-- ============================================================= -->
-   	<!-- Create the zip file                                           -->
-   	<!-- ============================================================= -->
-   	<target name="zip">
-      	<zip zipfile="${application.zip}" basedir="."/>
-   	</target>
-   
-	<target name="deployjar2plugins" depends="jar">
-   		<copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.copy/lib"/>
-   		<copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.delete/lib"/>
-   		<copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.dump/lib"/>
-   		<copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.schemageneration/lib"/>
-   		<copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.script/lib"/>
-   		<copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.statistics/lib"/>
-   		<copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.zip/lib"/>
-   		<copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.jsch/lib"/>
-   	</target>
-   
-	<!-- ============================================================= -->
-   	<!-- Execute opendbcopy                                      	    -->
-   	<!-- ============================================================= -->
-   	<target name="run">
-      	<java classname="opendbcopy.controller.MainController" fork="true">
-         	<sysproperty key="ant_opts" value="mx512m"/>
-         	<classpath>
-         		<path refid="build.classpath" />
-         		<path refid="lib.classpath" />
-            	<pathelement location="./"/>
-         	</classpath>
-      	</java>
-   	</target>
+    <!-- ============================================================= -->
+    <!-- Create the jar file                                           -->
+    <!-- ============================================================= -->
+    <target name="jar" depends="rebuild">
+        <jar jarfile="${lib.dir}/${application.jar}">
+            <fileset dir="${build.dir}"/>
+        </jar>
+    </target>
 
-   	<!-- ============================================================= -->
-   	<!-- Create IzPack installable jar                                 -->
-   	<!-- ============================================================= -->
-	<target name="installer" depends="jar">
-      	<!-- delete standard jars in plugin directories -->
-      	<delete>
-		    <fileset dir="plugins" includes="**/opendbcopy.jar, **/jdom.jar, **/log4j-1.2.8.jar, **/commons-lang-2.0.jar, **/xerces.jar, **/TableLayout.jar, **/ostermillerutils_1_03_00.jar"/>
-		</delete>
-   		
-   		<!-- opendbcopy.schemageneration requires additional libs and hbm directory removed -->
-		<copy file="${lib.dir}/jdom.jar" todir="plugins/opendbcopy.schemageneration/lib"/>
-   		<copy file="${lib.dir}/log4j-1.2.8.jar" todir="plugins/opendbcopy.schemageneration/lib"/>
-   		<copy file="${lib.dir}/commons-lang-2.0.jar" todir="plugins/opendbcopy.schemageneration/lib"/>
-   		<copy file="${lib.dir}/xerces.jar" todir="plugins/opendbcopy.schemageneration/lib"/>
-   		<delete>
-		    <fileset dir="plugins/opendbcopy.schemageneration" includes="**/hibernate.properties, **/*.hbm.xml"/>
-		</delete>   		
-		
-		<taskdef name="izpack" classpath="${basedir}/tools/IzPack/lib/compiler.jar"
-			classname="com.izforge.izpack.ant.IzPackTask"/>	
+    <!-- ============================================================= -->
+    <!-- Create the zip file                                           -->
+    <!-- ============================================================= -->
+    <target name="zip">
+        <zip zipfile="${application.zip}" basedir="."/>
+    </target>
 
-		<izpack input="${install.file}"
-			output="${dist.dir}/${installable.jar}"
-			installerType="${install.type}"
-			basedir="${basedir}"
-			izPackDir="${basedir}/tools/IzPack"/>		
-		<echo>1) Please ensure that maven site:generate has been executed before installer</echo>
-		<echo>2) App Version was changed in project.xml, install.xml, build.xml</echo>
-		<echo>3) CVS checked in for proper java headers</echo>
-	</target>
-	
-   	<!-- ============================================================= -->
-   	<!-- Creates the API documentation                                 -->
-   	<!-- ============================================================= -->
-   	<target name="javadoc" depends="compile">
-      	<mkdir dir="${javadoc.dir}"/>
-      	<javadoc packagenames="${packages}"
-         	sourcepath="${sources.dir}"
-         	destdir="${javadoc.dir}"
-         	author="true"
-         	version="true"
-         	windowtitle="${application.name}-${application.version} API"
-         	doctitle="${application.name}-${application.version}"
-         	bottom="${application.copyright}"
+    <target name="deployjar2plugins" depends="jar">
+        <copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.copy/lib"/>
+        <copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.delete/lib"/>
+        <copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.dump/lib"/>
+        <copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.schemageneration/lib"/>
+        <copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.script/lib"/>
+        <copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.statistics/lib"/>
+        <copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.zip/lib"/>
+        <copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.jsch/lib"/>
+    </target>
+
+    <!-- ============================================================= -->
+    <!-- Execute opendbcopy                                      	    -->
+    <!-- ============================================================= -->
+    <target name="run">
+        <java classname="opendbcopy.controller.MainController" fork="true">
+            <sysproperty key="ant_opts" value="mx512m"/>
+            <classpath>
+                <path refid="build.classpath"/>
+                <path refid="lib.classpath"/>
+                <pathelement location="./"/>
+            </classpath>
+        </java>
+    </target>
+
+    <!-- ============================================================= -->
+    <!-- Create IzPack installable jar                                 -->
+    <!-- ============================================================= -->
+    <target name="installer" depends="jar">
+        <!-- delete standard jars in plugin directories -->
+        <delete>
+            <fileset dir="plugins"
+                     includes="**/opendbcopy.jar, **/jdom.jar, **/log4j-1.2.8.jar, **/commons-lang-2.0.jar, **/xerces.jar, **/TableLayout.jar, **/ostermillerutils_1_03_00.jar"/>
+        </delete>
+
+        <!-- opendbcopy.schemageneration requires additional libs and hbm directory removed -->
+        <copy file="${lib.dir}/jdom.jar" todir="plugins/opendbcopy.schemageneration/lib"/>
+        <copy file="${lib.dir}/log4j-1.2.8.jar" todir="plugins/opendbcopy.schemageneration/lib"/>
+        <copy file="${lib.dir}/commons-lang-2.0.jar" todir="plugins/opendbcopy.schemageneration/lib"/>
+        <copy file="${lib.dir}/xerces.jar" todir="plugins/opendbcopy.schemageneration/lib"/>
+        <delete>
+            <fileset dir="plugins/opendbcopy.schemageneration" includes="**/hibernate.properties, **/*.hbm.xml"/>
+        </delete>
+
+        <taskdef name="izpack" classpath="${basedir}/tools/IzPack/lib/compiler.jar"
+                 classname="com.izforge.izpack.ant.IzPackTask"/>
+
+        <izpack input="${install.file}"
+                output="${dist.dir}/${installable.jar}"
+                installerType="${install.type}"
+                basedir="${basedir}"
+                izPackDir="${basedir}/tools/IzPack"/>
+        <echo>1) Please ensure that maven site:generate has been executed before installer</echo>
+        <echo>2) App Version was changed in project.xml, install.xml, build.xml</echo>
+        <echo>3) CVS checked in for proper java headers</echo>
+    </target>
+
+    <!-- ============================================================= -->
+    <!-- Creates the API documentation                                 -->
+    <!-- ============================================================= -->
+    <target name="javadoc" depends="compile">
+        <mkdir dir="${javadoc.dir}"/>
+        <javadoc packagenames="${packages}"
+                 sourcepath="${sources.dir}"
+                 destdir="${javadoc.dir}"
+                 author="true"
+                 version="true"
+                 windowtitle="${application.name}-${application.version} API"
+                 doctitle="${application.name}-${application.version}"
+                 bottom="${application.copyright}"
         />
-   </target>
-   
-   	<!-- ============================================================= -->
-   	<!-- Creates checkstyle report                                     -->
-   	<!-- ============================================================= -->
-   	<target name="checkstyle" description="Check code style for compliance with coding standards">
-	   	<!-- definition is here because not all users will have tools installed -->
-	   	<property name="checkstyle.dir" value="${basedir}/tools/checkstyle-3.1"/>
-	   	<patternset id="java.files.pattern" includes="**/*.java"/>
-	   	
-		<property name="checkstyle.data.dir" location="${build.dir}/docs/checkstyle"/>
-		<property name="checkstyle.data.file" location="${checkstyle.data.dir}/checkstyle.xml"/>
-		<property name="checkstyle.report.file" location="${checkstyle.data.dir}/checkstyle.html"/>
-		<property name="checkstyle.xsl.file" location="${checkstyle.dir}/contrib/checkstyle-noframes.xsl"/>
-        <mkdir dir="${checkstyle.data.dir}"/>
-		<taskdef resource="checkstyletask.properties" classpath="${checkstyle.dir}/${checkstyle.jar}"/>
-		<checkstyle
-			config="${checkstyle.dir}/${checkstyle.file}" 
-			failOnViolation="false"
-			failureProperty="checkstyle.failure">
-            <fileset dir="src">
-            	<patternset refid="java.files.pattern"/>
-			</fileset>
+    </target>
 
-			<!-- uncomment to print to console as well -->
-			<!--formatter type="plain"/-->
+    <!-- ============================================================= -->
+    <!-- Creates checkstyle report                                     -->
+    <!-- ============================================================= -->
+    <target name="checkstyle" description="Check code style for compliance with coding standards">
+        <!-- definition is here because not all users will have tools installed -->
+        <property name="checkstyle.dir" value="${basedir}/tools/checkstyle-3.1"/>
+        <patternset id="java.files.pattern" includes="**/*.java"/>
+
+        <property name="checkstyle.data.dir" location="${build.dir}/docs/checkstyle"/>
+        <property name="checkstyle.data.file" location="${checkstyle.data.dir}/checkstyle.xml"/>
+        <property name="checkstyle.report.file" location="${checkstyle.data.dir}/checkstyle.html"/>
+        <property name="checkstyle.xsl.file" location="${checkstyle.dir}/contrib/checkstyle-noframes.xsl"/>
+        <mkdir dir="${checkstyle.data.dir}"/>
+        <taskdef resource="checkstyletask.properties" classpath="${checkstyle.dir}/${checkstyle.jar}"/>
+        <checkstyle
+                config="${checkstyle.dir}/${checkstyle.file}"
+                failOnViolation="false"
+                failureProperty="checkstyle.failure">
+            <fileset dir="src">
+                <patternset refid="java.files.pattern"/>
+            </fileset>
+
+            <!-- uncomment to print to console as well -->
+            <!--formatter type="plain"/-->
             <formatter type="xml" toFile="${checkstyle.data.file}"/>
-		</checkstyle>
+        </checkstyle>
         <xslt in="${checkstyle.data.file}" out="${checkstyle.report.file}" style="${checkstyle.xsl.file}"/>
-	</target>
+    </target>
 </project>

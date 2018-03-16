@@ -39,22 +39,20 @@ public final class PropertiesToFile {
     /**
      * DOCUMENT ME!
      *
-     * @param p DOCUMENT ME!
+     * @param p        DOCUMENT ME!
      * @param fileName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws IOException DOCUMENT ME!
+     * @throws IOException              DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public static final String exportPropertiesToFile(Properties p,
-                                                      String     fileName) throws IOException {
+                                                      String fileName) throws IOException {
         if ((p == null) || (fileName == null) || (fileName.length() == 0)) {
             throw new IllegalArgumentException("missing Properties or fileName to export");
         }
 
-        
-        File             outputFile = new File(fileName);
+
+        File outputFile = new File(fileName);
         FileOutputStream myFileOutputStream = new FileOutputStream(outputFile);
         p.store(myFileOutputStream, null);
         myFileOutputStream.close();
@@ -66,10 +64,8 @@ public final class PropertiesToFile {
      * DOCUMENT ME!
      *
      * @param fileName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws IOException DOCUMENT ME!
+     * @throws IOException              DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public static final Properties importPropertiesFromFile(String fileName) throws IOException {
@@ -77,9 +73,9 @@ public final class PropertiesToFile {
             throw new IllegalArgumentException("missing fileName for properties file to import");
         }
 
-        Properties      p = new Properties();
+        Properties p = new Properties();
 
-        File            inputFile = new File(fileName);
+        File inputFile = new File(fileName);
         FileInputStream myFileInputStream = new FileInputStream(inputFile);
         p.load(myFileInputStream);
         myFileInputStream.close();

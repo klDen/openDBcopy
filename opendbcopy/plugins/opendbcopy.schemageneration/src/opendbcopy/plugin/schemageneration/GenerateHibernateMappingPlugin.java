@@ -23,17 +23,15 @@
 package opendbcopy.plugin.schemageneration;
 
 import opendbcopy.controller.MainController;
-
 import opendbcopy.plugin.DynamicPluginThread;
 import opendbcopy.plugin.PluginMetadata;
-
 import opendbcopy.plugin.exception.PluginException;
 
 
 /**
  * class description
  *
- * @author  Anthony Smith
+ * @author Anthony Smith
  * @version $Revision$
  */
 public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
@@ -41,12 +39,11 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
      * Creates a new GenerateHibernateMapping object.
      *
      * @param controller DOCUMENT ME!
-     * @param plugin DOCUMENT ME!
-     *
+     * @param plugin     DOCUMENT ME!
      * @throws PluginException DOCUMENT ME!
      */
     public GenerateHibernateMappingPlugin(MainController controller,
-                                    PluginMetadata plugin) throws PluginException {
+                                          PluginMetadata plugin) throws PluginException {
         super(controller, plugin);
     }
 }

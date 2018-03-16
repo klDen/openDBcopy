@@ -22,10 +22,9 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.plugin.model.exception;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-
-import org.jdom.Element;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.jdom2.Element;
 
 
 /**
@@ -36,18 +35,18 @@ import org.jdom.Element;
  */
 public class UnsuppertedElementException extends Exception {
     private Element element;
-    private String  elementName;
+    private String elementName;
 
     /**
      * Creates a new UnsuppertedElementException object.
      *
-     * @param element DOCUMENT ME!
+     * @param element     DOCUMENT ME!
      * @param elementName DOCUMENT ME!
      */
     public UnsuppertedElementException(Element element,
-                                       String  elementName) {
-        this.element         = element;
-        this.elementName     = elementName;
+                                       String elementName) {
+        this.element = element;
+        this.elementName = elementName;
     }
 
     /**

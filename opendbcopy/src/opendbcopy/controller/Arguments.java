@@ -23,9 +23,8 @@
 package opendbcopy.controller;
 
 import opendbcopy.io.ImportFromXML;
-
-import org.jdom.Document;
-import org.jdom.JDOMException;
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
 
 import java.io.IOException;
 
@@ -41,13 +40,11 @@ public final class Arguments {
      * Given Empty "String" arguments returns null if no parameters provided
      *
      * @param args DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws JDOMException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
+     * @throws IOException   DOCUMENT ME!
      */
-    public static final Document process(String[] args) throws JDOMException, IOException {
+    public static Document process(String[] args) throws JDOMException, IOException {
         if (args.length == 1) {
             return ImportFromXML.importFile(args[0]);
         } else {

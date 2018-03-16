@@ -24,19 +24,20 @@
 -->
 
 <plugin identifier="delete" model_class="opendbcopy.plugin.model.database.DatabaseModel">
-	<conf />
-	<threads>
-		<thread thread_class="opendbcopy.plugin.delete.DeleteTablesPlugin" description="title.plugin.opendbcopy.delete" />
-	</threads>
-	<input />
-	<output />
-	<source_db>
-      <driver />
-      <metadata />
-      <connection />
-      <catalog value="" />
-      <schema value="%" />
-      <table_pattern value="%" />
-      <model />
-   </source_db>
+    <conf/>
+    <threads>
+        <thread thread_class="opendbcopy.plugin.delete.DeleteTablesPlugin"
+                description="title.plugin.opendbcopy.delete"/>
+    </threads>
+    <input/>
+    <output/>
+    <source_db>
+        <driver/>
+        <metadata/>
+        <connection/>
+        <catalog value=""/>
+        <schema value="%"/>
+        <table_pattern value="%"/>
+        <model/>
+    </source_db>
 </plugin>

@@ -23,14 +23,11 @@
 package opendbcopy.connection;
 
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.connection.exception.CloseConnectionException;
 import opendbcopy.connection.exception.DriverNotFoundException;
 import opendbcopy.connection.exception.OpenConnectionException;
-
 import opendbcopy.plugin.model.exception.MissingAttributeException;
-
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -48,7 +45,6 @@ public final class DBConnection {
      * DOCUMENT ME!
      *
      * @param connection DOCUMENT ME!
-     *
      * @throws CloseConnectionException DOCUMENT ME!
      */
     public static final void closeConnection(Connection connection) throws CloseConnectionException {
@@ -73,13 +69,11 @@ public final class DBConnection {
      * DOCUMENT ME!
      *
      * @param connection DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws DriverNotFoundException DOCUMENT ME!
-     * @throws OpenConnectionException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws DriverNotFoundException   DOCUMENT ME!
+     * @throws OpenConnectionException   DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
      */
     public static final Connection getConnection(Element connection) throws MissingAttributeException, DriverNotFoundException, OpenConnectionException {
         if (connection == null) {
@@ -118,7 +112,7 @@ public final class DBConnection {
             conn = DriverManager.getConnection(connection.getAttributeValue(XMLTags.URL), connection.getAttributeValue(XMLTags.USERNAME), connection.getAttributeValue(XMLTags.PASSWORD));
         }
         // maybe that an SQLException is thrown but the connection is still valid!
-         catch (SQLException e1) {
+        catch (SQLException e1) {
             if (conn == null) {
                 throw new OpenConnectionException(e1);
             }
@@ -138,13 +132,11 @@ public final class DBConnection {
      * DOCUMENT ME!
      *
      * @param connection DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws DriverNotFoundException DOCUMENT ME!
-     * @throws OpenConnectionException DOCUMENT ME!
-     * @throws CloseConnectionException DOCUMENT ME!
+     * @throws DriverNotFoundException   DOCUMENT ME!
+     * @throws OpenConnectionException   DOCUMENT ME!
+     * @throws CloseConnectionException  DOCUMENT ME!
      */
     public static final boolean testConnection(Element connection) throws MissingAttributeException, DriverNotFoundException, OpenConnectionException, CloseConnectionException {
         Connection conn = getConnection(connection);

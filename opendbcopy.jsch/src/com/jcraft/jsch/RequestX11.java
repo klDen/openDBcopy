@@ -29,32 +29,36 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-class RequestX11 implements Request{
-  public void setCookie(String cookie){
-    ChannelX11.cookie=cookie.getBytes();
-  }
-  public void request(Session session, Channel channel) throws Exception{
-    Buffer buf=new Buffer();
-    Packet packet=new Packet(buf);
+class RequestX11 implements Request {
+    public void setCookie(String cookie) {
+        ChannelX11.cookie = cookie.getBytes();
+    }
 
-    // byte      SSH_MSG_CHANNEL_REQUEST(98)
-    // uint32 recipient channel
-    // string request type        // "x11-req"
-    // boolean want reply         // 0
-    // boolean   single connection
-    // string    x11 authentication protocol // "MIT-MAGIC-COOKIE-1".
-    // string    x11 authentication cookie
-    // uint32    x11 screen number
-    packet.reset();
-    buf.putByte((byte) Session.SSH_MSG_CHANNEL_REQUEST);
-    buf.putInt(channel.getRecipient());
-    buf.putString("x11-req".getBytes());
-    buf.putByte((byte)(waitForReply() ? 1 : 0));
-    buf.putByte((byte)0);
-    buf.putString("MIT-MAGIC-COOKIE-1".getBytes());
-    buf.putString(ChannelX11.getFakedCookie(session));
-    buf.putInt(0);
-    session.write(packet);
-  }
-  public boolean waitForReply(){ return false; }
+    public void request(Session session, Channel channel) throws Exception {
+        Buffer buf = new Buffer();
+        Packet packet = new Packet(buf);
+
+        // byte      SSH_MSG_CHANNEL_REQUEST(98)
+        // uint32 recipient channel
+        // string request type        // "x11-req"
+        // boolean want reply         // 0
+        // boolean   single connection
+        // string    x11 authentication protocol // "MIT-MAGIC-COOKIE-1".
+        // string    x11 authentication cookie
+        // uint32    x11 screen number
+        packet.reset();
+        buf.putByte((byte) Session.SSH_MSG_CHANNEL_REQUEST);
+        buf.putInt(channel.getRecipient());
+        buf.putString("x11-req".getBytes());
+        buf.putByte((byte) (waitForReply() ? 1 : 0));
+        buf.putByte((byte) 0);
+        buf.putString("MIT-MAGIC-COOKIE-1".getBytes());
+        buf.putString(ChannelX11.getFakedCookie(session));
+        buf.putInt(0);
+        session.write(packet);
+    }
+
+    public boolean waitForReply() {
+        return false;
+    }
 }

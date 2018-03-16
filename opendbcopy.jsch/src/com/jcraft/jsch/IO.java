@@ -29,52 +29,59 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-public class IO{
-  InputStream in;
-  OutputStream out;
-  OutputStream out_ext;
+public class IO {
+    InputStream in;
+    OutputStream out;
+    OutputStream out_ext;
 
-  void setOutputStream(OutputStream out){
-    this.out=out;
-  }
-  void setExtOutputStream(OutputStream out){
-    this.out_ext=out;
-  }
-  void setInputStream(InputStream in){
-    this.in=in;
-  }
-  public void put(Packet p) throws IOException, java.net.SocketException {
-    out.write(p.buffer.buffer, 0, p.buffer.index);
-    out.flush();
-  }
-  void put(byte[] array, int begin, int length) throws IOException {
-    out.write(array, begin, length);
-    out.flush();
-  }
-  void put_ext(byte[] array, int begin, int length) throws IOException {
-    out_ext.write(array, begin, length);
-    out_ext.flush();
-  }
-
-  int getByte() throws IOException {
-    return in.read()&0xff;
-  }
-
-  void getByte(byte[] array) throws IOException {
-    getByte(array, 0, array.length);
-  }
-
-  void getByte(byte[] array, int begin, int length) throws IOException {
-    do{
-      int completed = in.read(array, begin, length);
-      if(completed<=0){
-	throw new IOException("");
-      }
-      begin+=completed;
-      length-=completed;
+    void setOutputStream(OutputStream out) {
+        this.out = out;
     }
-    while (length>0);
-  }
+
+    void setExtOutputStream(OutputStream out) {
+        this.out_ext = out;
+    }
+
+    void setInputStream(InputStream in) {
+        this.in = in;
+    }
+
+    public void put(Packet p) throws IOException, java.net.SocketException {
+        out.write(p.buffer.buffer, 0, p.buffer.index);
+        out.flush();
+    }
+
+    void put(byte[] array, int begin, int length) throws IOException {
+        out.write(array, begin, length);
+        out.flush();
+    }
+
+    void put_ext(byte[] array, int begin, int length) throws IOException {
+        out_ext.write(array, begin, length);
+        out_ext.flush();
+    }
+
+    int getByte() throws IOException {
+        return in.read() & 0xff;
+    }
+
+    void getByte(byte[] array) throws IOException {
+        getByte(array, 0, array.length);
+    }
+
+    void getByte(byte[] array, int begin, int length) throws IOException {
+        do {
+            int completed = in.read(array, begin, length);
+            if (completed <= 0) {
+                throw new IOException("");
+            }
+            begin += completed;
+            length -= completed;
+        }
+        while (length > 0);
+    }
 }

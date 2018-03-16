@@ -22,13 +22,11 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.swing;
 
-import java.util.Vector;
-
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
+import java.util.Vector;
 
 
 /**
@@ -64,7 +62,7 @@ public class JTableX extends JTable {
      * @param tm DOCUMENT ME!
      * @param cm DOCUMENT ME!
      */
-    public JTableX(TableModel       tm,
+    public JTableX(TableModel tm,
                    TableColumnModel cm) {
         super(tm, cm);
         rm = null;
@@ -77,8 +75,8 @@ public class JTableX extends JTable {
      * @param cm DOCUMENT ME!
      * @param sm DOCUMENT ME!
      */
-    public JTableX(TableModel         tm,
-                   TableColumnModel   cm,
+    public JTableX(TableModel tm,
+                   TableColumnModel cm,
                    ListSelectionModel sm) {
         super(tm, cm, sm);
         rm = null;
@@ -99,7 +97,7 @@ public class JTableX extends JTable {
     /**
      * Creates a new JTableX object.
      *
-     * @param rowData DOCUMENT ME!
+     * @param rowData     DOCUMENT ME!
      * @param columnNames DOCUMENT ME!
      */
     public JTableX(final Vector rowData,
@@ -111,28 +109,19 @@ public class JTableX extends JTable {
     /**
      * Creates a new JTableX object.
      *
-     * @param rowData DOCUMENT ME!
+     * @param rowData  DOCUMENT ME!
      * @param colNames DOCUMENT ME!
      */
     public JTableX(final Object[][] rowData,
-                   final Object[]   colNames) {
+                   final Object[] colNames) {
         super(rowData, colNames);
         rm = null;
     }
 
     // new constructor
-    public JTableX(TableModel     tm,
+    public JTableX(TableModel tm,
                    RowEditorModel rm) {
         super(tm, null, null);
-        this.rm = rm;
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @param rm DOCUMENT ME!
-     */
-    public void setRowEditorModel(RowEditorModel rm) {
         this.rm = rm;
     }
 
@@ -148,9 +137,17 @@ public class JTableX extends JTable {
     /**
      * DOCUMENT ME!
      *
+     * @param rm DOCUMENT ME!
+     */
+    public void setRowEditorModel(RowEditorModel rm) {
+        this.rm = rm;
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
      * @param row DOCUMENT ME!
      * @param col DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public TableCellEditor getCellEditor(int row,

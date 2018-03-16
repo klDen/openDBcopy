@@ -22,8 +22,16 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.gui;
 
-import java.awt.BorderLayout;
-import java.awt.SystemColor;
+import opendbcopy.controller.MainController;
+import opendbcopy.controller.TaskLauncher;
+import opendbcopy.io.FileHandling;
+import opendbcopy.io.Reader;
+import opendbcopy.resource.ResourceManager;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -31,24 +39,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.Timer;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
-
-import opendbcopy.controller.MainController;
-import opendbcopy.controller.TaskLauncher;
-import opendbcopy.io.FileHandling;
-import opendbcopy.io.Reader;
-import opendbcopy.resource.ResourceManager;
 
 
 /**
@@ -59,49 +49,48 @@ import opendbcopy.resource.ResourceManager;
  */
 public class FrameConsole extends JFrame implements Observer {
     private final static int TIMER_SLOT = 100;
-    private FrameConsole     frameConsole;
-    private TaskLauncher     task;
-    private MainController   controller;
-    private ResourceManager  rm;
-    private Timer            timer;
-    private JPanel           panelMain;
-    private JPanel           panelInfo;
-    private JProgressBar     progressBar;
-    private JScrollPane      scrollPaneConsoleOut;
-    private JTextArea        textAreaConsoleOutLog;
-    private long             lastModifiedConsoleOut;
-    private long             lengthConsoleOut;
-    private File             consoleOut;
-    private String           pathFilenameLogo;
+    private FrameConsole frameConsole;
+    private TaskLauncher task;
+    private MainController controller;
+    private ResourceManager rm;
+    private Timer timer;
+    private JPanel panelMain;
+    private JPanel panelInfo;
+    private JProgressBar progressBar;
+    private JScrollPane scrollPaneConsoleOut;
+    private JTextArea textAreaConsoleOutLog;
+    private long lastModifiedConsoleOut;
+    private long lengthConsoleOut;
+    private File consoleOut;
+    private String pathFilenameLogo;
 
     /**
      * Creates a new FrameLaunchingProgress object.
      *
-     * @param task DOCUMENT ME!
-     * @param controller DOCUMENT ME!
-     * @param frameConsoleWidth DOCUMENT ME!
-     * @param frameConsoleHeight DOCUMENT ME!
+     * @param task                   DOCUMENT ME!
+     * @param controller             DOCUMENT ME!
+     * @param frameConsoleWidth      DOCUMENT ME!
+     * @param frameConsoleHeight     DOCUMENT ME!
      * @param pathFilenameConsoleOut DOCUMENT ME!
-     * @param pathFilenameLogo DOCUMENT ME!
-     *
+     * @param pathFilenameLogo       DOCUMENT ME!
      * @throws Exception DOCUMENT ME!
      */
-    public FrameConsole(TaskLauncher   task,
+    public FrameConsole(TaskLauncher task,
                         MainController controller,
-                        Integer        frameConsoleWidth,
-                        Integer        frameConsoleHeight,
-                        String         pathFilenameConsoleOut,
-                        String         pathFilenameLogo) throws Exception {
-        this.frameConsole         = this;
-        this.task                 = task;
-        this.controller           = controller;
-        this.rm                   = controller.getResourceManager();
-        this.pathFilenameLogo     = pathFilenameLogo;
+                        Integer frameConsoleWidth,
+                        Integer frameConsoleHeight,
+                        String pathFilenameConsoleOut,
+                        String pathFilenameLogo) throws Exception {
+        this.frameConsole = this;
+        this.task = task;
+        this.controller = controller;
+        this.rm = controller.getResourceManager();
+        this.pathFilenameLogo = pathFilenameLogo;
         this.setSize(frameConsoleWidth.intValue(), frameConsoleHeight.intValue());
 
-        consoleOut                 = FileHandling.getFile(pathFilenameConsoleOut);
-        lastModifiedConsoleOut     = 0;
-        lengthConsoleOut           = 0;
+        consoleOut = FileHandling.getFile(pathFilenameConsoleOut);
+        lastModifiedConsoleOut = 0;
+        lengthConsoleOut = 0;
         guiInit();
         task.registerObserver(this);
         updateProgressBar();
@@ -130,11 +119,11 @@ public class FrameConsole extends JFrame implements Observer {
     /**
      * DOCUMENT ME!
      *
-     * @param o DOCUMENT ME!
+     * @param o   DOCUMENT ME!
      * @param obj DOCUMENT ME!
      */
     public void update(Observable o,
-                       Object     obj) {
+                       Object obj) {
         updateProgressBar();
     }
 
@@ -233,8 +222,8 @@ public class FrameConsole extends JFrame implements Observer {
             // read log file and show in log pane
             try {
                 if ((lastModifiedConsoleOut < consoleOut.lastModified()) || (lengthConsoleOut < consoleOut.length())) {
-                    lastModifiedConsoleOut     = consoleOut.lastModified();
-                    lengthConsoleOut           = consoleOut.length();
+                    lastModifiedConsoleOut = consoleOut.lastModified();
+                    lengthConsoleOut = consoleOut.length();
                     textAreaConsoleOutLog.setText(Reader.read(consoleOut).toString());
                     textAreaConsoleOutLog.setBackground(SystemColor.WHITE);
                 }

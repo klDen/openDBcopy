@@ -34,17 +34,15 @@ public final class TypeInfoHelper {
     /**
      * DOCUMENT ME!
      *
-     * @param stringIn DOCUMENT ME!
-     * @param typeInfoOut DOCUMENT ME!
+     * @param stringIn                 DOCUMENT ME!
+     * @param typeInfoOut              DOCUMENT ME!
      * @param identifierQuoteStringOut DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
-    public static final String getFormattedString(String   stringIn,
+    public static final String getFormattedString(String stringIn,
                                                   TypeInfo typeInfoOut,
-                                                  String   identifierQuoteStringOut) {
+                                                  String identifierQuoteStringOut) {
         if ((stringIn == null) || (typeInfoOut == null) || (identifierQuoteStringOut == null)) {
             throw new IllegalArgumentException("Missing arguments values: stringIn=" + stringIn + " typeInfoOut=" + typeInfoOut + " identifierQuoteStringOut=" + identifierQuoteStringOut);
         }

@@ -29,76 +29,80 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-import java.net.*;
+public class ChannelExec extends ChannelSession {
+    boolean xforwading = false;
+    String command = "";
 
-public class ChannelExec extends ChannelSession{
-  boolean xforwading=false;
-  String command="";
-  /*
-  ChannelExec(){
-    super();
-    type="session".getBytes();
-    io=new IO();
-  }
-  */
-  public void setXForwarding(boolean foo){
-    xforwading=true;
-  }
-  public void start(){
-    try{
-      Request request;
-      if(xforwading){
-        request=new RequestX11();
-        request.request(session, this);
-      }
-      request=new RequestExec(command);
-      //((RequestExec)request).setCommand(command);
-      request.request(session, this);
+    /*
+    ChannelExec(){
+      super();
+      type="session".getBytes();
+      io=new IO();
     }
-    catch(Exception e){
+    */
+    public void setXForwarding(boolean foo) {
+        xforwading = true;
     }
-    //(new Thread(this)).start();
-    thread=new Thread(this);
-    ((Thread)thread).start();
-  }
-  public void setCommand(String foo){ command=foo;}
-  public void init(){
-    io.setInputStream(session.in);
-    io.setOutputStream(session.out);
-  }
-  public void run(){
+
+    public void start() {
+        try {
+            Request request;
+            if (xforwading) {
+                request = new RequestX11();
+                request.request(session, this);
+            }
+            request = new RequestExec(command);
+            //((RequestExec)request).setCommand(command);
+            request.request(session, this);
+        } catch (Exception e) {
+        }
+        //(new Thread(this)).start();
+        thread = new Thread(this);
+        ((Thread) thread).start();
+    }
+
+    public void setCommand(String foo) {
+        command = foo;
+    }
+
+    public void init() {
+        io.setInputStream(session.in);
+        io.setOutputStream(session.out);
+    }
+
+    public void run() {
 //System.out.println(this+":run >");
-    thread=this;
-    Buffer buf=new Buffer();
+        thread = this;
+        Buffer buf = new Buffer();
 //    Buffer buf=new Buffer(lmpsize);
-    Packet packet=new Packet(buf);
-    int i=0;
-    try{
-      while(thread!=null && io!=null && io.in!=null){
-        i=io.in.read(buf.buffer, 14, buf.buffer.length-14);
-	if(i==0)continue;
-	if(i==-1)break;
-	if(close)break;
-        packet.reset();
-        buf.putByte((byte)Session.SSH_MSG_CHANNEL_DATA);
-        buf.putInt(recipient);
-        buf.putInt(i);
-        buf.skip(i);
-	session.write(packet, this, i);
-      }
-    }
-    catch(Exception e){
-      //System.out.println("# ChannelExec.run");
-      //e.printStackTrace();
-    }
-    thread=null;
+        Packet packet = new Packet(buf);
+        int i = 0;
+        try {
+            while (thread != null && io != null && io.in != null) {
+                i = io.in.read(buf.buffer, 14, buf.buffer.length - 14);
+                if (i == 0) continue;
+                if (i == -1) break;
+                if (close) break;
+                packet.reset();
+                buf.putByte((byte) Session.SSH_MSG_CHANNEL_DATA);
+                buf.putInt(recipient);
+                buf.putInt(i);
+                buf.skip(i);
+                session.write(packet, this, i);
+            }
+        } catch (Exception e) {
+            //System.out.println("# ChannelExec.run");
+            //e.printStackTrace();
+        }
+        thread = null;
 //System.out.println(this+":run <");
-  }
+    }
 
-  public void setErrStream(java.io.OutputStream out){
-    setExtOutputStream(out);
-  }
-  public java.io.InputStream getErrStream() throws java.io.IOException {
-    return getExtInputStream();
-  }
+    public java.io.InputStream getErrStream() throws java.io.IOException {
+        return getExtInputStream();
+    }
+
+    public void setErrStream(java.io.OutputStream out) {
+        setExtOutputStream(out);
+    }
 }

@@ -22,12 +22,12 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.io;
 
+import opendbcopy.controller.MainController;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-
-import opendbcopy.controller.MainController;
 
 
 /**
@@ -41,13 +41,12 @@ public final class Writer {
      * DOCUMENT ME!
      *
      * @param stringBuffer DOCUMENT ME!
-     * @param fileName DOCUMENT ME!
-     *
-     * @throws IOException DOCUMENT ME!
+     * @param fileName     DOCUMENT ME!
+     * @throws IOException              DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public static final void write(StringBuffer stringBuffer,
-                                   String       fileName) throws IOException {
+                                   String fileName) throws IOException {
         if ((stringBuffer == null) || (fileName == null) || (fileName.length() == 0)) {
             throw new IllegalArgumentException("Missing arguments values: stringBuffer=" + stringBuffer + " fileName=" + fileName);
         }
@@ -63,13 +62,12 @@ public final class Writer {
      * DOCUMENT ME!
      *
      * @param stringBuffer DOCUMENT ME!
-     * @param file DOCUMENT ME!
-     *
-     * @throws IOException DOCUMENT ME!
+     * @param file         DOCUMENT ME!
+     * @throws IOException              DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public static final void write(StringBuffer stringBuffer,
-                                   File         file) throws IOException {
+                                   File file) throws IOException {
         if ((stringBuffer == null) || (file == null)) {
             throw new IllegalArgumentException("Missing arguments values: stringBuffer=" + stringBuffer + " file=" + file);
         }

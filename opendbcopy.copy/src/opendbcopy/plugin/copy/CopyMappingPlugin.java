@@ -24,37 +24,23 @@ package opendbcopy.plugin.copy;
 
 import opendbcopy.config.APM;
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.connection.DBConnection;
-
 import opendbcopy.connection.exception.CloseConnectionException;
-
 import opendbcopy.controller.MainController;
-
 import opendbcopy.filter.StringConverter;
-
 import opendbcopy.plugin.model.DynamicPluginThread;
 import opendbcopy.plugin.model.Model;
 import opendbcopy.plugin.model.database.DatabaseModel;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.PluginException;
-
 import opendbcopy.sql.Helper;
-
 import opendbcopy.util.InputOutputHelper;
-
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -69,41 +55,40 @@ import java.util.List;
  */
 public class CopyMappingPlugin extends DynamicPluginThread {
     private static final String FILE_TYPE = "csv";
-    private DatabaseModel       model; // this plugin's model
-    private Connection          connSource;
-    private Connection          connDestination;
-    private Statement           stmSource;
-    private PreparedStatement   pstmtDestination;
-    private ResultSet           rs;
-    private StringBuffer        recordBuffer; // to hold records contents
-    private StringBuffer        recordErrorBuffer; // in case of errors records are written to file
-    private String              stmSelect = "";
-    private String              stmInsert = "";
-    private String              sourceTableName = "";
-    private String              destinationTableName = "";
-    private File                outputPath = null;
-    private String              fileName = "";
-    private String              delimiter = ";";
-    private boolean             log_error = false;
-    private boolean             errorLogSetup = false;
-    private int                 counterRecords = 0;
-    private int                 counterTables = 0;
-    private List                processColumns;
-    private List                processTables;
-    boolean                     trimString = false;
-    boolean                     trimAndRemoveMultipleIntermediateWhitespaces = false;
-    boolean                     trimAndReturnNullWhenEmpty = false;
+    boolean trimString = false;
+    boolean trimAndRemoveMultipleIntermediateWhitespaces = false;
+    boolean trimAndReturnNullWhenEmpty = false;
+    private DatabaseModel model; // this plugin's model
+    private Connection connSource;
+    private Connection connDestination;
+    private Statement stmSource;
+    private PreparedStatement pstmtDestination;
+    private ResultSet rs;
+    private StringBuffer recordBuffer; // to hold records contents
+    private StringBuffer recordErrorBuffer; // in case of errors records are written to file
+    private String stmSelect = "";
+    private String stmInsert = "";
+    private String sourceTableName = "";
+    private String destinationTableName = "";
+    private File outputPath = null;
+    private String fileName = "";
+    private String delimiter = ";";
+    private boolean log_error = false;
+    private boolean errorLogSetup = false;
+    private int counterRecords = 0;
+    private int counterTables = 0;
+    private List processColumns;
+    private List processTables;
 
     /**
      * Creates a new CopyMappingPlugin object.
      *
      * @param controller DOCUMENT ME!
-     * @param baseModel DOCUMENT ME!
-     *
+     * @param baseModel  DOCUMENT ME!
      * @throws PluginException DOCUMENT ME!
      */
     public CopyMappingPlugin(MainController controller,
-                             Model          baseModel) throws PluginException {
+                             Model baseModel) throws PluginException {
         // Call the super constructor
         super(controller, baseModel);
 
@@ -141,8 +126,8 @@ public class CopyMappingPlugin extends DynamicPluginThread {
             log_error = Boolean.valueOf(conf.getChild(XMLTags.LOG_ERROR).getAttributeValue(XMLTags.VALUE)).booleanValue();
 
             if (log_error) {
-                recordBuffer          = new StringBuffer();
-                recordErrorBuffer     = new StringBuffer();
+                recordBuffer = new StringBuffer();
+                recordErrorBuffer = new StringBuffer();
             }
 
             // check string filters
@@ -159,8 +144,8 @@ public class CopyMappingPlugin extends DynamicPluginThread {
             }
 
             // get connections
-            connSource          = DBConnection.getConnection(model.getSourceConnection());
-            connDestination     = DBConnection.getConnection(model.getDestinationConnection());
+            connSource = DBConnection.getConnection(model.getSourceConnection());
+            connDestination = DBConnection.getConnection(model.getDestinationConnection());
 
             // extract the tables to copy
             processTables = model.getDestinationTablesToProcessOrdered();
@@ -183,15 +168,15 @@ public class CopyMappingPlugin extends DynamicPluginThread {
         try {
             stmSource = connSource.createStatement();
 
-            Iterator  itProcessTables = processTables.iterator();
+            Iterator itProcessTables = processTables.iterator();
 
             ArrayList generatedFiles = new ArrayList();
 
             while (!isInterrupted() && itProcessTables.hasNext()) {
-                tableProcess     = (Element) itProcessTables.next();
+                tableProcess = (Element) itProcessTables.next();
 
-                sourceTableName          = tableProcess.getAttributeValue(XMLTags.SOURCE_DB);
-                destinationTableName     = tableProcess.getAttributeValue(XMLTags.DESTINATION_DB);
+                sourceTableName = tableProcess.getAttributeValue(XMLTags.SOURCE_DB);
+                destinationTableName = tableProcess.getAttributeValue(XMLTags.DESTINATION_DB);
 
                 // file name for error logs
                 if (log_error) {
@@ -209,10 +194,10 @@ public class CopyMappingPlugin extends DynamicPluginThread {
                 model.setLengthProgressRecord(Helper.getNumberOfRecordsFiltered(stmSource, model, XMLTags.SOURCE_DB, sourceTableName));
 
                 // get Select Statement for source model
-                stmSelect     = Helper.getSelectStatement(model, sourceTableName, XMLTags.SOURCE_DB, processColumns);
+                stmSelect = Helper.getSelectStatement(model, sourceTableName, XMLTags.SOURCE_DB, processColumns);
 
                 // get Insert Statement for destination model
-                stmInsert     = Helper.getInsertPreparedStatement(model.getQualifiedDestinationTableName(destinationTableName), processColumns);
+                stmInsert = Helper.getInsertPreparedStatement(model.getQualifiedDestinationTableName(destinationTableName), processColumns);
 
                 pstmtDestination = connDestination.prepareStatement(stmInsert);
 
@@ -259,15 +244,15 @@ public class CopyMappingPlugin extends DynamicPluginThread {
                 if (log_error) {
                     if (recordErrorBuffer.length() > 0) {
                         // open file writer			
-                        File               errorFile = new File(outputPath.getAbsolutePath() + APM.FILE_SEP + fileName);
+                        File errorFile = new File(outputPath.getAbsolutePath() + APM.FILE_SEP + fileName);
                         OutputStreamWriter fileWriter = new OutputStreamWriter(new FileOutputStream(errorFile), MainController.getEncoding());
                         fileWriter.write(recordErrorBuffer.toString());
                         fileWriter.close();
                         generatedFiles.add(errorFile);
 
                         logger.error(errorFile + " contains records which could not be processed");
-                        recordErrorBuffer     = new StringBuffer();
-                        errorLogSetup         = false;
+                        recordErrorBuffer = new StringBuffer();
+                        errorLogSetup = false;
                     }
                 }
             }
@@ -309,26 +294,26 @@ public class CopyMappingPlugin extends DynamicPluginThread {
     /**
      * while there are more records to process and the process is not interrupted by the user
      *
-     * @throws SQLException DOCUMENT ME!
+     * @throws SQLException            DOCUMENT ME!
      * @throws MissingElementException DOCUMENT ME!
      */
     private void processRecordsUsingObjects() throws SQLException, MissingElementException {
         Iterator itColumns;
-        Element  columnDestination;
-        Object   input;
-        int      colCounter;
+        Element columnDestination;
+        Object input;
+        int colCounter;
 
         // while there are more records to process and the process is not interrupted by the user
         while (!isInterrupted() && rs.next()) {
             System.out.println("is interrupted = " + isInterrupted());
-            
-        	colCounter     = 1;
+
+            colCounter = 1;
 
             // process columns
             itColumns = processColumns.iterator();
 
             while (itColumns.hasNext()) {
-                columnDestination     = model.getDestinationColumn(destinationTableName, ((Element) itColumns.next()).getAttributeValue(XMLTags.DESTINATION_DB));
+                columnDestination = model.getDestinationColumn(destinationTableName, ((Element) itColumns.next()).getAttributeValue(XMLTags.DESTINATION_DB));
 
                 // add special handling for oracle date/time and timestamp fields - bug in their driver
                 input = rs.getObject(colCounter);
@@ -390,54 +375,54 @@ public class CopyMappingPlugin extends DynamicPluginThread {
     /**
      * while there are more records to process and the process is not interrupted by the user
      *
-     * @throws SQLException DOCUMENT ME!
+     * @throws SQLException            DOCUMENT ME!
      * @throws MissingElementException DOCUMENT ME!
      */
     private void processRecordsUsingPrimitives() throws SQLException, MissingElementException {
         Iterator itColumns;
-        Element  columnSource;
+        Element columnSource;
         Element columnDestination;
-        Object   input;
-        int      colCounter;
+        Object input;
+        int colCounter;
 
         // while there are more records to process and the process is not interrupted by the user
         while (!isInterrupted() && rs.next()) {
-            colCounter     = 1;
+            colCounter = 1;
 
             // process columns
             itColumns = processColumns.iterator();
-            
+
             while (itColumns.hasNext()) {
-            	Element mappingElement = (Element) itColumns.next();
+                Element mappingElement = (Element) itColumns.next();
                 columnSource = model.getSourceColumn(sourceTableName, mappingElement.getAttributeValue(XMLTags.SOURCE_DB));
                 columnDestination = model.getDestinationColumn(destinationTableName, mappingElement.getAttributeValue(XMLTags.DESTINATION_DB));
 
                 int dataType = Integer.parseInt(columnSource.getAttributeValue(XMLTags.DATA_TYPE));
-                
+
                 switch (dataType) {
-                // Date
-                case 91:
-                    input = rs.getDate(colCounter);
-                    break;
+                    // Date
+                    case 91:
+                        input = rs.getDate(colCounter);
+                        break;
 
-                // Time
-                case 92:
-                	input = rs.getTime(colCounter);
-                    break;
+                    // Time
+                    case 92:
+                        input = rs.getTime(colCounter);
+                        break;
 
-                // Default Timestamp
-                case 93:
-                	input = rs.getTimestamp(colCounter); 
-                    break;
+                    // Default Timestamp
+                    case 93:
+                        input = rs.getTimestamp(colCounter);
+                        break;
 
-                // Old Oracle Timestamp Data Type (until JDBC driver 9.2.0.3)
-                case 1111:
-                	input = rs.getTimestamp(colCounter); 
-                    break;
+                    // Old Oracle Timestamp Data Type (until JDBC driver 9.2.0.3)
+                    case 1111:
+                        input = rs.getTimestamp(colCounter);
+                        break;
 
-                // all other data types
-                default:
-                    input = rs.getObject(colCounter);
+                    // all other data types
+                    default:
+                        input = rs.getObject(colCounter);
                 }
 
                 if (input != null) {
@@ -497,12 +482,11 @@ public class CopyMappingPlugin extends DynamicPluginThread {
     /**
      * If global string filters were selected by user, those are applied using this method
      *
-     * @param in DOCUMENT ME!
+     * @param in                  DOCUMENT ME!
      * @param returnNullWhenEmpty DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
-    private Object applyStringFilters(Object  in,
+    private Object applyStringFilters(Object in,
                                       boolean returnNullWhenEmpty) {
         if (in instanceof String || in instanceof Character) {
             if (trimAndRemoveMultipleIntermediateWhitespaces && trimAndReturnNullWhenEmpty) {

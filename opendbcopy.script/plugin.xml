@@ -24,37 +24,40 @@
 -->
 
 <plugin identifier="script" model_class="opendbcopy.plugin.model.database.DatabaseModel">
-	<conf>
-		<!-- path may be relative or absolute -->
-		<dir required="true" value="" type="dir" description="plugin.opendbcopy.script.conf.outputDir" />			
-		<show_qualified_table_name value="true" type="boolean" description="plugin.opendbcopy.script.conf.showQualifiedTableName" />
-		<output>
-			<filelist value="scripts" type="string" description="plugin.opendbcopy.script.conf.output.filelistIdentifier" />
-		</output>			
-	</conf>
-	<threads>
-		<thread thread_class="opendbcopy.plugin.script.InsertScriptPlugin" description="title.plugin.opendbcopy.script" />
-	</threads>
-	<input />
-	<output />
-	<source_db>
-      <driver />
-      <metadata />
-      <connection />
-      <catalog value="" />
-      <schema value="%" />
-      <table_pattern value="%" />
-      <model />
-   </source_db>
-	<destination_db>
-      <driver />
-      <metadata />
-      <connection />
-      <catalog value="" />
-      <schema value="%" />
-      <table_pattern value="%" />
-      <model />
-   </destination_db>
-   <mapping />
-   <filter />
+    <conf>
+        <!-- path may be relative or absolute -->
+        <dir required="true" value="" type="dir" description="plugin.opendbcopy.script.conf.outputDir"/>
+        <show_qualified_table_name value="true" type="boolean"
+                                   description="plugin.opendbcopy.script.conf.showQualifiedTableName"/>
+        <output>
+            <filelist value="scripts" type="string"
+                      description="plugin.opendbcopy.script.conf.output.filelistIdentifier"/>
+        </output>
+    </conf>
+    <threads>
+        <thread thread_class="opendbcopy.plugin.script.InsertScriptPlugin"
+                description="title.plugin.opendbcopy.script"/>
+    </threads>
+    <input/>
+    <output/>
+    <source_db>
+        <driver/>
+        <metadata/>
+        <connection/>
+        <catalog value=""/>
+        <schema value="%"/>
+        <table_pattern value="%"/>
+        <model/>
+    </source_db>
+    <destination_db>
+        <driver/>
+        <metadata/>
+        <connection/>
+        <catalog value=""/>
+        <schema value="%"/>
+        <table_pattern value="%"/>
+        <model/>
+    </destination_db>
+    <mapping/>
+    <filter/>
 </plugin>

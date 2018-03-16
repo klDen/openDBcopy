@@ -22,21 +22,7 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.controller;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.MissingResourceException;
-import java.util.Observer;
-import java.util.Properties;
-
-import opendbcopy.config.APM;
-import opendbcopy.config.ConfigManager;
-import opendbcopy.config.OperationType;
-import opendbcopy.config.SQLDriverManager;
-import opendbcopy.config.XMLTags;
+import opendbcopy.config.*;
 import opendbcopy.connection.exception.CloseConnectionException;
 import opendbcopy.connection.exception.DriverNotFoundException;
 import opendbcopy.connection.exception.OpenConnectionException;
@@ -51,16 +37,20 @@ import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.PluginException;
 import opendbcopy.plugin.model.exception.UnsupportedAttributeValueException;
 import opendbcopy.resource.ResourceManager;
+import org.apache.log4j.*;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
 
-import org.apache.log4j.Category;
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
-import org.apache.log4j.PropertyConfigurator;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.MissingResourceException;
+import java.util.Observer;
+import java.util.Properties;
 
 
 /**
@@ -70,42 +60,41 @@ import org.jdom.JDOMException;
  * @version $Revision$
  */
 public class MainController {
-    private static Logger           logger = Logger.getLogger(MainController.class.getName());
-    private static ConfigManager    cm;
-    private static JobManager       jm;
-    private static ResourceManager  rm;
-    private static FrameMain        frameMain;
-    private static FrameConsole     frameConsole;
+    private static Logger logger = Logger.getLogger(MainController.class.getName());
+    private static ConfigManager cm;
+    private static JobManager jm;
+    private static ResourceManager rm;
+    private static FrameMain frameMain;
+    private static FrameConsole frameConsole;
     private static PluginGuiManager pluginGuiManager;
     private static SQLDriverManager sqlDriverManager;
-    private static TaskLauncher     taskLauncher;
-    private static HashMap          resourcesDynamicallyLoaded;
-    private static boolean          isGuiEnabled = false;
-    private static int              frameWidth = 0;
-    private static int              frameHeight = 0;
+    private static TaskLauncher taskLauncher;
+    private static HashMap resourcesDynamicallyLoaded;
+    private static boolean isGuiEnabled = false;
+    private static int frameWidth = 0;
+    private static int frameHeight = 0;
 
     /**
      * default Constructor args may be null or contain parameters
      *
      * @param args DOCUMENT ME!
-     *
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws DriverNotFoundException DOCUMENT ME!
-     * @throws OpenConnectionException DOCUMENT ME!
-     * @throws CloseConnectionException DOCUMENT ME!
-     * @throws JDOMException DOCUMENT ME!
-     * @throws SQLException DOCUMENT ME!
-     * @throws FileNotFoundException DOCUMENT ME!
-     * @throws ClassNotFoundException DOCUMENT ME!
-     * @throws IllegalAccessException DOCUMENT ME!
-     * @throws InstantiationException DOCUMENT ME!
-     * @throws InvocationTargetException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
-     * @throws Exception DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
+     * @throws DriverNotFoundException            DOCUMENT ME!
+     * @throws OpenConnectionException            DOCUMENT ME!
+     * @throws CloseConnectionException           DOCUMENT ME!
+     * @throws JDOMException                      DOCUMENT ME!
+     * @throws SQLException                       DOCUMENT ME!
+     * @throws FileNotFoundException              DOCUMENT ME!
+     * @throws ClassNotFoundException             DOCUMENT ME!
+     * @throws IllegalAccessException             DOCUMENT ME!
+     * @throws InstantiationException             DOCUMENT ME!
+     * @throws InvocationTargetException          DOCUMENT ME!
+     * @throws IOException                        DOCUMENT ME!
+     * @throws Exception                          DOCUMENT ME!
      */
-    public MainController(String[] args) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, DriverNotFoundException, OpenConnectionException, CloseConnectionException, JDOMException, SQLException, FileNotFoundException, ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, IOException, Exception {
+    public MainController(String[] args) throws Exception {
         if (isGuiEnabled()) {
             taskLauncher = new TaskLauncher(this, 5, frameWidth, frameHeight, cm.getPathFilenameConsoleOut(), cm.getApplicationProperty(APM.OPENDBCOPY_LOGO_FILE));
             taskLauncher.go();
@@ -135,11 +124,11 @@ public class MainController {
 
         if (isGuiEnabled()) {
             try {
-                frameWidth      = Integer.parseInt(cm.getApplicationProperty(APM.FRAME_MAIN_WIDTH));
-                frameHeight     = Integer.parseInt(cm.getApplicationProperty(APM.FRAME_MAIN_HEIGHT));
+                frameWidth = Integer.parseInt(cm.getApplicationProperty(APM.FRAME_MAIN_WIDTH));
+                frameHeight = Integer.parseInt(cm.getApplicationProperty(APM.FRAME_MAIN_HEIGHT));
             } catch (Exception e) {
-                frameWidth      = 800;
-                frameHeight     = 650;
+                frameWidth = 800;
+                frameHeight = 650;
             }
 
             pluginGuiManager = new PluginGuiManager(this);
@@ -200,7 +189,7 @@ public class MainController {
             cm = new ConfigManager();
 
             System.out.println("reading language specific resources");
-            rm = new ResourceManager(cm.getApplicationProperty(APM.OPENDBCOPY_RESOURCE_BUNDLE_DIR), cm.getApplicationProperty(APM.OPENDBCOPY_RESOURCE_NAME), cm.getApplicationProperty(APM.DEFAULT_LANGUAGE));
+            rm = new ResourceManager(cm.getApplicationProperty(APM.OPENDBCOPY_RESOURCE_NAME), cm.getApplicationProperty(APM.DEFAULT_LANGUAGE));
 
             // check if the gui shall be shown or not
             if ((cm.getApplicationProperty(APM.SHOW_GUI) != null) && (cm.getApplicationProperty(APM.SHOW_GUI).compareToIgnoreCase("true") == 0)) {
@@ -208,18 +197,16 @@ public class MainController {
             }
 
             if (isGuiEnabled()) {
-                frameWidth      = 300;
-                frameHeight     = 400;
+                frameWidth = 300;
+                frameHeight = 400;
 
                 try {
-                    frameWidth      = Integer.parseInt(cm.getApplicationProperty(APM.FRAME_CONSOLE_WIDTH));
-                    frameHeight     = Integer.parseInt(cm.getApplicationProperty(APM.FRAME_CONSOLE_HEIGHT));
+                    frameWidth = Integer.parseInt(cm.getApplicationProperty(APM.FRAME_CONSOLE_WIDTH));
+                    frameHeight = Integer.parseInt(cm.getApplicationProperty(APM.FRAME_CONSOLE_HEIGHT));
                 } catch (Exception e) {
                     // use default values as specified above
                 }
             }
-
-            ClasspathLoader.addLibDirectoryToClasspath();
 
             new MainController(args);
         } catch (MissingResourceException e) {
@@ -235,21 +222,88 @@ public class MainController {
     /**
      * DOCUMENT ME!
      *
-     * @param operation DOCUMENT ME!
-     *
-     * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws DriverNotFoundException DOCUMENT ME!
-     * @throws OpenConnectionException DOCUMENT ME!
-     * @throws CloseConnectionException DOCUMENT ME!
-     * @throws JDOMException DOCUMENT ME!
-     * @throws SQLException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
-     * @throws Exception DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @return DOCUMENT ME!
      */
-    public final void execute(Element operation) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, DriverNotFoundException, OpenConnectionException, CloseConnectionException, JDOMException, SQLException, IOException, Exception {
+    public static final String getEncoding() {
+        if (cm != null) {
+            return cm.getApplicationProperty(APM.ENCODING);
+        } else {
+            return "UTF-8";
+        }
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param fileName DOCUMENT ME!
+     */
+    private static void setupLog4j(String fileName) {
+        PropertyConfigurator.configure(fileName);
+
+        try {
+            // setup fileAppender for application logging
+            FileAppender fa = new FileAppender(new PatternLayout("%5p %d %m%n"), cm.getExecutionLogFile().getAbsolutePath(), false);
+
+            //            fa.setThreshold(Priority.INFO);
+            Category cat = Category.getInstance("opendbcopy.plugin");
+            cat.addAppender(fa);
+        } catch (IOException e) {
+        }
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @return Returns the isGuiEnabled.
+     */
+    public static boolean isGuiEnabled() {
+        return isGuiEnabled;
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param file DOCUMENT ME!
+     * @return Returns the resourcesDynamicallyLoaded.
+     */
+    public static final boolean isResourcesDynamicallyLoaded(File file) {
+        if (resourcesDynamicallyLoaded != null) {
+            return resourcesDynamicallyLoaded.containsKey(file.getName());
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param file DOCUMENT ME!
+     */
+    public static final void addResourceDynamicallyLoaded(File file) {
+        if (resourcesDynamicallyLoaded == null) {
+            resourcesDynamicallyLoaded = new HashMap();
+        }
+
+        resourcesDynamicallyLoaded.put(file.getName(), file);
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param operation DOCUMENT ME!
+     * @throws UnsupportedAttributeValueException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
+     * @throws DriverNotFoundException            DOCUMENT ME!
+     * @throws OpenConnectionException            DOCUMENT ME!
+     * @throws CloseConnectionException           DOCUMENT ME!
+     * @throws JDOMException                      DOCUMENT ME!
+     * @throws SQLException                       DOCUMENT ME!
+     * @throws IOException                        DOCUMENT ME!
+     * @throws Exception                          DOCUMENT ME!
+     * @throws IllegalArgumentException           DOCUMENT ME!
+     */
+    public final void execute(Element operation) throws Exception {
         if (operation == null) {
             throw new IllegalArgumentException("Missing operation");
         }
@@ -261,7 +315,6 @@ public class MainController {
      * register observers on the fly
      *
      * @param observer DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final void registerObserver(Observer observer) {
@@ -277,7 +330,6 @@ public class MainController {
      * DOCUMENT ME!
      *
      * @param observer DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final void deleteObserver(Observer observer) {
@@ -292,11 +344,11 @@ public class MainController {
      * Used to post Exceptions given a general Exception and Log level to the appropriate GUI, if available. If not, exceptions are logged in
      * MainController's logger
      *
-     * @param e DOCUMENT ME!
+     * @param e     DOCUMENT ME!
      * @param level DOCUMENT ME!
      */
     public final void postException(Exception e,
-                                    Level     level) {
+                                    Level level) {
         if (isGuiEnabled()) {
             frameMain.postException(e, level);
         } else {
@@ -327,14 +379,13 @@ public class MainController {
      * DOCUMENT ME!
      *
      * @param pluginGuiElement DOCUMENT ME!
-     * @param pluginElement DOCUMENT ME!
-     *
+     * @param pluginElement    DOCUMENT ME!
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
      */
     public final void addPluginGuiForPlugin(Element pluginGuiElement,
-                                            Element pluginElement) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException {
+                                            Element pluginElement) throws MissingAttributeException, MissingElementException {
         if (isGuiEnabled()) {
             pluginGuiManager.addPluginGui(pluginGuiElement, pluginElement);
         }
@@ -343,18 +394,17 @@ public class MainController {
     /**
      * DOCUMENT ME!
      *
-     * @param pluginIdentifier DOCUMENT ME!
+     * @param pluginIdentifier  DOCUMENT ME!
      * @param isExecutableModel DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws ClassNotFoundException DOCUMENT ME!
-     * @throws InstantiationException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws ClassNotFoundException    DOCUMENT ME!
+     * @throws InstantiationException    DOCUMENT ME!
      * @throws InvocationTargetException DOCUMENT ME!
-     * @throws IllegalAccessException DOCUMENT ME!
-     * @throws PluginException DOCUMENT ME!
+     * @throws IllegalAccessException    DOCUMENT ME!
+     * @throws PluginException           DOCUMENT ME!
      */
-    public final void loadPluginGuiForPlugin(String  pluginIdentifier,
+    public final void loadPluginGuiForPlugin(String pluginIdentifier,
                                              boolean isExecutableModel) throws MissingAttributeException, MissingElementException, ClassNotFoundException, InstantiationException, InvocationTargetException, IllegalAccessException, PluginException {
         if (isGuiEnabled()) {
             pluginGuiManager.loadPluginGui(pluginIdentifier, isExecutableModel);
@@ -364,18 +414,17 @@ public class MainController {
     /**
      * DOCUMENT ME!
      *
-     * @param model DOCUMENT ME!
+     * @param model          DOCUMENT ME!
      * @param modelToExecute DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws ClassNotFoundException DOCUMENT ME!
-     * @throws InstantiationException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws ClassNotFoundException    DOCUMENT ME!
+     * @throws InstantiationException    DOCUMENT ME!
      * @throws InvocationTargetException DOCUMENT ME!
-     * @throws IllegalAccessException DOCUMENT ME!
-     * @throws PluginException DOCUMENT ME!
+     * @throws IllegalAccessException    DOCUMENT ME!
+     * @throws PluginException           DOCUMENT ME!
      */
-    public final void loadPluginGuiFromModel(Model   model,
+    public final void loadPluginGuiFromModel(Model model,
                                              boolean modelToExecute) throws MissingAttributeException, MissingElementException, ClassNotFoundException, InstantiationException, InvocationTargetException, IllegalAccessException, PluginException {
         if (isGuiEnabled()) {
             pluginGuiManager.loadPluginGuiFromModel(model, modelToExecute);
@@ -426,49 +475,8 @@ public class MainController {
      *
      * @return DOCUMENT ME!
      */
-    public static final String getEncoding() {
-        if (cm != null) {
-            return cm.getApplicationProperty(APM.ENCODING);
-        } else {
-            return "UTF-8";
-        }
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     */
     public final FrameMain getFrame() {
         return frameMain;
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @param fileName DOCUMENT ME!
-     */
-    private static void setupLog4j(String fileName) {
-        PropertyConfigurator.configure(fileName);
-
-        try {
-            // setup fileAppender for application logging
-            FileAppender fa = new FileAppender(new PatternLayout("%5p %d %m%n"), cm.getExecutionLogFile().getAbsolutePath(), false);
-
-            //            fa.setThreshold(Priority.INFO);
-            Category cat = Category.getInstance("opendbcopy.plugin");
-            cat.addAppender(fa);
-        } catch (IOException e) {
-        }
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @return Returns the isGuiEnabled.
-     */
-    public static boolean isGuiEnabled() {
-        return isGuiEnabled;
     }
 
     /**
@@ -496,38 +504,6 @@ public class MainController {
      */
     public ResourceManager getResourceManager() {
         return rm;
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @param file DOCUMENT ME!
-     *
-     * @return Returns the resourcesDynamicallyLoaded.
-     */
-    public static final boolean isResourcesDynamicallyLoaded(File file) {
-        if (resourcesDynamicallyLoaded != null) {
-            if (resourcesDynamicallyLoaded.containsKey(file.getName())) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @param file DOCUMENT ME!
-     */
-    public static final void addResourceDynamicallyLoaded(File file) {
-        if (resourcesDynamicallyLoaded == null) {
-            resourcesDynamicallyLoaded = new HashMap();
-        }
-
-        resourcesDynamicallyLoaded.put(file.getName(), file);
     }
 
     /**

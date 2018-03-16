@@ -23,14 +23,11 @@
 package opendbcopy.swing;
 
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.resource.ResourceManager;
 
-import java.awt.Component;
-
-import javax.swing.ImageIcon;
-import javax.swing.JTree;
+import javax.swing.*;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import java.awt.*;
 
 
 /**
@@ -41,47 +38,46 @@ import javax.swing.tree.DefaultTreeCellRenderer;
  */
 public class ConfNodeRenderer extends DefaultTreeCellRenderer {
     ResourceManager rm;
-    ImageIcon       iconDir;
-    ImageIcon       iconFile;
-    ImageIcon       iconConfig;
+    ImageIcon iconDir;
+    ImageIcon iconFile;
+    ImageIcon iconConfig;
 
     /**
      * Creates a new ConfNodeRenderer object.
      *
-     * @param rm DOCUMENT ME!
-     * @param iconDir DOCUMENT ME!
-     * @param iconFile DOCUMENT ME!
+     * @param rm         DOCUMENT ME!
+     * @param iconDir    DOCUMENT ME!
+     * @param iconFile   DOCUMENT ME!
      * @param iconConfig DOCUMENT ME!
      */
     public ConfNodeRenderer(ResourceManager rm,
-                            ImageIcon       iconDir,
-                            ImageIcon       iconFile,
-                            ImageIcon       iconConfig) {
-        this.rm             = rm;
-        this.iconDir        = iconDir;
-        this.iconFile       = iconFile;
-        this.iconConfig     = iconConfig;
+                            ImageIcon iconDir,
+                            ImageIcon iconFile,
+                            ImageIcon iconConfig) {
+        this.rm = rm;
+        this.iconDir = iconDir;
+        this.iconFile = iconFile;
+        this.iconConfig = iconConfig;
     }
 
     /**
      * DOCUMENT ME!
      *
-     * @param tree DOCUMENT ME!
-     * @param value DOCUMENT ME!
-     * @param sel DOCUMENT ME!
+     * @param tree     DOCUMENT ME!
+     * @param value    DOCUMENT ME!
+     * @param sel      DOCUMENT ME!
      * @param expanded DOCUMENT ME!
-     * @param leaf DOCUMENT ME!
-     * @param row DOCUMENT ME!
+     * @param leaf     DOCUMENT ME!
+     * @param row      DOCUMENT ME!
      * @param hasFocus DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
-    public Component getTreeCellRendererComponent(JTree   tree,
-                                                  Object  value,
+    public Component getTreeCellRendererComponent(JTree tree,
+                                                  Object value,
                                                   boolean sel,
                                                   boolean expanded,
                                                   boolean leaf,
-                                                  int     row,
+                                                  int row,
                                                   boolean hasFocus) {
         super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 
@@ -96,9 +92,9 @@ public class ConfNodeRenderer extends DefaultTreeCellRenderer {
         }
 
         if (confNode.getElementDescription() != null) {
-        	if (confNode.getName().compareTo(confNode.getElementDescription()) != 0) {
+            if (confNode.getName().compareTo(confNode.getElementDescription()) != 0) {
                 setToolTipText(rm.getString(confNode.getElementDescription()));
-        	}
+            }
         }
 
         return this;

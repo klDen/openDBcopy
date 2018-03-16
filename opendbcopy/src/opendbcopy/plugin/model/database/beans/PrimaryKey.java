@@ -23,10 +23,8 @@
 package opendbcopy.plugin.model.database.beans;
 
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.plugin.model.exception.MissingAttributeException;
-
-import org.jdom.Element;
+import org.jdom2.Element;
 
 
 /**
@@ -37,8 +35,8 @@ import org.jdom.Element;
  */
 public class PrimaryKey {
     private Element pkElement;
-    private String  keyName;
-    private String  columnName;
+    private String keyName;
+    private String columnName;
     private Integer keySequence;
 
     /**
@@ -60,7 +58,6 @@ public class PrimaryKey {
      * Creates a new PrimaryKey object.
      *
      * @param pkElement DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
      */
     public PrimaryKey(Element pkElement) throws MissingAttributeException {

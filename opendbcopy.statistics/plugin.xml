@@ -24,38 +24,39 @@
 -->
 
 <plugin identifier="statistics" model_class="opendbcopy.plugin.statistics.StatisticsModel">
-	<conf>
-		<!-- path may be relative or absolute -->
-		<file required="true" value="" type="file" description="plugin.opendbcopy.statistics.conf.outputFile" />			
-		<file_type value="csv" type="string" description="plugin.opendbcopy.statistics.conf.fileType" />
-		<output>
-			<file editable="false" value="" type="string" description="plugin.opendbcopy.statistics.conf.outputFile" />
-		</output>			
-	</conf>
-	<threads>
-		<thread thread_class="opendbcopy.plugin.statistics.WriteStatisticsToFilePlugin" description="title.plugin.opendbcopy.statistics" />
-	</threads>
-	<input />
-	<output />
-	<source_db>
-      <driver />
-      <metadata />
-      <connection />
-      <catalog value="" />
-      <schema value="%" />
-      <table_pattern value="%" />
-      <model />
-      <statistics />
-   </source_db>
-	<destination_db>
-      <driver />
-      <metadata />
-      <connection />
-      <catalog value="" />
-      <schema value="%" />
-      <table_pattern value="%" />
-      <model />
-      <statistics />
-   </destination_db>
-   <mapping />
+    <conf>
+        <!-- path may be relative or absolute -->
+        <file required="true" value="" type="file" description="plugin.opendbcopy.statistics.conf.outputFile"/>
+        <file_type value="csv" type="string" description="plugin.opendbcopy.statistics.conf.fileType"/>
+        <output>
+            <file editable="false" value="" type="string" description="plugin.opendbcopy.statistics.conf.outputFile"/>
+        </output>
+    </conf>
+    <threads>
+        <thread thread_class="opendbcopy.plugin.statistics.WriteStatisticsToFilePlugin"
+                description="title.plugin.opendbcopy.statistics"/>
+    </threads>
+    <input/>
+    <output/>
+    <source_db>
+        <driver/>
+        <metadata/>
+        <connection/>
+        <catalog value=""/>
+        <schema value="%"/>
+        <table_pattern value="%"/>
+        <model/>
+        <statistics/>
+    </source_db>
+    <destination_db>
+        <driver/>
+        <metadata/>
+        <connection/>
+        <catalog value=""/>
+        <schema value="%"/>
+        <table_pattern value="%"/>
+        <model/>
+        <statistics/>
+    </destination_db>
+    <mapping/>
 </plugin>

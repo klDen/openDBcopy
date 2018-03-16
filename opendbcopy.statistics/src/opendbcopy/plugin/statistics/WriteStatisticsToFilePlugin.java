@@ -24,35 +24,26 @@ package opendbcopy.plugin.statistics;
 
 import opendbcopy.config.APM;
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.connection.DBConnection;
-
 import opendbcopy.connection.exception.DriverNotFoundException;
 import opendbcopy.connection.exception.OpenConnectionException;
-
 import opendbcopy.controller.MainController;
-
 import opendbcopy.plugin.model.DynamicPluginThread;
 import opendbcopy.plugin.model.Model;
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.PluginException;
 import opendbcopy.plugin.model.exception.UnsupportedAttributeValueException;
-
 import opendbcopy.sql.Helper;
-
 import opendbcopy.util.InputOutputHelper;
-
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -71,12 +62,11 @@ public class WriteStatisticsToFilePlugin extends DynamicPluginThread {
      * Creates a new WriteStatisticsToFilePlugin object.
      *
      * @param controller DOCUMENT ME!
-     * @param baseModel DOCUMENT ME!
-     *
+     * @param baseModel  DOCUMENT ME!
      * @throws PluginException DOCUMENT ME!
      */
     public WriteStatisticsToFilePlugin(MainController controller,
-                                       Model          baseModel) throws PluginException {
+                                       Model baseModel) throws PluginException {
         super(controller, baseModel);
         model = (StatisticsModel) baseModel;
     }
@@ -119,41 +109,41 @@ public class WriteStatisticsToFilePlugin extends DynamicPluginThread {
     /**
      * Creates a new writeStatisticsToFile object.
      *
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws IllegalArgumentException           DOCUMENT ME!
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
+     * @throws IOException                        DOCUMENT ME!
      */
     private void writeStatisticsToFile() throws IllegalArgumentException, UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, IOException, PluginException {
         StringBuffer buffer = new StringBuffer();
-        int          difference = 0;
-        int          sourceRecords = 0;
-        int          destinationRecords = 0;
-        int          totalSourceRecords = 0;
-        int          totalDestinationRecords = 0;
+        int difference = 0;
+        int sourceRecords = 0;
+        int destinationRecords = 0;
+        int totalSourceRecords = 0;
+        int totalDestinationRecords = 0;
 
         // get parameters for plugin
         Element conf = model.getConf();
-        
+
         String pathFilename = conf.getChild(XMLTags.FILE).getAttributeValue(XMLTags.VALUE);
         if (pathFilename == null) {
-        	throw new PluginException("Missing path / filename to store statistics");
+            throw new PluginException("Missing path / filename to store statistics");
         }
 
         String fileType = conf.getChild(XMLTags.FILE_TYPE).getAttributeValue(XMLTags.VALUE);
         if (fileType == null) {
-        	throw new PluginException("Missing file type");
+            throw new PluginException("Missing file type");
         }
 
         int indexFileExtension = pathFilename.indexOf(fileType);
 
         // file does not yet contain extension
         if (indexFileExtension != pathFilename.length() - fileType.length()) {
-        	pathFilename = pathFilename + "." + fileType;
+            pathFilename = pathFilename + "." + fileType;
         }
-        
-        String  delimiter = ";";
+
+        String delimiter = ";";
 
         // init the string buffer to show table headings
         buffer.append("Created by openDBcopy Statistics Plugin on " + model.getSourceStatistics().getAttributeValue(XMLTags.CAPTURE_DATE) + APM.LINE_SEP);
@@ -180,9 +170,9 @@ public class WriteStatisticsToFilePlugin extends DynamicPluginThread {
                 Element statisticsDestinationTable = model.getDestinationStatisticsTable(mappingTable.getAttributeValue(XMLTags.DESTINATION_DB));
 
                 if ((statisticsSourceTable != null) && (statisticsDestinationTable != null)) {
-                    sourceRecords          = Integer.parseInt(statisticsSourceTable.getAttributeValue(XMLTags.RECORDS));
-                    destinationRecords     = Integer.parseInt(statisticsDestinationTable.getAttributeValue(XMLTags.RECORDS));
-                    difference             = sourceRecords - destinationRecords;
+                    sourceRecords = Integer.parseInt(statisticsSourceTable.getAttributeValue(XMLTags.RECORDS));
+                    destinationRecords = Integer.parseInt(statisticsDestinationTable.getAttributeValue(XMLTags.RECORDS));
+                    difference = sourceRecords - destinationRecords;
 
                     buffer.append(statisticsSourceTable.getAttributeValue(XMLTags.NAME) + delimiter);
                     buffer.append(statisticsSourceTable.getAttributeValue(XMLTags.RECORDS) + delimiter);
@@ -208,7 +198,7 @@ public class WriteStatisticsToFilePlugin extends DynamicPluginThread {
             buffer.append(APM.LINE_SEP);
 
             // go through unmapped source tables
-            List     unmappedSourceTables = model.getUnmappedSourceTables();
+            List unmappedSourceTables = model.getUnmappedSourceTables();
 
             Iterator itUnmappedSourceTables = unmappedSourceTables.iterator();
 
@@ -223,7 +213,7 @@ public class WriteStatisticsToFilePlugin extends DynamicPluginThread {
             }
 
             // go through unmapped destination tables
-            List     unmappedDestinationTables = model.getUnmappedDestinationTables();
+            List unmappedDestinationTables = model.getUnmappedDestinationTables();
 
             Iterator itUnmappedDestinationTables = unmappedDestinationTables.iterator();
 
@@ -240,7 +230,7 @@ public class WriteStatisticsToFilePlugin extends DynamicPluginThread {
         // single_db mode
         else {
             // go through source tables
-            List     sourceTables = model.getSourceTables();
+            List sourceTables = model.getSourceTables();
 
             Iterator itSourceTables = sourceTables.iterator();
 
@@ -258,7 +248,7 @@ public class WriteStatisticsToFilePlugin extends DynamicPluginThread {
         }
 
         if (!isInterrupted()) {
-            File       outputFile = new File(pathFilename);
+            File outputFile = new File(pathFilename);
             FileWriter fileWriter = new FileWriter(outputFile);
 
             fileWriter.write(buffer.toString());
@@ -277,13 +267,12 @@ public class WriteStatisticsToFilePlugin extends DynamicPluginThread {
      *
      * @param db_element DOCUMENT ME!
      * @param statistics DOCUMENT ME!
-     *
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws OpenConnectionException DOCUMENT ME!
-     * @throws DriverNotFoundException DOCUMENT ME!
-     * @throws SQLException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws OpenConnectionException   DOCUMENT ME!
+     * @throws DriverNotFoundException   DOCUMENT ME!
+     * @throws SQLException              DOCUMENT ME!
      */
     private void readStatisticsForDb(Element db_element,
                                      Element statistics) throws IllegalArgumentException, MissingAttributeException, MissingElementException, OpenConnectionException, DriverNotFoundException, SQLException {
@@ -303,15 +292,15 @@ public class WriteStatisticsToFilePlugin extends DynamicPluginThread {
         Connection conn = DBConnection.getConnection(db_element.getChild(XMLTags.CONNECTION));
 
         // extract the tables to read
-        Iterator  itTables = db_element.getChild(XMLTags.MODEL).getChildren(XMLTags.TABLE).iterator();
+        Iterator itTables = db_element.getChild(XMLTags.MODEL).getChildren(XMLTags.TABLE).iterator();
 
         Statement stmSource = conn.createStatement();
 
-        int       nbrTables = db_element.getChild(XMLTags.MODEL).getChildren(XMLTags.TABLE).size();
-        int       nbrRecords = 0;
-        int       tableCounter = 0;
-        int       totalNbrRecords = 0;
-        String    qualifiedTableName = "";
+        int nbrTables = db_element.getChild(XMLTags.MODEL).getChildren(XMLTags.TABLE).size();
+        int nbrRecords = 0;
+        int tableCounter = 0;
+        int totalNbrRecords = 0;
+        String qualifiedTableName = "";
 
         model.setLengthProgressTable(nbrTables);
         model.setCurrentProgressTable(tableCounter);
@@ -320,14 +309,14 @@ public class WriteStatisticsToFilePlugin extends DynamicPluginThread {
 
         while (itTables.hasNext() && !isInterrupted()) {
             Element table = (Element) itTables.next();
-            String  tableName = table.getAttributeValue(XMLTags.NAME);
+            String tableName = table.getAttributeValue(XMLTags.NAME);
 
             if (db_element.getName().compareTo(XMLTags.SOURCE_DB) == 0) {
-                qualifiedTableName     = model.getQualifiedSourceTableName(tableName);
-                nbrRecords             = Helper.getNumberOfRecords(stmSource, model, XMLTags.SOURCE_DB, tableName);
+                qualifiedTableName = model.getQualifiedSourceTableName(tableName);
+                nbrRecords = Helper.getNumberOfRecords(stmSource, model, XMLTags.SOURCE_DB, tableName);
             } else {
-                qualifiedTableName     = model.getQualifiedDestinationTableName(tableName);
-                nbrRecords             = Helper.getNumberOfRecords(stmSource, model, XMLTags.DESTINATION_DB, tableName);
+                qualifiedTableName = model.getQualifiedDestinationTableName(tableName);
+                nbrRecords = Helper.getNumberOfRecords(stmSource, model, XMLTags.DESTINATION_DB, tableName);
             }
 
             model.setProgressMessage(qualifiedTableName);

@@ -25,12 +25,10 @@ package opendbcopy.email;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
-
 import sun.net.smtp.SmtpClient;
 
 import java.io.IOException;
 import java.io.PrintStream;
-
 import java.util.StringTokenizer;
 
 
@@ -42,14 +40,14 @@ import java.util.StringTokenizer;
  */
 public class MailAppender extends AppenderSkeleton {
     private static Logger logger = Logger.getLogger(MailAppender.class.getName());
-    private String        fromEmail;
-    private String        toEmail;
-    private String        mailServer;
-    private String        messageText;
-    private String        dateTime;
-    private String        type;
-    private String        sourceName;
-    private String        sourceLine;
+    private String fromEmail;
+    private String toEmail;
+    private String mailServer;
+    private String messageText;
+    private String dateTime;
+    private String type;
+    private String sourceName;
+    private String sourceLine;
 
     /**
      * DOCUMENT ME!
@@ -72,14 +70,14 @@ public class MailAppender extends AppenderSkeleton {
     private void retrieveMessageItems() {
         StringTokenizer st = new StringTokenizer(messageText, "&");
 
-        mailServer      = st.nextToken().trim();
-        fromEmail       = st.nextToken().trim();
-        toEmail         = st.nextToken().trim();
-        dateTime        = st.nextToken().trim();
-        type            = st.nextToken().trim();
-        sourceName      = st.nextToken().trim();
-        sourceLine      = st.nextToken().trim();
-        messageText     = st.nextToken().trim();
+        mailServer = st.nextToken().trim();
+        fromEmail = st.nextToken().trim();
+        toEmail = st.nextToken().trim();
+        dateTime = st.nextToken().trim();
+        type = st.nextToken().trim();
+        sourceName = st.nextToken().trim();
+        sourceLine = st.nextToken().trim();
+        messageText = st.nextToken().trim();
     }
 
     /**
@@ -87,7 +85,7 @@ public class MailAppender extends AppenderSkeleton {
      */
     private void sendEmail() {
         try {
-            SmtpClient  client;
+            SmtpClient client;
             PrintStream message;
 
             client = new SmtpClient(mailServer);

@@ -1,59 +1,59 @@
 <shortcuts>
-   <programGroup defaultName="openDBcopy" location="applications/startMenu"/>
-   <shortcut
-      name="openDBcopy"
-      target="$INSTALL_PATH\bin\start.bat"
-      commandLine=""
-      workingDirectory="$INSTALL_PATH\bin"
-      description="openDBcopy"
-      initialState="normal"
-      programGroup="yes"
-      desktop="yes"
-      applications="no"
-      startMenu="no"
-      startup="no">
-   	  <createForPack name="Base Programme"/>
-   </shortcut>
-   <shortcut
-      name="User Manual"
-      target="$INSTALL_PATH\docs\user-manual.pdf"
-      commandLine=""
-      workingDirectory="$INSTALL_PATH"
-      description="openDBcopy User Manual"
-      initialState="normal"
-      programGroup="yes"
-      desktop="no"
-      applications="no"
-      startMenu="no"
-      startup="no">
-   	  <createForPack name="User Manual"/>
-   </shortcut>
-   <shortcut
-      name="Developer Manual"
-      target="$INSTALL_PATH\docs\developer-manual.pdf"
-      commandLine=""
-      workingDirectory="$INSTALL_PATH"
-      description="openDBcopy Developer Manual"
-      initialState="normal"
-      programGroup="yes"
-      desktop="no"
-      applications="no"
-      startMenu="no"
-      startup="no">
-   	  <createForPack name="Developer Pack"/>
-   </shortcut>
-   <shortcut
-      name="API Docs"
-      target="$INSTALL_PATH\apidocs\index.html"
-      commandLine=""
-      workingDirectory="$INSTALL_PATH"
-      description="API Docs"
-      initialState="normal"
-      programGroup="yes"
-      desktop="no"
-      applications="no"
-      startMenu="no"
-      startup="no">
-   	  <createForPack name="Developer Pack"/>
-   </shortcut>
+    <programGroup defaultName="openDBcopy" location="applications/startMenu"/>
+    <shortcut
+            name="openDBcopy"
+            target="$INSTALL_PATH\bin\start.bat"
+            commandLine=""
+            workingDirectory="$INSTALL_PATH\bin"
+            description="openDBcopy"
+            initialState="normal"
+            programGroup="yes"
+            desktop="yes"
+            applications="no"
+            startMenu="no"
+            startup="no">
+        <createForPack name="Base Programme"/>
+    </shortcut>
+    <shortcut
+            name="User Manual"
+            target="$INSTALL_PATH\docs\user-manual.pdf"
+            commandLine=""
+            workingDirectory="$INSTALL_PATH"
+            description="openDBcopy User Manual"
+            initialState="normal"
+            programGroup="yes"
+            desktop="no"
+            applications="no"
+            startMenu="no"
+            startup="no">
+        <createForPack name="User Manual"/>
+    </shortcut>
+    <shortcut
+            name="Developer Manual"
+            target="$INSTALL_PATH\docs\developer-manual.pdf"
+            commandLine=""
+            workingDirectory="$INSTALL_PATH"
+            description="openDBcopy Developer Manual"
+            initialState="normal"
+            programGroup="yes"
+            desktop="no"
+            applications="no"
+            startMenu="no"
+            startup="no">
+        <createForPack name="Developer Pack"/>
+    </shortcut>
+    <shortcut
+            name="API Docs"
+            target="$INSTALL_PATH\apidocs\index.html"
+            commandLine=""
+            workingDirectory="$INSTALL_PATH"
+            description="API Docs"
+            initialState="normal"
+            programGroup="yes"
+            desktop="no"
+            applications="no"
+            startMenu="no"
+            startup="no">
+        <createForPack name="Developer Pack"/>
+    </shortcut>
 </shortcuts>

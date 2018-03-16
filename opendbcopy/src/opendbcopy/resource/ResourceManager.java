@@ -22,8 +22,6 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.resource;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
@@ -41,16 +39,11 @@ public class ResourceManager {
     /**
      * Creates a new ResourceManager object.
      *
-     * @param resourceDir DOCUMENT ME!
      * @param defaultResourceName DOCUMENT ME!
-     * @param defaultLanguage DOCUMENT ME!
-     *
-     * @throws FileNotFoundException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
+     * @param defaultLanguage     DOCUMENT ME!
      */
-    public ResourceManager(String resourcePath,
-                           String defaultResourceName,
-                           String defaultLanguage) throws FileNotFoundException, IOException {
+    public ResourceManager(String defaultResourceName,
+                           String defaultLanguage) {
         this.defaultResourceName = defaultResourceName;
 
         // override the default locale for this JVM
@@ -58,7 +51,7 @@ public class ResourceManager {
             Locale.setDefault(new Locale(defaultLanguage));
         }
 
-        addResourceBundle(resourcePath + defaultResourceName);
+        addResourceBundle(defaultResourceName);
     }
 
     /**
@@ -74,9 +67,7 @@ public class ResourceManager {
      * DOCUMENT ME!
      *
      * @param key DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final String getString(String key) {
@@ -104,14 +95,12 @@ public class ResourceManager {
      * Given a key and String array replace the placeholders in the localised message first Maximum number of parameters that can be replaced is 10
      * (0 to 9 as placeholder)
      *
-     * @param key DOCUMENT ME!
+     * @param key       DOCUMENT ME!
      * @param parameter DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
-    public final String getString(String   key,
+    public final String getString(String key,
                                   String[] parameter) {
         if (parameter == null) {
             throw new IllegalArgumentException("Missing parameter(s)");
@@ -159,7 +148,6 @@ public class ResourceManager {
      * DOCUMENT ME!
      *
      * @param filename DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     private String getFilenameWithoutEnding(String filename) {
@@ -169,24 +157,23 @@ public class ResourceManager {
     /**
      * DOCUMENT ME!
      *
-     * @param message DOCUMENT ME!
+     * @param message   DOCUMENT ME!
      * @param parameter DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
-    private String replaceParameter(String   message,
+    private String replaceParameter(String message,
                                     String[] parameter) {
-        String          replacedString = null;
+        String replacedString = null;
 
         StringTokenizer st = new StringTokenizer(message, "{");
 
-        int             paramCounter = 0;
+        int paramCounter = 0;
 
         // retrieve first element
         if (st.hasMoreElements()) {
             String nextElement = (String) st.nextElement();
 
-            int    index = nextElement.indexOf("}");
+            int index = nextElement.indexOf("}");
 
             if (index >= 1) {
                 // add parameter

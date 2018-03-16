@@ -23,26 +23,20 @@
 package opendbcopy.gui.database;
 
 import info.clearthought.layout.TableLayout;
-
-import java.awt.GridLayout;
-import java.awt.SystemColor;
-import java.awt.event.ActionEvent;
-import java.util.Iterator;
-import java.util.Observable;
-
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.border.TitledBorder;
-
 import opendbcopy.config.GUI;
 import opendbcopy.config.XMLTags;
 import opendbcopy.controller.MainController;
 import opendbcopy.gui.DynamicPanel;
 import opendbcopy.gui.PluginGui;
 import opendbcopy.plugin.model.database.DatabaseModel;
+import org.jdom2.Element;
 
-import org.jdom.Element;
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.Iterator;
+import java.util.Observable;
 
 
 /**
@@ -53,24 +47,23 @@ import org.jdom.Element;
  */
 public class PanelFilter extends DynamicPanel {
     private DatabaseModel model;
-    private GridLayout    gridLayout = new GridLayout();
-    private JPanel        panelStringFilter = new JPanel();
-    private JCheckBox     checkBoxTrim = new JCheckBox();
-    private JCheckBox     checkBoxRemoveMultipleIntermediateSpaces = new JCheckBox();
-    private JCheckBox     checkBoxSetNull = new JCheckBox();
+    private GridLayout gridLayout = new GridLayout();
+    private JPanel panelStringFilter = new JPanel();
+    private JCheckBox checkBoxTrim = new JCheckBox();
+    private JCheckBox checkBoxRemoveMultipleIntermediateSpaces = new JCheckBox();
+    private JCheckBox checkBoxSetNull = new JCheckBox();
 
     /**
      * Creates a new PanelConfiguration object.
      *
-     * @param controller DOCUMENT ME!
-     * @param workingMode DOCUMENT ME!
+     * @param controller         DOCUMENT ME!
+     * @param workingMode        DOCUMENT ME!
      * @param registerAsObserver DOCUMENT ME!
-     *
      * @throws Exception DOCUMENT ME!
      */
     public PanelFilter(MainController controller,
-                       PluginGui      workingMode,
-                       Boolean        registerAsObserver) throws Exception {
+                       PluginGui workingMode,
+                       Boolean registerAsObserver) throws Exception {
         super(controller, workingMode, registerAsObserver);
         model = (DatabaseModel) super.model;
         guiInit();
@@ -79,11 +72,11 @@ public class PanelFilter extends DynamicPanel {
     /**
      * DOCUMENT ME!
      *
-     * @param o DOCUMENT ME!
+     * @param o   DOCUMENT ME!
      * @param obj DOCUMENT ME!
      */
     public final void update(Observable o,
-                             Object     obj) {
+                             Object obj) {
         try {
             // check for string filters
             Iterator itStringFilters = model.getStringFilters().iterator();
@@ -115,8 +108,8 @@ public class PanelFilter extends DynamicPanel {
      */
     private void guiInit() throws Exception {
         double[][] size = {
-                              { GUI.B, GUI.F, GUI.B }, // Columns
-        { GUI.B, GUI.P, GUI.VG, GUI.P, GUI.VG, GUI.P, GUI.B }
+                {GUI.B, GUI.F, GUI.B}, // Columns
+                {GUI.B, GUI.P, GUI.VG, GUI.P, GUI.VG, GUI.P, GUI.B}
         }; // Rows
 
         this.setLayout(new TableLayout(size));

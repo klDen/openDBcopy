@@ -1,60 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
-	
+
     <properties>
         <author email="smith[at]puzzle.ch">Anthony Smith</author>
         <title>opendbcopy</title>
     </properties>
 
-	<body>
+    <body>
         <links>
             <item href="http://www.sourceforge.net/projects/opendbcopy" name="openDBcopy at SourceForge"/>
         </links>
 
-		<menu name="Quick Links">
-			<item href="/index.html" name="Overview"></item>
-			<item href="http://sourceforge.net/news/?group_id=91406" name="News"></item>
-			<item href="http://sourceforge.net/forum/?group_id=91406" name="Forum"></item>
-			<item href="/download.html" name="Download"></item>
-		</menu>
+        <menu name="Quick Links">
+            <item href="/index.html" name="Overview"></item>
+            <item href="http://sourceforge.net/news/?group_id=91406" name="News"></item>
+            <item href="http://sourceforge.net/forum/?group_id=91406" name="Forum"></item>
+            <item href="/download.html" name="Download"></item>
+        </menu>
 
-		<menu name="Documentation">
-			<item href="/about.html" name="About"></item>
-			<item href="/features.html" name="Features"></item>
-			<item href="/user-manual.pdf" name="User Manual"></item>
-			<item href="/developer-manual.pdf" name="Developer Manual"></item>
-<!--			<item href="/../apidocs/index.html" name="Java API Docs"></item> -->
-		</menu>
-		
-		<menu name="Project Info">
-			<item href="/team-list.html" name="Project Team"></item>
-			<item href="/dependencies.html" name="Dependencies"></item>
-			<item href="/cvs-usage.html" name="Source Repository"></item>
-			<item href="/issue-tracking.html" name="Issue Tracking"></item>
-			<item href="/license.html" name="License"></item>
-		</menu>
+        <menu name="Documentation">
+            <item href="/about.html" name="About"></item>
+            <item href="/features.html" name="Features"></item>
+            <item href="/user-manual.pdf" name="User Manual"></item>
+            <item href="/developer-manual.pdf" name="Developer Manual"></item>
+            <!--			<item href="/../apidocs/index.html" name="Java API Docs"></item> -->
+        </menu>
+
+        <menu name="Project Info">
+            <item href="/team-list.html" name="Project Team"></item>
+            <item href="/dependencies.html" name="Dependencies"></item>
+            <item href="/cvs-usage.html" name="Source Repository"></item>
+            <item href="/issue-tracking.html" name="Issue Tracking"></item>
+            <item href="/license.html" name="License"></item>
+        </menu>
 
         <menu name="Useful Links">
             <item href="http://squirrel-sql.sourceforge.net/" name="Squirrel-SQL"/>
             <item href="http://www.hibernate.org/" name="Hibernate"/>
             <item href="http://boss.bekk.no/boss/middlegen/" name="Middlegen"/>
-			<item href="https://appfuse.dev.java.net/" name="appFuse"/>
-			<item href="http://autoj.sourceforge.net" name="autoj builder"/>
-			<item href="http://xmenu-xlayer.sourceforge.net/" name="Xmenu-xlayer"/>			
+            <item href="https://appfuse.dev.java.net/" name="appFuse"/>
+            <item href="http://autoj.sourceforge.net" name="autoj builder"/>
+            <item href="http://xmenu-xlayer.sourceforge.net/" name="Xmenu-xlayer"/>
         </menu>
 
-		<!-- footer will be placed above the (c) -->
-		<footer>
-			<table border="0">
-			<p>
-				<a href="http://sourceforge.net">
-					<img src="http://sourceforge.net/sflogo.php?group_id=91406" border="0" alt="sf logo"/>
-				</a>
-			</p>
-			</table>
-		</footer>		
+        <!-- footer will be placed above the (c) -->
+        <footer>
+            <table border="0">
+                <p>
+                    <a href="http://sourceforge.net">
+                        <img src="http://sourceforge.net/sflogo.php?group_id=91406" border="0" alt="sf logo"/>
+                    </a>
+                </p>
+            </table>
+        </footer>
 
-		<search/>
+        <search/>
 
-	</body>
+    </body>
 </project>

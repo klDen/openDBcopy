@@ -31,42 +31,47 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jcraft.jsch;
 
 public class RequestSubsystem implements Request {
-  private String subsystem;
+    private String subsystem;
 
-  RequestSubsystem(String subsystem){
-    this.subsystem=subsystem;
-  }
-
-  public void request(Session session, Channel channel) throws Exception{
-    Buffer buf=new Buffer();
-    Packet packet=new Packet(buf);
-
-    boolean reply=waitForReply();
-    if(reply){
-      channel.reply=-1;
+    RequestSubsystem(String subsystem) {
+        this.subsystem = subsystem;
     }
 
-    packet.reset();
-    buf.putByte((byte)Session.SSH_MSG_CHANNEL_REQUEST);
-    buf.putInt(channel.getRecipient());
-    buf.putString("subsystem".getBytes());
-    buf.putByte((byte)(waitForReply() ? 1 : 0));
-    buf.putString(subsystem.getBytes());
-    session.write(packet);
+    public void request(Session session, Channel channel) throws Exception {
+        Buffer buf = new Buffer();
+        Packet packet = new Packet(buf);
 
-    if(reply){
-      while(channel.reply==-1){
-	try{Thread.sleep(10);}
-	catch(Exception ee){
-	}
-      }
-      if(channel.reply==0){
-	throw new JSchException("failed to send "+getSubsystem()+" request");
-      }
+        boolean reply = waitForReply();
+        if (reply) {
+            channel.reply = -1;
+        }
+
+        packet.reset();
+        buf.putByte((byte) Session.SSH_MSG_CHANNEL_REQUEST);
+        buf.putInt(channel.getRecipient());
+        buf.putString("subsystem".getBytes());
+        buf.putByte((byte) (waitForReply() ? 1 : 0));
+        buf.putString(subsystem.getBytes());
+        session.write(packet);
+
+        if (reply) {
+            while (channel.reply == -1) {
+                try {
+                    Thread.sleep(10);
+                } catch (Exception ee) {
+                }
+            }
+            if (channel.reply == 0) {
+                throw new JSchException("failed to send " + getSubsystem() + " request");
+            }
+        }
     }
-  }
-  public String getSubsystem(){
-    return subsystem;
-  }
-  public boolean waitForReply(){ return true; }
+
+    public String getSubsystem() {
+        return subsystem;
+    }
+
+    public boolean waitForReply() {
+        return true;
+    }
 }

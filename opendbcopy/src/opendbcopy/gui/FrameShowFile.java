@@ -23,29 +23,17 @@
 package opendbcopy.gui;
 
 import opendbcopy.controller.MainController;
-
 import opendbcopy.io.Reader;
-
 import opendbcopy.resource.ResourceManager;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.SystemColor;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowEvent;
-
-import java.io.File;
-import java.io.IOException;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
 
 
 /**
@@ -55,36 +43,35 @@ import javax.swing.border.TitledBorder;
  * @version $Revision$
  */
 public class FrameShowFile extends JFrame {
-    private MainController  controller;
+    private MainController controller;
     private ResourceManager rm;
-    private JPanel          panelMain;
-    private JPanel          panelControl;
-    private JButton         buttonRefresh;
-    private JScrollPane     scrollPane;
-    private JTextArea       textArea;
-    private File            file;
-    private String          title;
+    private JPanel panelMain;
+    private JPanel panelControl;
+    private JButton buttonRefresh;
+    private JScrollPane scrollPane;
+    private JTextArea textArea;
+    private File file;
+    private String title;
 
     /**
      * Creates a new FrameLaunchingProgress object.
      *
-     * @param controller DOCUMENT ME!
-     * @param frameWidth DOCUMENT ME!
+     * @param controller  DOCUMENT ME!
+     * @param frameWidth  DOCUMENT ME!
      * @param frameHeight DOCUMENT ME!
-     * @param file DOCUMENT ME!
-     * @param title DOCUMENT ME!
-     *
+     * @param file        DOCUMENT ME!
+     * @param title       DOCUMENT ME!
      * @throws Exception DOCUMENT ME!
      */
     public FrameShowFile(MainController controller,
-                         int            frameWidth,
-                         int            frameHeight,
-                         File           file,
-                         String         title) throws Exception {
-        this.controller     = controller;
-        this.rm             = controller.getResourceManager();
-        this.file           = file;
-        this.title          = title;
+                         int frameWidth,
+                         int frameHeight,
+                         File file,
+                         String title) throws Exception {
+        this.controller = controller;
+        this.rm = controller.getResourceManager();
+        this.file = file;
+        this.title = title;
         this.setSize(frameWidth, frameHeight);
 
         guiInit();

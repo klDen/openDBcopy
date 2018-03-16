@@ -24,49 +24,28 @@ package opendbcopy.gui.database.dual;
 
 import opendbcopy.config.OperationType;
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.controller.MainController;
-
 import opendbcopy.gui.DynamicPanel;
 import opendbcopy.gui.PluginGui;
-
 import opendbcopy.plugin.model.database.DatabaseModel;
 import opendbcopy.plugin.model.exception.MissingElementException;
-
 import opendbcopy.swing.JTableX;
 import opendbcopy.swing.RowEditorModel;
+import org.jdom2.Element;
 
-import org.jdom.Element;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Rectangle;
-import java.awt.SystemColor;
-import java.awt.event.ActionEvent;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Observable;
-import java.util.Vector;
-
-import javax.swing.BorderFactory;
-import javax.swing.DefaultCellEditor;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextField;
-import javax.swing.JTree;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Observable;
+import java.util.Vector;
 
 
 /**
@@ -76,55 +55,54 @@ import javax.swing.tree.DefaultMutableTreeNode;
  * @version $Revision$
  */
 public class PanelMappingColumn extends DynamicPanel {
-    private static final String    SQL_START = "SELECT <RECORDS> FROM ";
-    private static final String    WHERE = " WHERE";
-    private DatabaseModel          model;
-    private Object[][]             dataMapping;
-    private Object[][]             dataProcess;
-    private String                 currentTable;
+    private static final String SQL_START = "SELECT <RECORDS> FROM ";
+    private static final String WHERE = " WHERE";
+    private DatabaseModel model;
+    private Object[][] dataMapping;
+    private Object[][] dataProcess;
+    private String currentTable;
     private DefaultMutableTreeNode top;
-    private MappingColumnModel     mappingColumnModel;
-    private ProcessColumnModel     processColumnModel;
-    private RowEditorModel         rowModel;
-    private DefaultCellEditor      dce;
-    private boolean                select_all = false;
-    private Border                 borderRightPanel;
-    private BorderLayout           borderLayout = new BorderLayout();
-    private BorderLayout           borderLayoutRight = new BorderLayout();
-    private BorderLayout           borderLayoutTextfield = new BorderLayout();
-    private GridLayout             gridLayoutFilter = new GridLayout();
-    private JPanel                 panelOptions = new JPanel();
-    private JPanel                 panelRight = new JPanel();
-    private JPanel                 panelTableFilters = new JPanel();
-    private JPanel                 panelMappingColumns = null;
-    private JPanel                 panelProcessColumns = null;
-    private JPanel                 panelSelection = new JPanel();
-    private JPanel                 panelControlFilter = new JPanel();
-    private JSplitPane             splitPane = new JSplitPane();
-    private JScrollPane            scrollPaneTree = null;
-    private JScrollPane            scrollPaneTables = null;
-    private JTree                  treeSourceTables = new JTree();
-    private JTableX                tableMappingColumn = new JTableX();
-    private JTableX                tableProcessColumn = new JTableX();
-    private JTextField             tfFilter = new JTextField();
-    private JButton                buttonApplyTestFilter = new JButton();
-    private JButton                buttonDeleteFilter = new JButton();
-    private JCheckBox              checkBoxProcess = new JCheckBox();
-    private JLabel                 labelSelect = new JLabel();
-    private JLabel                 labelInfo = new JLabel();
+    private MappingColumnModel mappingColumnModel;
+    private ProcessColumnModel processColumnModel;
+    private RowEditorModel rowModel;
+    private DefaultCellEditor dce;
+    private boolean select_all = false;
+    private Border borderRightPanel;
+    private BorderLayout borderLayout = new BorderLayout();
+    private BorderLayout borderLayoutRight = new BorderLayout();
+    private BorderLayout borderLayoutTextfield = new BorderLayout();
+    private GridLayout gridLayoutFilter = new GridLayout();
+    private JPanel panelOptions = new JPanel();
+    private JPanel panelRight = new JPanel();
+    private JPanel panelTableFilters = new JPanel();
+    private JPanel panelMappingColumns = null;
+    private JPanel panelProcessColumns = null;
+    private JPanel panelSelection = new JPanel();
+    private JPanel panelControlFilter = new JPanel();
+    private JSplitPane splitPane = new JSplitPane();
+    private JScrollPane scrollPaneTree = null;
+    private JScrollPane scrollPaneTables = null;
+    private JTree treeSourceTables = new JTree();
+    private JTableX tableMappingColumn = new JTableX();
+    private JTableX tableProcessColumn = new JTableX();
+    private JTextField tfFilter = new JTextField();
+    private JButton buttonApplyTestFilter = new JButton();
+    private JButton buttonDeleteFilter = new JButton();
+    private JCheckBox checkBoxProcess = new JCheckBox();
+    private JLabel labelSelect = new JLabel();
+    private JLabel labelInfo = new JLabel();
 
     /**
      * Creates a new PanelProcessColumn object.
      *
-     * @param controller DOCUMENT ME!
-     * @param pluginGui DOCUMENT ME!
+     * @param controller         DOCUMENT ME!
+     * @param workingMode        DOCUMENT ME!
      * @param registerAsObserver DOCUMENT ME!
-     *
      * @throws Exception DOCUMENT ME!
      */
     public PanelMappingColumn(MainController controller,
-                              PluginGui    workingMode,
-                              Boolean        registerAsObserver) throws Exception {
+                              PluginGui workingMode,
+                              Boolean registerAsObserver) throws Exception {
         super(controller, workingMode, registerAsObserver);
         model = (DatabaseModel) super.model;
         guiInit();
@@ -134,11 +112,11 @@ public class PanelMappingColumn extends DynamicPanel {
     /**
      * DOCUMENT ME!
      *
-     * @param o DOCUMENT ME!
+     * @param o   DOCUMENT ME!
      * @param obj DOCUMENT ME!
      */
     public final void update(Observable o,
-                             Object     obj) {
+                             Object obj) {
         if ((currentTable != null) && (currentTable.length() > 0)) {
             try {
                 Element tableFilter = model.getTableFilter(currentTable);
@@ -179,22 +157,22 @@ public class PanelMappingColumn extends DynamicPanel {
 
             // Listen for when the selection changes.
             treeSourceTables.addTreeSelectionListener(new TreeSelectionListener() {
-                    public void valueChanged(TreeSelectionEvent e) {
-                        DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeSourceTables.getLastSelectedPathComponent();
+                public void valueChanged(TreeSelectionEvent e) {
+                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeSourceTables.getLastSelectedPathComponent();
 
-                        if (node == null) {
-                            return;
-                        }
+                    if (node == null) {
+                        return;
+                    }
 
-                        if (node.getLevel() == 1) {
-                            try {
-                                loadMappingColumnsAndFilter(node.toString());
-                            } catch (Exception ex) {
-                                postException(ex);
-                            }
+                    if (node.getLevel() == 1) {
+                        try {
+                            loadMappingColumnsAndFilter(node.toString());
+                        } catch (Exception ex) {
+                            postException(ex);
                         }
                     }
-                });
+                }
+            });
 
             // add component		
             scrollPaneTree = new JScrollPane(treeSourceTables);
@@ -226,7 +204,6 @@ public class PanelMappingColumn extends DynamicPanel {
      * DOCUMENT ME!
      *
      * @param tableName DOCUMENT ME!
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     private void loadMappingColumnsAndFilter(String tableName) throws MissingElementException {
@@ -245,8 +222,8 @@ public class PanelMappingColumn extends DynamicPanel {
             }
         }
 
-        mappingColumnModel     = new MappingColumnModel();
-        processColumnModel     = new ProcessColumnModel();
+        mappingColumnModel = new MappingColumnModel();
+        processColumnModel = new ProcessColumnModel();
 
         rowModel = new RowEditorModel();
 
@@ -267,7 +244,7 @@ public class PanelMappingColumn extends DynamicPanel {
             String nbrRecordsString = tableFilter.getAttributeValue(XMLTags.RECORDS);
 
             if (nbrRecordsString != null) {
-                String[] param = { nbrRecordsString };
+                String[] param = {nbrRecordsString};
                 labelInfo.setText(rm.getString("text.column.selectedRecords", param));
             }
         } else {
@@ -277,8 +254,8 @@ public class PanelMappingColumn extends DynamicPanel {
             labelInfo.setText("");
         }
 
-        tableMappingColumn     = new JTableX(mappingColumnModel);
-        tableProcessColumn     = new JTableX(processColumnModel);
+        tableMappingColumn = new JTableX(mappingColumnModel);
+        tableProcessColumn = new JTableX(processColumnModel);
 
         // tell the JTableX which RowEditorModel we are using
         tableMappingColumn.setRowEditorModel(rowModel);
@@ -300,26 +277,25 @@ public class PanelMappingColumn extends DynamicPanel {
      * DOCUMENT ME!
      *
      * @param tableName DOCUMENT ME!
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     private void initTableData(String tableName) throws MissingElementException {
         Element sourceTable = model.getMappingSourceTable(currentTable);
 
-        int     nbrSourceColumns = sourceTable.getChildren(XMLTags.COLUMN).size();
+        int nbrSourceColumns = sourceTable.getChildren(XMLTags.COLUMN).size();
 
-        dataMapping     = new Object[nbrSourceColumns][2];
-        dataProcess     = new Object[nbrSourceColumns][1];
+        dataMapping = new Object[nbrSourceColumns][2];
+        dataProcess = new Object[nbrSourceColumns][1];
 
         for (int row = 0; row < mappingColumnModel.getRowCount(); row++) {
-            dataMapping[row][0]     = new String("");
-            dataMapping[row][1]     = new String("");
-            dataProcess[row][0]     = new Boolean(false);
+            dataMapping[row][0] = new String("");
+            dataMapping[row][1] = new String("");
+            dataProcess[row][0] = new Boolean(false);
         }
 
         Iterator itMappingColumns = sourceTable.getChildren(XMLTags.COLUMN).iterator();
 
-        int      row = 0;
+        int row = 0;
 
         while (itMappingColumns.hasNext()) {
             Element columnMapping = (Element) itMappingColumns.next();
@@ -331,7 +307,7 @@ public class PanelMappingColumn extends DynamicPanel {
             rowModel.addEditorForRow(row, dce);
 
             // set default selected item
-            dataMapping[row][1]     = combo.getSelectedItem();
+            dataMapping[row][1] = combo.getSelectedItem();
 
             dataProcess[row][0] = new Boolean(columnMapping.getAttributeValue(XMLTags.PROCESS));
 
@@ -361,11 +337,9 @@ public class PanelMappingColumn extends DynamicPanel {
     /**
      * DOCUMENT ME!
      *
-     * @param destinationTableName DOCUMENT ME!
+     * @param destinationTableName  DOCUMENT ME!
      * @param destinationColumnName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     private JComboBox getDestinationColumnsComboBox(String destinationTableName,
@@ -384,7 +358,6 @@ public class PanelMappingColumn extends DynamicPanel {
      * DOCUMENT ME!
      *
      * @param columns DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     private Vector createComboBoxVector(List columns) {
@@ -409,13 +382,12 @@ public class PanelMappingColumn extends DynamicPanel {
      * DOCUMENT ME!
      *
      * @param top DOCUMENT ME!
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     private void createMappingNodes(DefaultMutableTreeNode top) throws MissingElementException {
         DefaultMutableTreeNode table = null;
 
-        Iterator               itMappingTables = model.getMappingTables().iterator();
+        Iterator itMappingTables = model.getMappingTables().iterator();
 
         while (itMappingTables.hasNext()) {
             Element tableElement = (Element) itMappingTables.next();
@@ -491,8 +463,8 @@ public class PanelMappingColumn extends DynamicPanel {
         panelTableFilters.add(panelSelection, null);
         panelTableFilters.add(panelControlFilter, null);
 
-        panelMappingColumns     = new JPanel(new BorderLayout());
-        panelProcessColumns     = new JPanel(new BorderLayout());
+        panelMappingColumns = new JPanel(new BorderLayout());
+        panelProcessColumns = new JPanel(new BorderLayout());
 
         panelRight.add(panelMappingColumns, BorderLayout.CENTER);
         panelRight.add(panelProcessColumns, BorderLayout.EAST);
@@ -501,8 +473,8 @@ public class PanelMappingColumn extends DynamicPanel {
 
         splitPane.setDividerLocation(splitPane.getLastDividerLocation());
 
-        scrollPaneTree       = new JScrollPane();
-        scrollPaneTables     = new JScrollPane(panelRight);
+        scrollPaneTree = new JScrollPane();
+        scrollPaneTables = new JScrollPane(panelRight);
 
         splitPane.add(scrollPaneTree, JSplitPane.LEFT);
         splitPane.add(scrollPaneTables, JSplitPane.RIGHT);
@@ -599,8 +571,8 @@ public class PanelMappingColumn extends DynamicPanel {
      * @version $Revision$
      */
     class MappingColumnModel extends AbstractTableModel {
-        private String[]      columnNames = { rm.getString("text.column.sourceColumn"), rm.getString("text.column.destinationColumn") };
-        public final Object[] longValues = { "abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyz" };
+        public final Object[] longValues = {"abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyz"};
+        private String[] columnNames = {rm.getString("text.column.sourceColumn"), rm.getString("text.column.destinationColumn")};
 
         /**
          * DOCUMENT ME!
@@ -624,7 +596,6 @@ public class PanelMappingColumn extends DynamicPanel {
          * DOCUMENT ME!
          *
          * @param col DOCUMENT ME!
-         *
          * @return DOCUMENT ME!
          */
         public final String getColumnName(int col) {
@@ -636,7 +607,6 @@ public class PanelMappingColumn extends DynamicPanel {
          *
          * @param row DOCUMENT ME!
          * @param col DOCUMENT ME!
-         *
          * @return DOCUMENT ME!
          */
         public final Object getValueAt(int row,
@@ -674,8 +644,8 @@ public class PanelMappingColumn extends DynamicPanel {
          * data can change.
          */
         public final void setValueAt(Object value,
-                                     int    row,
-                                     int    col) {
+                                     int row,
+                                     int col) {
             dataMapping[row][col] = value;
 
             Element mapping_column = null;
@@ -714,8 +684,8 @@ public class PanelMappingColumn extends DynamicPanel {
      * @version $Revision$
      */
     class ProcessColumnModel extends AbstractTableModel {
-        private String[]      columnNames = { rm.getString("text.column.process") };
-        public final Object[] longValues = { new Boolean(false) };
+        public final Object[] longValues = {new Boolean(false)};
+        private String[] columnNames = {rm.getString("text.column.process")};
 
         /**
          * DOCUMENT ME!
@@ -739,7 +709,6 @@ public class PanelMappingColumn extends DynamicPanel {
          * DOCUMENT ME!
          *
          * @param col DOCUMENT ME!
-         *
          * @return DOCUMENT ME!
          */
         public final String getColumnName(int col) {
@@ -751,7 +720,6 @@ public class PanelMappingColumn extends DynamicPanel {
          *
          * @param row DOCUMENT ME!
          * @param col DOCUMENT ME!
-         *
          * @return DOCUMENT ME!
          */
         public final Object getValueAt(int row,
@@ -774,8 +742,8 @@ public class PanelMappingColumn extends DynamicPanel {
          * data can change.
          */
         public final void setValueAt(Object value,
-                                     int    row,
-                                     int    col) {
+                                     int row,
+                                     int col) {
             dataProcess[row][col] = value;
 
             try {
@@ -800,7 +768,6 @@ public class PanelMappingColumn extends DynamicPanel {
          *
          * @param row DOCUMENT ME!
          * @param col DOCUMENT ME!
-         *
          * @return DOCUMENT ME!
          */
         public final boolean isCellEditable(int row,

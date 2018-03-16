@@ -22,9 +22,8 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.swing;
 
-import java.util.Hashtable;
-
 import javax.swing.table.TableCellEditor;
+import java.util.Hashtable;
 
 
 /**
@@ -47,9 +46,9 @@ public class RowEditorModel {
      * DOCUMENT ME!
      *
      * @param row DOCUMENT ME!
-     * @param e DOCUMENT ME!
+     * @param e   DOCUMENT ME!
      */
-    public void addEditorForRow(int             row,
+    public void addEditorForRow(int row,
                                 TableCellEditor e) {
         data.put(new Integer(row), e);
     }
@@ -67,7 +66,6 @@ public class RowEditorModel {
      * DOCUMENT ME!
      *
      * @param row DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public TableCellEditor getEditor(int row) {

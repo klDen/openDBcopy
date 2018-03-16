@@ -37,9 +37,8 @@ public final class DateTimeConverter {
     /**
      * DOCUMENT ME!
      *
-     * @param date DOCUMENT ME!
+     * @param date   DOCUMENT ME!
      * @param timeIn DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public static Timestamp convertSingleDateTimeObjectIntoTimestamp(Object date,

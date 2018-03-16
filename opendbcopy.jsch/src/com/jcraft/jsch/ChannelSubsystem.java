@@ -31,63 +31,66 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jcraft.jsch;
 
 public class ChannelSubsystem extends ChannelSession {
-  private String subsystem;
-  /*
-  ChannelSubsystem(String subsystem){
-    super();
-    this.subsystem=subsystem;
-  }
-  */
-  public void start() throws JSchException{
-    try{
-      RequestSubsystem request=new RequestSubsystem(subsystem);
-      boolean reply=request.waitForReply();
-      request.request(session, this);
+    private String subsystem;
+
+    /*
+    ChannelSubsystem(String subsystem){
+      super();
+      this.subsystem=subsystem;
     }
-    catch(Exception e){
-      if(e instanceof JSchException) throw (JSchException)e;
-      throw new JSchException(e.toString());
+    */
+    public void start() throws JSchException {
+        try {
+            RequestSubsystem request = new RequestSubsystem(subsystem);
+            boolean reply = request.waitForReply();
+            request.request(session, this);
+        } catch (Exception e) {
+            if (e instanceof JSchException) throw (JSchException) e;
+            throw new JSchException(e.toString());
+        }
+        (new Thread(this)).start();
     }
-    (new Thread(this)).start();
-  }
-  public void init(){
-    io.setInputStream(session.in);
-    io.setOutputStream(session.out);
-  }
-  public void run(){
-    //System.err.println("# ChannelSubsystem.run starting");
-    thread=this;
-    Buffer buf=new Buffer();
-    Packet packet=new Packet(buf);
-    int i=0;
-    try{
-      while(thread!=null && io.in!=null){
-	i=io.in.read(buf.buffer, 14, buf.buffer.length - 14);
-	if(i==0)
-	  continue;
-	if(i==-1)
-	  break;
-	if(close)
-	  break;
-	packet.reset();
-	buf.putByte((byte)Session.SSH_MSG_CHANNEL_DATA);
-	buf.putInt(recipient);
-	buf.putInt(i);
-	buf.skip(i);
-	session.write(packet, this, i);
-      }
+
+    public void init() {
+        io.setInputStream(session.in);
+        io.setOutputStream(session.out);
     }
-    catch (Exception e){
-      System.out.println("# ChannelSubsystem.run");
-      e.printStackTrace();
+
+    public void run() {
+        //System.err.println("# ChannelSubsystem.run starting");
+        thread = this;
+        Buffer buf = new Buffer();
+        Packet packet = new Packet(buf);
+        int i = 0;
+        try {
+            while (thread != null && io.in != null) {
+                i = io.in.read(buf.buffer, 14, buf.buffer.length - 14);
+                if (i == 0)
+                    continue;
+                if (i == -1)
+                    break;
+                if (close)
+                    break;
+                packet.reset();
+                buf.putByte((byte) Session.SSH_MSG_CHANNEL_DATA);
+                buf.putInt(recipient);
+                buf.putInt(i);
+                buf.skip(i);
+                session.write(packet, this, i);
+            }
+        } catch (Exception e) {
+            System.out.println("# ChannelSubsystem.run");
+            e.printStackTrace();
+        }
+        //System.err.println("# ChannelSubsystem.run stopping");
+        thread = null;
     }
-    //System.err.println("# ChannelSubsystem.run stopping");
-    thread=null;
-  }
-  public void setSubsystem(String subsystem){
-    this.subsystem=subsystem;
-  }
-  public String getSubsystem(){
-    return subsystem;
-  }
+
+    public String getSubsystem() {
+        return subsystem;
+    }
+
+    public void setSubsystem(String subsystem) {
+        this.subsystem = subsystem;
+    }
 }

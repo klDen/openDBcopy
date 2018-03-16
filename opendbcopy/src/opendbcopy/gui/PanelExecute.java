@@ -22,38 +22,25 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Rectangle;
-import java.awt.SystemColor;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Observable;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.Timer;
-import javax.swing.border.TitledBorder;
-
 import opendbcopy.config.OperationType;
 import opendbcopy.config.XMLTags;
 import opendbcopy.controller.MainController;
 import opendbcopy.log4j.gui.TextAreaAppender;
 import opendbcopy.plugin.PluginManager;
 import opendbcopy.plugin.model.Model;
-
 import org.apache.log4j.Category;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.Priority;
-import org.jdom.Element;
+import org.jdom2.Element;
+
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Observable;
 
 
 /**
@@ -64,37 +51,36 @@ import org.jdom.Element;
  */
 public class PanelExecute extends DynamicPanel {
     private final static int TIMER_SLOT = 100;
-    private PluginManager    pluginManager;
-    private Model            currentModel;
+    private PluginManager pluginManager;
+    private Model currentModel;
     private TextAreaAppender taa;
-    private Timer            timer;
-    private HashMap          availablePluginThreads;
-    private BorderLayout     borderLayout = new BorderLayout();
-    private JPanel           panelPlugin = new JPanel();
-    private JPanel           panelMain = new JPanel();
-    private JPanel           panelControl = new JPanel();
-    private JPanel           panelProgress = new JPanel();
-    private JComboBox        comboBoxPlugin = new JComboBox();
-    private BorderLayout     borderLayoutMain = new BorderLayout();
-    private JTextArea        textAreaLog = null;
-    private JScrollPane      scrollPane = null;
-    private JProgressBar     progressBarTable = null;
-    private JProgressBar     progressBarRecord = null;
-    private JButton          buttonControl = null;
+    private Timer timer;
+    private HashMap availablePluginThreads;
+    private BorderLayout borderLayout = new BorderLayout();
+    private JPanel panelPlugin = new JPanel();
+    private JPanel panelMain = new JPanel();
+    private JPanel panelControl = new JPanel();
+    private JPanel panelProgress = new JPanel();
+    private JComboBox comboBoxPlugin = new JComboBox();
+    private BorderLayout borderLayoutMain = new BorderLayout();
+    private JTextArea textAreaLog = null;
+    private JScrollPane scrollPane = null;
+    private JProgressBar progressBarTable = null;
+    private JProgressBar progressBarRecord = null;
+    private JButton buttonControl = null;
     private boolean registeredAsObserverOfPluginManager;
 
     /**
      * Creates a new PanelExecute object.
      *
-     * @param controller DOCUMENT ME!
-     * @param pluginGui DOCUMENT ME!
+     * @param controller         DOCUMENT ME!
+     * @param workingMode        DOCUMENT ME!
      * @param registerAsObserver DOCUMENT ME!
-     *
      * @throws Exception DOCUMENT ME!
      */
     public PanelExecute(MainController controller,
-                        PluginGui    workingMode,
-                        Boolean        registerAsObserver) throws Exception {
+                        PluginGui workingMode,
+                        Boolean registerAsObserver) throws Exception {
         super(controller, workingMode, registerAsObserver);
 
         currentModel = super.model;
@@ -106,12 +92,12 @@ public class PanelExecute extends DynamicPanel {
     /**
      * Listens for changes on plugins executed
      *
-     * @param o DOCUMENT ME!
+     * @param o   DOCUMENT ME!
      * @param obj DOCUMENT ME!
      */
     public final void update(Observable o,
-                             Object     obj) {
-    	if (timer != null && timer.isRunning()) {
+                             Object obj) {
+        if (timer != null && timer.isRunning()) {
             if (pluginManager.isDone() || pluginManager.isInterrupted() || pluginManager.isExceptionOccured()) {
                 timer.stop();
 
@@ -142,7 +128,7 @@ public class PanelExecute extends DynamicPanel {
                     postMessage(rm.getString("text.execute.interrupted"));
                 }
             }
-    	}
+        }
     }
 
     /**
@@ -232,8 +218,8 @@ public class PanelExecute extends DynamicPanel {
      * @return DOCUMENT ME!
      */
     private String getSelectedPluginThread() {
-        String   pluginThreadDescription = (String) comboBoxPlugin.getSelectedItem();
-        String   pluginThreadClass = null;
+        String pluginThreadDescription = (String) comboBoxPlugin.getSelectedItem();
+        String pluginThreadClass = null;
 
         Iterator itPluginKeys = availablePluginThreads.keySet().iterator();
 
@@ -254,14 +240,14 @@ public class PanelExecute extends DynamicPanel {
      * @param e DOCUMENT ME!
      */
     void buttonControl_actionPerformed(ActionEvent e) {
-    	
-    	// if openDBcopy is loaded from an existing project the reference to pluginManager cannot be loaded before here
-    	if (pluginManager == null) {
-    		pluginManager     = controller.getJobManager().getPluginManager();
 
-    		// register this panel as observer of PluginManager
+        // if openDBcopy is loaded from an existing project the reference to pluginManager cannot be loaded before here
+        if (pluginManager == null) {
+            pluginManager = controller.getJobManager().getPluginManager();
+
+            // register this panel as observer of PluginManager
             pluginManager.registerObserver(this);
-    	}
+        }
 
         // Execute
         if (buttonControl.getActionCommand().compareTo(OperationType.EXECUTE) == 0) {

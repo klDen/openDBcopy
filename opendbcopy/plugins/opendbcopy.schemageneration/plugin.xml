@@ -24,16 +24,16 @@
 -->
 
 <plugin db_mode="both">
-	<class name="opendbcopy.plugin.schemageneration.GenerateHibernateMappingPlugin" />
-	<description value="Generate Hibernate Mapping Files (required to create DDL for schema generation)" />
-	<author name="Anthony Smith" />
-	<conf>
-		<!-- path may be relative or absolute -->
-		<path value="log/" />
-		
-		<!-- qualified table name or not, e.g. catalog.table, schema.table or just table -->
-		<show_qualified_table_name value="true" />
-	</conf>
+    <class name="opendbcopy.plugin.schemageneration.GenerateHibernateMappingPlugin"/>
+    <description value="Generate Hibernate Mapping Files (required to create DDL for schema generation)"/>
+    <author name="Anthony Smith"/>
+    <conf>
+        <!-- path may be relative or absolute -->
+        <path value="log/"/>
+
+        <!-- qualified table name or not, e.g. catalog.table, schema.table or just table -->
+        <show_qualified_table_name value="true"/>
+    </conf>
 </plugin>
 
 

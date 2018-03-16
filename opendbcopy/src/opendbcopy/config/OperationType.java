@@ -29,7 +29,9 @@ package opendbcopy.config;
  * @version $Revision$
  */
 public final class OperationType {
-    /** Project and Application Operations */
+    /**
+     * Project and Application Operations
+     */
     public static final String NEW_JOB = "new_job";
     public static final String ADD_PLUGIN = "add_plugin";
     public static final String REMOVE_PLUGIN = "remove_plugin";
@@ -41,16 +43,22 @@ public final class OperationType {
     public static final String EXPORT_PLUGIN = "export_plugin";
     public static final String IMPORT_PLUGIN = "import_plugin";
 
-    /** Capture Operations */
+    /**
+     * Capture Operations
+     */
     public static final String READ_METADATA = "read_metadata";
     public static final String CAPTURE_SOURCE_MODEL = "capture_source_model";
     public static final String CAPTURE_DESTINATION_MODEL = "capture_destination_model";
 
-    /** Execute Menu */
+    /**
+     * Execute Menu
+     */
     public static final String EXECUTE = "execute";
     public static final String CANCEL = "cancel";
 
-    /** Test Menu */
+    /**
+     * Test Menu
+     */
     public static final String TEST_SOURCE_CONNECTION = "test_source_connection";
     public static final String TEST_DESTINATION_CONNECTION = "test_destination_connection";
     public static final String TEST_TABLE_FILTER = "test_table_filter";

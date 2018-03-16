@@ -22,12 +22,12 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.swing;
 
-import java.util.Vector;
-
+import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
+import java.util.Vector;
 
 
 /**
@@ -37,7 +37,7 @@ import javax.swing.tree.TreePath;
  * @version $Revision$
  */
 public class ElementTreeModel implements TreeModel {
-    private Vector   treeModelListeners = new Vector();
+    private Vector treeModelListeners = new Vector();
     private ConfNode root;
 
     /**
@@ -55,8 +55,8 @@ public class ElementTreeModel implements TreeModel {
      * @param oldRoot DOCUMENT ME!
      */
     protected void fireTreeStructureChanged(ConfNode oldRoot) {
-        int            len = treeModelListeners.size();
-        TreeModelEvent e = new TreeModelEvent(this, new Object[] { oldRoot });
+        int len = treeModelListeners.size();
+        TreeModelEvent e = new TreeModelEvent(this, new Object[]{oldRoot});
 
         for (int i = 0; i < len; i++) {
             ((TreeModelListener) treeModelListeners.elementAt(i)).treeStructureChanged(e);
@@ -68,12 +68,11 @@ public class ElementTreeModel implements TreeModel {
      * parameters passed into  the fire method.
      *
      * @param confNode the node being changed
-     *
      * @see EventListenerList
      */
     protected void fireTreeNodesChanged(ConfNode confNode) {
-        int            len = treeModelListeners.size();
-        TreeModelEvent e = new TreeModelEvent(this, new Object[] { confNode });
+        int len = treeModelListeners.size();
+        TreeModelEvent e = new TreeModelEvent(this, new Object[]{confNode});
 
         for (int i = 0; i < len; i++) {
             ((TreeModelListener) treeModelListeners.elementAt(i)).treeNodesChanged(e);
@@ -93,14 +92,12 @@ public class ElementTreeModel implements TreeModel {
      * Returns the child of parent at index index in the parent's child array.
      *
      * @param parent DOCUMENT ME!
-     * @param index DOCUMENT ME!
-     *
+     * @param index  DOCUMENT ME!
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public Object getChild(Object parent,
-                           int    index) {
+                           int index) {
         if (parent == null) {
             throw new IllegalArgumentException("Missing parent");
         }
@@ -112,7 +109,6 @@ public class ElementTreeModel implements TreeModel {
      * Returns the number of children of parent.
      *
      * @param parent DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public int getChildCount(Object parent) {
@@ -123,8 +119,7 @@ public class ElementTreeModel implements TreeModel {
      * Returns the index of child in parent.
      *
      * @param parent DOCUMENT ME!
-     * @param child DOCUMENT ME!
-     *
+     * @param child  DOCUMENT ME!
      * @return DOCUMENT ME!
      */
     public int getIndexOfChild(Object parent,
@@ -148,7 +143,6 @@ public class ElementTreeModel implements TreeModel {
      * Returns true if node is a leaf.
      *
      * @param node DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public boolean isLeaf(Object node) {
@@ -171,11 +165,11 @@ public class ElementTreeModel implements TreeModel {
     /**
      * Messaged when the user has altered the value for the item identified by path to newValue.  Not used by this model.
      *
-     * @param path DOCUMENT ME!
+     * @param path     DOCUMENT ME!
      * @param newValue DOCUMENT ME!
      */
     public void valueForPathChanged(TreePath path,
-                                    Object   newValue) {
+                                    Object newValue) {
         fireTreeNodesChanged((ConfNode) newValue);
     }
 }

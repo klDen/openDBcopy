@@ -23,9 +23,8 @@
 package opendbcopy.plugin.model.database.typeinfo;
 
 import opendbcopy.config.XMLTags;
-
-import org.jdom.Document;
-import org.jdom.Element;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,7 +43,6 @@ public class TypeMapping {
      * Creates a new TypeMapping object.
      *
      * @param typeMapping DOCUMENT ME!
-     *
      * @throws Exception DOCUMENT ME!
      */
     public TypeMapping(Document typeMapping) throws Exception {
@@ -55,7 +53,6 @@ public class TypeMapping {
      * DOCUMENT ME!
      *
      * @param sqlTypeNumber DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public String getJavaType(String sqlTypeNumber) {
@@ -74,12 +71,11 @@ public class TypeMapping {
      * DOCUMENT ME!
      *
      * @param typeMapping DOCUMENT ME!
-     *
      * @throws Exception DOCUMENT ME!
      */
     private void setupTypeMapping(Document typeMapping) throws Exception {
         Iterator itTypes = typeMapping.getRootElement().getChildren(XMLTags.TYPE).iterator();
-        Element  typeElement = null;
+        Element typeElement = null;
         typeMap = new HashMap();
 
         while (itTypes.hasNext()) {

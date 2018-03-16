@@ -22,15 +22,14 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.plugin.model.database.dependency;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
-
 import opendbcopy.config.XMLTags;
 import opendbcopy.plugin.model.database.DatabaseModel;
 import opendbcopy.plugin.model.exception.MissingElementException;
+import org.jdom2.Element;
 
-import org.jdom.Element;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
 
 /**
@@ -41,15 +40,14 @@ import org.jdom.Element;
  */
 public class Mapper {
     private DatabaseModel pluginModel;
-    private Element      mapping;
-    private Element      source_db_model;
-    private Element      destination_db_model;
+    private Element mapping;
+    private Element source_db_model;
+    private Element destination_db_model;
 
     /**
      * Creates a new LinkingModel object.
      *
-     * @param projectModel DOCUMENT ME!
-     *
+     * @param pluginModel DOCUMENT ME!
      * @throws MissingElementException DOCUMENT ME!
      */
     public Mapper(DatabaseModel pluginModel) throws MissingElementException {
@@ -72,11 +70,11 @@ public class Mapper {
         // remove all children first
         mapping.getChildren().clear();
 
-        source_db_model          = pluginModel.getSourceModel();
-        destination_db_model     = pluginModel.getDestinationModel();
+        source_db_model = pluginModel.getSourceModel();
+        destination_db_model = pluginModel.getDestinationModel();
 
-        List     source_db_tables = pluginModel.getSourceTables();
-        List     destination_db_tables = pluginModel.getDestinationTables();
+        List source_db_tables = pluginModel.getSourceTables();
+        List destination_db_tables = pluginModel.getDestinationTables();
 
         Iterator itSourceTables = source_db_tables.iterator();
 
@@ -112,7 +110,7 @@ public class Mapper {
      * DOCUMENT ME!
      */
     public final void findInitalMatches() {
-        List     tables = mapping.getChildren(XMLTags.TABLE);
+        List tables = mapping.getChildren(XMLTags.TABLE);
 
         Iterator itTables = tables.iterator();
 
@@ -149,9 +147,8 @@ public class Mapper {
      * DOCUMENT ME!
      *
      * @param sourceTableName DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      */
     public final void checkForMappings(String sourceTableName) throws MissingElementException {
         if (sourceTableName == null) {
@@ -161,7 +158,7 @@ public class Mapper {
         Element mapping_table = pluginModel.getMappingSourceTable(sourceTableName);
 
         if ((mapping_table != null) && (mapping_table.getAttributeValue(XMLTags.DESTINATION_DB).length() > 0)) {
-            Element  destination_table = pluginModel.getDestinationTable(mapping_table.getAttributeValue(XMLTags.DESTINATION_DB));
+            Element destination_table = pluginModel.getDestinationTable(mapping_table.getAttributeValue(XMLTags.DESTINATION_DB));
 
             Iterator itColumns = mapping_table.getChildren(XMLTags.COLUMN).iterator();
 
@@ -184,18 +181,16 @@ public class Mapper {
      * DOCUMENT ME!
      *
      * @param tableName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException  DOCUMENT ME!
      */
     public final Vector getUnmappedColumns(String tableName) throws MissingElementException {
         if (tableName == null) {
             throw new IllegalArgumentException("Missing tableName");
         }
 
-        Vector  unmatchedColumns = new Vector();
+        Vector unmatchedColumns = new Vector();
         Element tableDestination = pluginModel.getDestinationTable(tableName);
 
         if (tableDestination != null) {
@@ -218,9 +213,7 @@ public class Mapper {
      * DOCUMENT ME!
      *
      * @param tableName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     private Element findMatchingTable(String tableName) {
@@ -245,15 +238,13 @@ public class Mapper {
     /**
      * DOCUMENT ME!
      *
-     * @param table DOCUMENT ME!
+     * @param table      DOCUMENT ME!
      * @param columnName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     private Element findMatchingColumn(Element table,
-                                       String  columnName) {
+                                       String columnName) {
         if ((table == null) || (columnName == null)) {
             throw new IllegalArgumentException("Missing arguments values: table=" + table + " columnName=" + columnName);
         }
@@ -278,7 +269,7 @@ public class Mapper {
     private void setProcessOrder() {
         Iterator itMappingTables = mapping.getChildren(XMLTags.TABLE).iterator();
 
-        int      order = 0;
+        int order = 0;
 
         while (itMappingTables.hasNext()) {
             Element mappingTable = (Element) itMappingTables.next();

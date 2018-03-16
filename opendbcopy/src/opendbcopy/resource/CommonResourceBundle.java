@@ -32,13 +32,19 @@ import java.util.*;
  * @version 1.0
  */
 public abstract class CommonResourceBundle extends ResourceBundle {
-    /** Default implementation of this abstract class */
+    /**
+     * Default implementation of this abstract class
+     */
     private static DefResourceBundle instance;
 
-    /** Collection of resource bundles */
+    /**
+     * Collection of resource bundles
+     */
     private static ArrayList bundles = new ArrayList();
 
-    /** Resource bundle base names */
+    /**
+     * Resource bundle base names
+     */
     protected String[] baseName;
 
     /**
@@ -80,15 +86,6 @@ public abstract class CommonResourceBundle extends ResourceBundle {
     }
 
     /**
-     * DOCUMENT ME!
-     *
-     * @return an array of all resource bundle base names
-     */
-    public String[] getBaseName() {
-        return baseName;
-    }
-
-    /**
      * Adds a resource bundle to the collection of bundles
      *
      * @param bundle the ResourceBundle to add
@@ -109,6 +106,15 @@ public abstract class CommonResourceBundle extends ResourceBundle {
     /**
      * DOCUMENT ME!
      *
+     * @return an array of all resource bundle base names
+     */
+    public String[] getBaseName() {
+        return baseName;
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
      * @return Enumeration of the keys
      */
     public abstract Enumeration getKeys();
@@ -123,9 +129,8 @@ public abstract class CommonResourceBundle extends ResourceBundle {
     /**
      * Builds the resource bundle base names as an array from a string like: test1,test2 etc or test1 test2 etc
      *
-     * @param base DOCUMENT ME!
+     * @param base  DOCUMENT ME!
      * @param delim DOCUMENT ME!
-     *
      * @throws RuntimeException DOCUMENT ME!
      */
     protected void buildBaseName(String base,
@@ -186,51 +191,49 @@ public abstract class CommonResourceBundle extends ResourceBundle {
          * DOCUMENT ME!
          *
          * @return DOCUMENT ME!
-         *
          * @throws NoSuchElementException DOCUMENT ME!
          */
         public Enumeration getKeys() {
             return new Enumeration() {
-                    Enumeration enumeration = null;
-                    int         i = 0;
+                Enumeration enumeration = null;
+                int i = 0;
 
-                    public boolean hasMoreElements() {
-                        boolean b = false;
+                public boolean hasMoreElements() {
+                    boolean b = false;
 
-                        while ((enumeration == null) || !(b = enumeration.hasMoreElements())) {
-                            if (i >= bundles.size()) {
-                                enumeration = null;
+                    while ((enumeration == null) || !(b = enumeration.hasMoreElements())) {
+                        if (i >= bundles.size()) {
+                            enumeration = null;
 
-                                return b;
-                            }
-
-                            enumeration = ((ResourceBundle) bundles.get(i++)).getKeys();
+                            return b;
                         }
 
-                        return b;
+                        enumeration = ((ResourceBundle) bundles.get(i++)).getKeys();
                     }
 
-                    public Object nextElement() {
-                        if (enumeration == null) {
-                            throw new NoSuchElementException();
-                        }
+                    return b;
+                }
 
-                        return enumeration.nextElement();
+                public Object nextElement() {
+                    if (enumeration == null) {
+                        throw new NoSuchElementException();
                     }
-                };
+
+                    return enumeration.nextElement();
+                }
+            };
         }
 
         /**
          * DOCUMENT ME!
          *
          * @param key DOCUMENT ME!
-         *
          * @return DOCUMENT ME!
          */
         protected Object handleGetObject(String key) {
             ResourceBundle rb = null;
 
-            String         val = null;
+            String val = null;
 
             for (int i = 0; i < bundles.size(); i++) {
                 rb = (ResourceBundle) bundles.get(i);

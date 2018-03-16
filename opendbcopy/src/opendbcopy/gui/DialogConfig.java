@@ -23,26 +23,17 @@
 package opendbcopy.gui;
 
 import info.clearthought.layout.TableLayout;
-
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
-
 import opendbcopy.config.APM;
 import opendbcopy.config.ConfigManager;
 import opendbcopy.config.GUI;
 import opendbcopy.resource.ResourceManager;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -52,37 +43,37 @@ import opendbcopy.resource.ResourceManager;
  * @version $Revision$
  */
 public class DialogConfig extends JDialog {
-    private ConfigManager   cm;
+    private ConfigManager cm;
     private ResourceManager rm;
-    private JPanel          panelMain;
-    private JLabel          labelGuiLanguage;
-    private JLabel          labelEncoding;
-    private JLabel          labelDefaultBrowser;
-    private JComboBox       comboBoxGuiLanguages;
-    private JTextField      tfEncoding;
+    private JPanel panelMain;
+    private JLabel labelGuiLanguage;
+    private JLabel labelEncoding;
+    private JLabel labelDefaultBrowser;
+    private JComboBox comboBoxGuiLanguages;
+    private JTextField tfEncoding;
     private JTextField tfBrowserPaths;
-    private JTextPane       textPaneDefaultBrowser;
-    private JButton         buttonCancel;
-    private JButton         buttonOk;
+    private JTextPane textPaneDefaultBrowser;
+    private JButton buttonCancel;
+    private JButton buttonOk;
 
     /**
      * Creates a new DialogConfig object.
      *
      * @param parentFrame DOCUMENT ME!
-     * @param cm DOCUMENT ME!
-     * @param rm DOCUMENT ME!
-     * @param title DOCUMENT ME!
-     * @param modal DOCUMENT ME!
+     * @param cm          DOCUMENT ME!
+     * @param rm          DOCUMENT ME!
+     * @param title       DOCUMENT ME!
+     * @param modal       DOCUMENT ME!
      */
-    public DialogConfig(JFrame          parentFrame,
-                        ConfigManager   cm,
+    public DialogConfig(JFrame parentFrame,
+                        ConfigManager cm,
                         ResourceManager rm,
-                        String          title,
-                        boolean         modal) {
+                        String title,
+                        boolean modal) {
         super(parentFrame, title, modal);
 
-        this.cm     = cm;
-        this.rm     = rm;
+        this.cm = cm;
+        this.rm = rm;
 
         guiInit();
     }
@@ -92,25 +83,25 @@ public class DialogConfig extends JDialog {
      */
     private void guiInit() {
         double[][] size = {
-                              { GUI.B, GUI.P, GUI.HG, GUI.P, GUI.B }, // Columns
-        { GUI.B, GUI.P, GUI.VG, GUI.P, GUI.VG, GUI.P, GUI.VG, GUI.P, GUI.B }
+                {GUI.B, GUI.P, GUI.HG, GUI.P, GUI.B}, // Columns
+                {GUI.B, GUI.P, GUI.VG, GUI.P, GUI.VG, GUI.P, GUI.VG, GUI.P, GUI.B}
         }; // Rows
 
-        panelMain     = new JPanel(new TableLayout(size));
+        panelMain = new JPanel(new TableLayout(size));
 
-        labelGuiLanguage        = new JLabel(rm.getString("text.config.guiLanguage"));
-        labelEncoding           = new JLabel(rm.getString("text.config.encoding"));
-        labelDefaultBrowser     = new JLabel(rm.getString("text.config.defaultBrowser"));
+        labelGuiLanguage = new JLabel(rm.getString("text.config.guiLanguage"));
+        labelEncoding = new JLabel(rm.getString("text.config.encoding"));
+        labelDefaultBrowser = new JLabel(rm.getString("text.config.defaultBrowser"));
 
         comboBoxGuiLanguages = new JComboBox();
         fillGuiLanguages();
 
         tfEncoding = new JTextField();
         tfEncoding.setText(cm.getApplicationProperty(APM.ENCODING));
-        
+
         tfBrowserPaths = new JTextField();
         tfBrowserPaths.setText(cm.getApplicationProperty(APM.BROWSER_PATHS));
-        
+
         buttonCancel = new JButton(rm.getString("button.cancel"));
         buttonCancel.addActionListener(new DialogConfig_buttonCancel_actionAdapter(this));
 
@@ -123,7 +114,7 @@ public class DialogConfig extends JDialog {
         panelMain.add(tfEncoding, "3, 3");
         panelMain.add(labelDefaultBrowser, "1, 5");
         panelMain.add(tfBrowserPaths, "3, 5");
-        
+
         JPanel panelControl = new JPanel(new GridLayout(1, 2, 10, 10));
         panelControl.add(buttonCancel);
         panelControl.add(buttonOk);
@@ -142,54 +133,54 @@ public class DialogConfig extends JDialog {
 
         // default language is the first one in comboBox
         if (locales != null && locales.size() > 0) {
-        	for (int i = 0; i < locales.size(); i++) {
-        		Locale locale = (Locale) locales.get(i);
-        		
-        		comboBoxGuiLanguages.addItem(new LocaleBean(locale));
-        		if (locale.equals(defaultLocale)) {
-        			comboBoxGuiLanguages.setSelectedIndex(i);
-        		}
-        	}
+            for (int i = 0; i < locales.size(); i++) {
+                Locale locale = (Locale) locales.get(i);
+
+                comboBoxGuiLanguages.addItem(new LocaleBean(locale));
+                if (locale.equals(defaultLocale)) {
+                    comboBoxGuiLanguages.setSelectedIndex(i);
+                }
+            }
         }
     }
-    
+
     void buttonCancel_actionPerformed(ActionEvent e) {
-    	this.hide();
+        this.hide();
     }
 
     void buttonOk_actionPerformed(ActionEvent e) {
-    	try {
-        	// default language
-        	cm.updateApplicationProperty(APM.DEFAULT_LANGUAGE, ((LocaleBean) comboBoxGuiLanguages.getSelectedItem()).getLocale().getLanguage());
-        	
-        	// encoding
-        	cm.updateApplicationProperty(APM.ENCODING, tfEncoding.getText());
-        	
-        	// browser paths
-        	cm.updateApplicationProperty(APM.BROWSER_PATHS, tfBrowserPaths.getText());
-        	
-        	this.hide();
-        	
-    	} catch (IOException ioex) {
-    		ioex.printStackTrace();
-    	}
+        try {
+            // default language
+            cm.updateApplicationProperty(APM.DEFAULT_LANGUAGE, ((LocaleBean) comboBoxGuiLanguages.getSelectedItem()).getLocale().getLanguage());
+
+            // encoding
+            cm.updateApplicationProperty(APM.ENCODING, tfEncoding.getText());
+
+            // browser paths
+            cm.updateApplicationProperty(APM.BROWSER_PATHS, tfBrowserPaths.getText());
+
+            this.hide();
+
+        } catch (IOException ioex) {
+            ioex.printStackTrace();
+        }
     }
 }
 
 class LocaleBean {
-	private Locale locale;
-	
-	LocaleBean(Locale locale) {
-		this.locale = locale;
-	}
-	
-	public String toString() {
-		return locale.getDisplayLanguage();
-	}
-	
-	public Locale getLocale() {
-		return locale;
-	}
+    private Locale locale;
+
+    LocaleBean(Locale locale) {
+        this.locale = locale;
+    }
+
+    public String toString() {
+        return locale.getDisplayLanguage();
+    }
+
+    public Locale getLocale() {
+        return locale;
+    }
 }
 
 class DialogConfig_buttonCancel_actionAdapter implements java.awt.event.ActionListener {

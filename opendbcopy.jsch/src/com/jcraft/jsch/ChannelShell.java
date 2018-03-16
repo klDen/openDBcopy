@@ -29,74 +29,73 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-import java.net.*;
+public class ChannelShell extends ChannelSession {
+    boolean xforwading = false;
 
-public class ChannelShell extends ChannelSession{
-  boolean xforwading=false;
-  /*
-  ChannelShell(){
-    super();
-    type="session".getBytes();
-    io=new IO();
-  }
-  */
-  public void setXForwarding(boolean foo){
-    xforwading=true;
-  }
-  public void start(){
-    try{
-      Request request;
-      if(xforwading){
-        request=new RequestX11();
-        request.request(session, this);
-      }
-      request=new RequestPtyReq();
-      request.request(session, this);
-      request=new RequestShell();
-      request.request(session, this);
+    /*
+    ChannelShell(){
+      super();
+      type="session".getBytes();
+      io=new IO();
     }
-    catch(Exception e){
+    */
+    public void setXForwarding(boolean foo) {
+        xforwading = true;
     }
-    (new Thread(this)).start();
-  }
-  public void init(){
-    io.setInputStream(session.in);
-    io.setOutputStream(session.out);
-  }
-  public void run(){
-    thread=this;
-    Buffer buf=new Buffer();
-    Packet packet=new Packet(buf);
-    int i=0;
-    try{
-      while(thread!=null && io!=null && io.in!=null){
-        i=io.in.read(buf.buffer, 14, buf.buffer.length-14);
-	if(i==0)continue;
-	if(i==-1)break;
-	if(close)break;
-        packet.reset();
-        buf.putByte((byte)Session.SSH_MSG_CHANNEL_DATA);
-        buf.putInt(recipient);
-        buf.putInt(i);
-        buf.skip(i);
-	session.write(packet, this, i);
-      }
-    }
-    catch(Exception e){
-      //System.out.println("ChannelShell.run: "+e);
-    }
-    thread=null;
-  }
 
-  public void setPtySize(int row, int col, int wp, int hp){
-    //if(thread==null) return;
-    try{
-      RequestWindowChange request=new RequestWindowChange();
-      request.setSize(row, col, wp, hp);
-      request.request(session, this);
+    public void start() {
+        try {
+            Request request;
+            if (xforwading) {
+                request = new RequestX11();
+                request.request(session, this);
+            }
+            request = new RequestPtyReq();
+            request.request(session, this);
+            request = new RequestShell();
+            request.request(session, this);
+        } catch (Exception e) {
+        }
+        (new Thread(this)).start();
     }
-    catch(Exception e){
-      System.out.println("ChannelShell.setPtySize: "+e);
+
+    public void init() {
+        io.setInputStream(session.in);
+        io.setOutputStream(session.out);
     }
-  }
+
+    public void run() {
+        thread = this;
+        Buffer buf = new Buffer();
+        Packet packet = new Packet(buf);
+        int i = 0;
+        try {
+            while (thread != null && io != null && io.in != null) {
+                i = io.in.read(buf.buffer, 14, buf.buffer.length - 14);
+                if (i == 0) continue;
+                if (i == -1) break;
+                if (close) break;
+                packet.reset();
+                buf.putByte((byte) Session.SSH_MSG_CHANNEL_DATA);
+                buf.putInt(recipient);
+                buf.putInt(i);
+                buf.skip(i);
+                session.write(packet, this, i);
+            }
+        } catch (Exception e) {
+            //System.out.println("ChannelShell.run: "+e);
+        }
+        thread = null;
+    }
+
+    public void setPtySize(int row, int col, int wp, int hp) {
+        //if(thread==null) return;
+        try {
+            RequestWindowChange request = new RequestWindowChange();
+            request.setSize(row, col, wp, hp);
+            request.request(session, this);
+        } catch (Exception e) {
+            System.out.println("ChannelShell.setPtySize: " + e);
+        }
+    }
 }

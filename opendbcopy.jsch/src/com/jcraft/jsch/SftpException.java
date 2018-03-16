@@ -29,15 +29,17 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-public class SftpException extends Exception{
-  public int id;
-  public String message;
-  public SftpException (int id, String message) {
-    super();
-    this.id=id;
-    this.message=message;
-  }
-  public String toString(){
-    return message;
-  }
+public class SftpException extends Exception {
+    public int id;
+    public String message;
+
+    public SftpException(int id, String message) {
+        super();
+        this.id = id;
+        this.message = message;
+    }
+
+    public String toString() {
+        return message;
+    }
 }

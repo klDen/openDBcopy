@@ -24,17 +24,14 @@ package opendbcopy.config;
 
 import opendbcopy.io.ExportToXML;
 import opendbcopy.io.ImportFromXML;
-
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
-
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.util.Iterator;
 import java.util.TreeMap;
 
@@ -47,21 +44,20 @@ import java.util.TreeMap;
  */
 public class SQLDriverManager {
     private Document driversDoc;
-    private TreeMap  drivers;
-    private File     personalSQLDriversFile;
+    private TreeMap drivers;
+    private File personalSQLDriversFile;
 
     /**
      * Creates a new SQLDrivers object.
      *
      * @param personalSQLDriversFile DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws JDOMException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws JDOMException             DOCUMENT ME!
+     * @throws IOException               DOCUMENT ME!
      */
     public SQLDriverManager(File personalSQLDriversFile) throws MissingAttributeException, MissingElementException, JDOMException, IOException {
-        this.personalSQLDriversFile     = personalSQLDriversFile;
+        this.personalSQLDriversFile = personalSQLDriversFile;
 
         this.drivers = new TreeMap();
         loadAvailableDrivers();
@@ -71,9 +67,7 @@ public class SQLDriverManager {
      * DOCUMENT ME!
      *
      * @param nameOrClassName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final Driver getDriver(String nameOrClassName) {
@@ -91,16 +85,14 @@ public class SQLDriverManager {
     /**
      * DOCUMENT ME!
      *
-     * @param name DOCUMENT ME!
+     * @param name      DOCUMENT ME!
      * @param className DOCUMENT ME!
-     * @param url DOCUMENT ME!
-     *
+     * @param url       DOCUMENT ME!
      * @return DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
-     * @throws RuntimeException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
+     * @throws RuntimeException          DOCUMENT ME!
      */
     public final Driver saveDriver(String name,
                                    String className,
@@ -157,10 +149,9 @@ public class SQLDriverManager {
     /**
      * DOCUMENT ME!
      *
-     * @param driver DOCUMENT ME!
-     * @param url DOCUMENT ME!
+     * @param driver   DOCUMENT ME!
+     * @param url      DOCUMENT ME!
      * @param username DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final void setSourceDriverDefault(Driver driver,
@@ -178,10 +169,9 @@ public class SQLDriverManager {
     /**
      * DOCUMENT ME!
      *
-     * @param driver DOCUMENT ME!
-     * @param url DOCUMENT ME!
+     * @param driver   DOCUMENT ME!
+     * @param url      DOCUMENT ME!
      * @param username DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final void setDestinationDriverDefault(Driver driver,
@@ -218,9 +208,9 @@ public class SQLDriverManager {
      * DOCUMENT ME!
      *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws JDOMException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws JDOMException             DOCUMENT ME!
+     * @throws IOException               DOCUMENT ME!
      */
     private void loadAvailableDrivers() throws MissingAttributeException, MissingElementException, JDOMException, IOException {
         driversDoc = ImportFromXML.importFile(personalSQLDriversFile);
@@ -236,7 +226,7 @@ public class SQLDriverManager {
         while (itDrivers.hasNext()) {
             Element driverElement = (Element) itDrivers.next();
 
-            Driver  driver = new Driver(driverElement);
+            Driver driver = new Driver(driverElement);
             drivers.put(driver.getName(), driver);
         }
     }
@@ -281,7 +271,6 @@ public class SQLDriverManager {
      * DOCUMENT ME!
      *
      * @param className DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     private Driver findDriverByClassName(String className) {

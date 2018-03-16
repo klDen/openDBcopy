@@ -23,15 +23,12 @@
 package opendbcopy.plugin.model.database.dependency;
 
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.plugin.model.database.DatabaseModel;
 import opendbcopy.plugin.model.database.exception.DependencyNotSolvableException;
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.UnsupportedAttributeValueException;
-
-
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,32 +42,31 @@ import java.util.TreeMap;
  * @version $Revision$
  */
 public class Dependency {
-    private static final int    MAX_NUMBER_RECURSIONS = 500;
+    private static final int MAX_NUMBER_RECURSIONS = 500;
     private static final String ROOT_NODE = "root";
-    private DatabaseModel        pluginModel;
-    private Element             db_element;
-    private HashMap             unsortedNodes;
-    private TreeMap             sortedNodes;
-    private Node                rootNode;
-    private int                 nbrTables = 0;
+    private DatabaseModel pluginModel;
+    private Element db_element;
+    private HashMap unsortedNodes;
+    private TreeMap sortedNodes;
+    private Node rootNode;
+    private int nbrTables = 0;
 
     /**
      * Creates a new Dependency object.
      *
      * @param DatabasePluginModel DOCUMENT ME!
-     * @param db_element DOCUMENT ME!
-     *
-     * @throws DependencyNotSolvableException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
+     * @param db_element          DOCUMENT ME!
+     * @throws DependencyNotSolvableException     DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
      */
     public Dependency(DatabaseModel DatabasePluginModel,
-                      Element      db_element) throws DependencyNotSolvableException, MissingAttributeException, UnsupportedAttributeValueException, MissingElementException {
-        this.pluginModel      = DatabasePluginModel;
-        this.db_element        = db_element;
-        this.unsortedNodes     = new HashMap();
-        this.sortedNodes       = new TreeMap();
+                      Element db_element) throws DependencyNotSolvableException, MissingAttributeException, UnsupportedAttributeValueException, MissingElementException {
+        this.pluginModel = DatabasePluginModel;
+        this.db_element = db_element;
+        this.unsortedNodes = new HashMap();
+        this.sortedNodes = new TreeMap();
 
         removeOldProcessOrderAttributes();
         setupRootNode();
@@ -80,15 +76,15 @@ public class Dependency {
     /**
      * DOCUMENT ME!
      *
-     * @throws MissingAttributeException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
      */
     public final void setProcessOrder() throws MissingAttributeException, UnsupportedAttributeValueException, MissingElementException {
-        Node     table = null;
+        Node table = null;
         Iterator itSortedTables = sortedNodes.values().iterator();
 
-        int      processOrder = 0;
+        int processOrder = 0;
 
         while (itSortedTables.hasNext()) {
             table = (Node) itSortedTables.next();
@@ -107,12 +103,12 @@ public class Dependency {
      * DOCUMENT ME!
      *
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
      */
     private void removeOldProcessOrderAttributes() throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException {
         Iterator itTables;
-        Element  table;
+        Element table;
 
         if (pluginModel.getDbMode() == pluginModel.DUAL_MODE) {
             itTables = pluginModel.getMappingTables().iterator();
@@ -140,10 +136,10 @@ public class Dependency {
     /**
      * DOCUMENT ME!
      *
-     * @throws DependencyNotSolvableException DOCUMENT ME!
+     * @throws DependencyNotSolvableException     DOCUMENT ME!
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
      */
     private void traverseDependencies() throws DependencyNotSolvableException, UnsupportedAttributeValueException, MissingAttributeException, MissingElementException {
         this.nbrTables = getNbrTables();
@@ -155,7 +151,7 @@ public class Dependency {
             readUnsortedNodes();
 
             boolean jobDone = false;
-            int     nbrLoops = 0;
+            int nbrLoops = 0;
 
             jobDone = completeTheGame();
 
@@ -180,18 +176,18 @@ public class Dependency {
     /**
      * DOCUMENT ME!
      *
-     * @throws MissingAttributeException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
      */
     private void addNodesToRootWithNoParentRelation() throws MissingAttributeException, UnsupportedAttributeValueException, MissingElementException {
         Iterator itTables = db_element.getChildren(XMLTags.TABLE).iterator();
-        Element  table = null;
-        String   tableName = "";
+        Element table = null;
+        String tableName = "";
 
         while (itTables.hasNext()) {
-            table         = (Element) itTables.next();
-            tableName     = table.getAttributeValue(XMLTags.NAME);
+            table = (Element) itTables.next();
+            tableName = table.getAttributeValue(XMLTags.NAME);
 
             // check if element needs to be processed
             if (pluginModel.getDbMode() == pluginModel.DUAL_MODE) {
@@ -227,14 +223,14 @@ public class Dependency {
      */
     private void readUnsortedNodes() {
         if (unsortedNodes.size() > 0) {
-            Node     node = null;
-            Element  table = null;
+            Node node = null;
+            Element table = null;
 
             Iterator itUnsortedTables = unsortedNodes.values().iterator();
 
             while (itUnsortedTables.hasNext()) {
-                node      = (Node) itUnsortedTables.next();
-                table     = getTable(node.getName());
+                node = (Node) itUnsortedTables.next();
+                table = getTable(node.getName());
 
                 Iterator itImportedKeys = table.getChildren(XMLTags.IMPORTED_KEY).iterator();
 
@@ -252,19 +248,19 @@ public class Dependency {
      */
     private boolean completeTheGame() {
         if (unsortedNodes.size() > 0) {
-            Node     node = null;
-            HashMap  parents = null;
-            int      parentCounter = 0;
+            Node node = null;
+            HashMap parents = null;
+            int parentCounter = 0;
 
             Iterator itNodes = unsortedNodes.values().iterator();
 
             while (itNodes.hasNext()) {
-                node     = (Node) itNodes.next();
+                node = (Node) itNodes.next();
 
                 parents = node.getParents();
 
                 if (parents != null) {
-                    Iterator  itParents = parents.values().iterator();
+                    Iterator itParents = parents.values().iterator();
 
                     boolean[] contains_parent = new boolean[parents.size()];
                     parentCounter = 0;
@@ -275,11 +271,11 @@ public class Dependency {
                         if (sortedNodes.containsValue(parent)) {
                             contains_parent[parentCounter] = true;
                         } else {
-                        	if (node.findParent(node.getName()) != null) {
-                        		contains_parent[parentCounter] = true;
-                        	} else {
+                            if (node.findParent(node.getName()) != null) {
+                                contains_parent[parentCounter] = true;
+                            } else {
                                 contains_parent[parentCounter] = false;
-                        	}
+                            }
                         }
 
                         parentCounter++;
@@ -314,7 +310,7 @@ public class Dependency {
      * DOCUMENT ME!
      */
     private void removeSortedNodesFromUnsortedNodes() {
-        Node     node = null;
+        Node node = null;
         Iterator itSortedNodes = sortedNodes.values().iterator();
 
         while (itSortedNodes.hasNext()) {
@@ -330,11 +326,10 @@ public class Dependency {
      * DOCUMENT ME!
      *
      * @param tableName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     private Element getTable(String tableName) {
-        Element  table = null;
+        Element table = null;
 
         Iterator itTables = db_element.getChildren(XMLTags.TABLE).iterator();
 
@@ -353,13 +348,12 @@ public class Dependency {
      * DOCUMENT ME!
      *
      * @return DOCUMENT ME!
-     *
-     * @throws MissingAttributeException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
      */
     private int getNbrTables() throws MissingAttributeException, UnsupportedAttributeValueException, MissingElementException {
-        int      nbrTables = 0;
+        int nbrTables = 0;
         Iterator itTables;
 
         if (pluginModel.getDbMode() == pluginModel.DUAL_MODE) {
@@ -387,7 +381,6 @@ public class Dependency {
      * DOCUMENT ME!
      *
      * @param table DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     private int getNbrImportedKeys(Element table) {
@@ -398,7 +391,6 @@ public class Dependency {
      * DOCUMENT ME!
      *
      * @param table DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     private int getNbrExportedKeys(Element table) {

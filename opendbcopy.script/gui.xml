@@ -24,25 +24,25 @@
 -->
 
 <gui identifier="script" display_order="60" resource_name="plugin_opendbcopy_script">
-	<title value="title.plugin.opendbcopy.script" />
-	<panels>
-		<panel title="title.plugin.opendbcopy.script.panel.0">
-			<class name="opendbcopy.gui.PanelConfiguration" />
-		</panel>
-		<panel title="title.plugin.opendbcopy.script.panel.1">
-			<class name="opendbcopy.gui.database.PanelConnection" register_as_observer="true" />
-		</panel>
-		<panel title="title.plugin.opendbcopy.script.panel.2">
-			<class name="opendbcopy.gui.database.PanelModel" register_as_observer="true" />
-		</panel>
-		<panel title="title.plugin.opendbcopy.script.panel.3">
-			<class name="opendbcopy.gui.database.dual.PanelMappingTable" register_as_observer="true" />
-		</panel>
-		<panel title="title.plugin.opendbcopy.script.panel.4">
-			<class name="opendbcopy.gui.database.dual.PanelMappingColumn" register_as_observer="true" />
-		</panel>
-		<panel title="title.plugin.opendbcopy.script.panel.5">
-			<class name="opendbcopy.gui.PanelExecute" />
-		</panel>
-	</panels>
+    <title value="title.plugin.opendbcopy.script"/>
+    <panels>
+        <panel title="title.plugin.opendbcopy.script.panel.0">
+            <class name="opendbcopy.gui.PanelConfiguration"/>
+        </panel>
+        <panel title="title.plugin.opendbcopy.script.panel.1">
+            <class name="opendbcopy.gui.database.PanelConnection" register_as_observer="true"/>
+        </panel>
+        <panel title="title.plugin.opendbcopy.script.panel.2">
+            <class name="opendbcopy.gui.database.PanelModel" register_as_observer="true"/>
+        </panel>
+        <panel title="title.plugin.opendbcopy.script.panel.3">
+            <class name="opendbcopy.gui.database.dual.PanelMappingTable" register_as_observer="true"/>
+        </panel>
+        <panel title="title.plugin.opendbcopy.script.panel.4">
+            <class name="opendbcopy.gui.database.dual.PanelMappingColumn" register_as_observer="true"/>
+        </panel>
+        <panel title="title.plugin.opendbcopy.script.panel.5">
+            <class name="opendbcopy.gui.PanelExecute"/>
+        </panel>
+    </panels>
 </gui>

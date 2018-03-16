@@ -22,7 +22,7 @@
  * --------------------------------------------------------------------------*/
 package opendbcopy.swing;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 
 /**
@@ -32,7 +32,7 @@ import javax.swing.SwingUtilities;
  * modified SwingWorker slightly from the original source
  */
 public abstract class SwingWorker {
-    private Object    value; // see getValue(), setValue()
+    private Object value; // see getValue(), setValue()
     private ThreadVar threadVar;
 
     /**
@@ -159,7 +159,6 @@ public abstract class SwingWorker {
      * DOCUMENT ME!
      *
      * @param millis DOCUMENT ME!
-     *
      * @throws InterruptedException DOCUMENT ME!
      */
     public void have_a_break(int millis) throws InterruptedException {

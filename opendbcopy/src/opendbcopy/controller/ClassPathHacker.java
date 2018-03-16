@@ -24,9 +24,7 @@ package opendbcopy.controller;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.lang.reflect.Method;
-
 import java.net.URL;
 import java.net.URLClassLoader;
 
@@ -38,13 +36,12 @@ import java.net.URLClassLoader;
  * @version $Revision$
  */
 public class ClassPathHacker {
-    private static final Class[] parameters = new Class[] { URL.class };
+    private static final Class[] parameters = new Class[]{URL.class};
 
     /**
      * DOCUMENT ME!
      *
      * @param s DOCUMENT ME!
-     *
      * @throws IOException DOCUMENT ME!
      */
     public static void addFile(String s) throws IOException {
@@ -56,7 +53,6 @@ public class ClassPathHacker {
      * DOCUMENT ME!
      *
      * @param f DOCUMENT ME!
-     *
      * @throws IOException DOCUMENT ME!
      */
     public static void addFile(File f) throws IOException {
@@ -67,17 +63,16 @@ public class ClassPathHacker {
      * DOCUMENT ME!
      *
      * @param u DOCUMENT ME!
-     *
      * @throws IOException DOCUMENT ME!
      */
     public static void addURL(URL u) throws IOException {
         URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-        Class          sysclass = URLClassLoader.class;
+        Class sysclass = URLClassLoader.class;
 
         try {
             Method method = sysclass.getDeclaredMethod("addURL", parameters);
             method.setAccessible(true);
-            method.invoke(sysloader, new Object[] { u });
+            method.invoke(sysloader, new Object[]{u});
         } catch (Throwable t) {
             t.printStackTrace();
             throw new IOException("Error, could not add URL " + u + " to system classloader");

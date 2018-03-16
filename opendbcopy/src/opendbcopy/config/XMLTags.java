@@ -184,7 +184,7 @@ public final class XMLTags {
     public static final String TOFILE = "tofile";
     public static final String DELETE = "delete";
     public static final String OVERWRITE = "overwrite";
-    public static final String UNKNOWN = "unknown";    
+    public static final String UNKNOWN = "unknown";
     public static final String INT = "int";
     public static final String HIBERNATE_DIALECT = "hibernate_dialect";
     public static final String DIALECT = "dialect";
@@ -194,7 +194,7 @@ public final class XMLTags {
     public static final String INVERSE = "inverse";
     public static final String GENERATOR_CLASS = "generator_class";
     public static final String SELECTED = "selected";
-    
+
     // application arguments
     public static final String ARGUMENTS = "arguments";
     public static final String RUNLEVEL = "runlevel";
@@ -213,7 +213,7 @@ public final class XMLTags {
     public static final String PANELS = "panels";
     public static final String PANEL = "panel";
     public static final String REGISTER_AS_OBSERVER = "register_as_observer";
-    
+
     // Plugin Execution Status
     public static final String EXECUTION_STATUS = "execution_status";
     public static final String STARTED = "started";
@@ -222,7 +222,7 @@ public final class XMLTags {
     public static final String RESUMED = "resumed";
     public static final String DONE = "done";
     public static final String EXCEPTION_OCCURED = "exception occured";
-    
+
     // key properties
     public static final String COMPOSITE_ID = "composite-id";
 }

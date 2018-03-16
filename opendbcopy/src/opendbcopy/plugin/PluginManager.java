@@ -23,43 +23,28 @@
 package opendbcopy.plugin;
 
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.controller.ClasspathLoader;
 import opendbcopy.controller.MainController;
-
 import opendbcopy.io.FileHandling;
 import opendbcopy.io.ImportFromXML;
-
 import opendbcopy.plugin.model.Model;
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.PluginException;
 import opendbcopy.plugin.model.exception.UnsupportedAttributeValueException;
-
 import opendbcopy.resource.ResourceManager;
-
 import org.apache.log4j.Logger;
-
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-
 import java.text.SimpleDateFormat;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.TimeZone;
+import java.util.*;
 
 
 /**
@@ -69,66 +54,65 @@ import java.util.TimeZone;
  * @version $Revision$
  */
 public class PluginManager extends Observable {
-    private static final String    TIME_FORMAT = "HH:mm:ss:SSS";
-    private static Logger          logger = Logger.getLogger(PluginManager.class.getName());
+    private static final String TIME_FORMAT = "HH:mm:ss:SSS";
+    private static Logger logger = Logger.getLogger(PluginManager.class.getName());
     private static PluginScheduler pluginScheduler;
-    private MainController         controller;
-    private JobManager             jm;
-    private ResourceManager        rm;
-    private Model                  currentModel;
-    private SimpleDateFormat       df;
-    private HashMap                observers;
-    private LinkedList             modelsToExecute;
-    private LinkedList             modelsLoaded;
-    private Element                plugins;
-    private boolean                done = false;
-    private boolean                started = false;
-    private boolean                suspended = false;
-    private boolean                interrupted = false;
-    private boolean                exceptionOccured = false;
-    private long                   executionStarted = 0;
-    private int                    currentExecuteIndex = 0;
+    private MainController controller;
+    private JobManager jm;
+    private ResourceManager rm;
+    private Model currentModel;
+    private SimpleDateFormat df;
+    private HashMap observers;
+    private LinkedList modelsToExecute;
+    private LinkedList modelsLoaded;
+    private Element plugins;
+    private boolean done = false;
+    private boolean started = false;
+    private boolean suspended = false;
+    private boolean interrupted = false;
+    private boolean exceptionOccured = false;
+    private long executionStarted = 0;
+    private int currentExecuteIndex = 0;
 
     /**
      * Creates a new PluginManager object.
      *
-     * @param controller DOCUMENT ME!
-     * @param pm DOCUMENT ME!
-     * @param plugins DOCUMENT ME!
-     * @param pluginsLocation DOCUMENT ME!
-     * @param pluginFilename DOCUMENT ME!
+     * @param controller          DOCUMENT ME!
+     * @param pm                  DOCUMENT ME!
+     * @param plugins             DOCUMENT ME!
+     * @param pluginsLocation     DOCUMENT ME!
+     * @param pluginFilename      DOCUMENT ME!
      * @param workingModeFilename DOCUMENT ME!
-     *
-     * @throws FileNotFoundException DOCUMENT ME!
-     * @throws JDOMException DOCUMENT ME!
+     * @throws FileNotFoundException     DOCUMENT ME!
+     * @throws JDOMException             DOCUMENT ME!
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws JDOMException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
-     * @throws ClassNotFoundException DOCUMENT ME!
-     * @throws InstantiationException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws JDOMException             DOCUMENT ME!
+     * @throws IOException               DOCUMENT ME!
+     * @throws ClassNotFoundException    DOCUMENT ME!
+     * @throws InstantiationException    DOCUMENT ME!
      * @throws InvocationTargetException DOCUMENT ME!
-     * @throws IllegalAccessException DOCUMENT ME!
-     * @throws PluginException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws IllegalAccessException    DOCUMENT ME!
+     * @throws PluginException           DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
      */
     public PluginManager(MainController controller,
-                         JobManager     pm,
-                         Element        plugins,
-                         String         pluginsLocation,
-                         String         pluginFilename,
-                         String         workingModeFilename) throws FileNotFoundException, UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, JDOMException, IOException, ClassNotFoundException, InstantiationException, InvocationTargetException, IllegalAccessException, PluginException {
+                         JobManager pm,
+                         Element plugins,
+                         String pluginsLocation,
+                         String pluginFilename,
+                         String workingModeFilename) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, JDOMException, IOException, ClassNotFoundException, InstantiationException, InvocationTargetException, IllegalAccessException, PluginException {
         if ((pluginsLocation == null) || (pluginFilename == null) || (workingModeFilename == null)) {
             throw new IllegalArgumentException("Missing arguments values: pluginsLocation=" + pluginsLocation + " pluginFilename=" + pluginFilename + " workingModeFilename=" + workingModeFilename);
         }
 
-        this.controller     = controller;
-        this.jm             = pm;
-        this.rm             = controller.getResourceManager();
-        this.plugins        = plugins;
+        this.controller = controller;
+        this.jm = pm;
+        this.rm = controller.getResourceManager();
+        this.plugins = plugins;
 
-        modelsLoaded        = new LinkedList();
-        modelsToExecute     = new LinkedList();
+        modelsLoaded = new LinkedList();
+        modelsToExecute = new LinkedList();
 
         loadPlugins(pluginsLocation, pluginFilename, workingModeFilename);
         loadPluginsFromProject(plugins);
@@ -150,7 +134,6 @@ public class PluginManager extends Observable {
      * DOCUMENT ME!
      *
      * @param observer DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final void registerObserver(Observer observer) {
@@ -165,20 +148,18 @@ public class PluginManager extends Observable {
      * DOCUMENT ME!
      *
      * @param modelElement DOCUMENT ME!
-     * @param title DOCUMENT ME!
-     *
+     * @param title        DOCUMENT ME!
      * @return DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws ClassNotFoundException DOCUMENT ME!
-     * @throws InstantiationException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws ClassNotFoundException    DOCUMENT ME!
+     * @throws InstantiationException    DOCUMENT ME!
      * @throws InvocationTargetException DOCUMENT ME!
-     * @throws IllegalAccessException DOCUMENT ME!
-     * @throws PluginException DOCUMENT ME!
+     * @throws IllegalAccessException    DOCUMENT ME!
+     * @throws PluginException           DOCUMENT ME!
      */
     public final Model loadModel(Element modelElement,
-                                 String  title) throws MissingAttributeException, MissingElementException, ClassNotFoundException, InstantiationException, InvocationTargetException, IllegalAccessException, PluginException {
+                                 String title) throws MissingAttributeException, ClassNotFoundException, InstantiationException, InvocationTargetException, IllegalAccessException {
         Model model = (Model) dynamicallyLoadPluginModel(modelElement);
         model.setTitle(title);
 
@@ -195,7 +176,6 @@ public class PluginManager extends Observable {
      * DOCUMENT ME!
      *
      * @param index DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public final Model getModelLoaded(int index) {
@@ -206,7 +186,6 @@ public class PluginManager extends Observable {
      * DOCUMENT ME!
      *
      * @param index DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public final Model getModelToExecute(int index) {
@@ -214,24 +193,9 @@ public class PluginManager extends Observable {
     }
 
     /**
-     * DOCUMENT ME!
-     *
-     * @param model DOCUMENT ME!
-     *
-     * @throws IllegalArgumentException DOCUMENT ME!
-     */
-    public final void setCurrentModel(Model model) {
-        if (model == null) {
-            throw new IllegalArgumentException("Missing model");
-        }
-
-        currentModel = model;
-    }
-
-    /**
      * inserts given model at index given and shifts former model to the right of the list (index + 1)
      *
-     * @param sourceIndex DOCUMENT ME!
+     * @param sourceIndex      DOCUMENT ME!
      * @param destinationIndex DOCUMENT ME!
      */
     public final void changeOrderPluginToExecute(int sourceIndex,
@@ -247,11 +211,10 @@ public class PluginManager extends Observable {
      *
      * @param model DOCUMENT ME!
      * @param index DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final void addPluginToExecute(Model model,
-                                         int   index) {
+                                         int index) {
         if (model == null) {
             throw new IllegalArgumentException("Missing model");
         }
@@ -266,7 +229,6 @@ public class PluginManager extends Observable {
      * DOCUMENT ME!
      *
      * @param model DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final void addPluginToExecuteLast(Model model) {
@@ -284,7 +246,6 @@ public class PluginManager extends Observable {
      * DOCUMENT ME!
      *
      * @param model DOCUMENT ME!
-     *
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public final void addPluginLoadedLast(Model model) {
@@ -318,11 +279,11 @@ public class PluginManager extends Observable {
             throw new PluginException("No models to execute");
         }
 
-        done                    = false;
-        interrupted             = false;
-        exceptionOccured        = false;
-        suspended               = false;
-        currentExecuteIndex     = 0;
+        done = false;
+        interrupted = false;
+        exceptionOccured = false;
+        suspended = false;
+        currentExecuteIndex = 0;
 
         pluginScheduler = PluginScheduler.getInstance(this, controller);
 
@@ -352,7 +313,6 @@ public class PluginManager extends Observable {
      * Use this method to test or run a single model -> does not conflict with model chain
      *
      * @param model DOCUMENT ME!
-     *
      * @throws PluginException DOCUMENT ME!
      */
     public final void executePlugin(Model model) throws PluginException {
@@ -360,11 +320,11 @@ public class PluginManager extends Observable {
             throw new PluginException("No model to execute");
         }
 
-        done                    = false;
-        interrupted             = false;
-        exceptionOccured        = false;
-        suspended               = false;
-        currentExecuteIndex     = 0;
+        done = false;
+        interrupted = false;
+        exceptionOccured = false;
+        suspended = false;
+        currentExecuteIndex = 0;
 
         pluginScheduler = PluginScheduler.getInstance(this, controller);
 
@@ -397,23 +357,21 @@ public class PluginManager extends Observable {
      * DOCUMENT ME!
      *
      * @param dynamicPluginModel DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws ClassNotFoundException DOCUMENT ME!
-     * @throws InstantiationException DOCUMENT ME!
+     * @throws ClassNotFoundException    DOCUMENT ME!
+     * @throws InstantiationException    DOCUMENT ME!
      * @throws InvocationTargetException DOCUMENT ME!
-     * @throws IllegalAccessException DOCUMENT ME!
+     * @throws IllegalAccessException    DOCUMENT ME!
      */
     private Object dynamicallyLoadPluginThread(Model dynamicPluginModel) throws MissingAttributeException, ClassNotFoundException, InstantiationException, InvocationTargetException, IllegalAccessException {
-        Class         dynClass = Class.forName(dynamicPluginModel.getThreadClassName());
+        Class dynClass = Class.forName(dynamicPluginModel.getThreadClassName());
 
         Constructor[] constructors = dynClass.getConstructors();
 
-        Object[]      params = new Object[2];
-        params[0]     = controller;
-        params[1]     = dynamicPluginModel;
+        Object[] params = new Object[2];
+        params[0] = controller;
+        params[1] = dynamicPluginModel;
 
         // works as long there is only one constructor
         return constructors[0].newInstance(params);
@@ -423,15 +381,13 @@ public class PluginManager extends Observable {
      * DOCUMENT ME!
      *
      * @param model DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws ClassNotFoundException DOCUMENT ME!
-     * @throws InstantiationException DOCUMENT ME!
+     * @throws ClassNotFoundException    DOCUMENT ME!
+     * @throws InstantiationException    DOCUMENT ME!
      * @throws InvocationTargetException DOCUMENT ME!
-     * @throws IllegalAccessException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws IllegalAccessException    DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
      */
     private Object dynamicallyLoadPluginModel(Element model) throws MissingAttributeException, ClassNotFoundException, InstantiationException, InvocationTargetException, IllegalAccessException {
         if (model == null) {
@@ -441,13 +397,13 @@ public class PluginManager extends Observable {
         if (model.getAttributeValue(XMLTags.MODEL_CLASS) == null) {
             throw new MissingAttributeException(model, XMLTags.MODEL_CLASS);
         } else {
-            Class         dynClass = Class.forName(model.getAttributeValue(XMLTags.MODEL_CLASS));
+            Class dynClass = Class.forName(model.getAttributeValue(XMLTags.MODEL_CLASS));
 
             Constructor[] constructors = dynClass.getConstructors();
 
-            Object[]      params = new Object[2];
-            params[0]     = controller;
-            params[1]     = model;
+            Object[] params = new Object[2];
+            params[0] = controller;
+            params[1] = model;
 
             // works as long there is only one constructor
             return constructors[0].newInstance(params);
@@ -458,50 +414,43 @@ public class PluginManager extends Observable {
      * loads all available plugins, adds libraries to classpath, adds plugin to working mode creates a clone of plugin root to avoid overwriting of
      * original configuration!
      *
-     * @param pluginsLocation DOCUMENT ME!
-     * @param pluginFilename DOCUMENT ME!
+     * @param pluginsLocation     DOCUMENT ME!
+     * @param pluginFilename      DOCUMENT ME!
      * @param workingModeFilename DOCUMENT ME!
-     *
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws JDOMException DOCUMENT ME!
-     * @throws FileNotFoundException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
-     * @throws IllegalAccessException DOCUMENT ME!
-     * @throws ClassNotFoundException DOCUMENT ME!
-     * @throws InstantiationException DOCUMENT ME!
-     * @throws InvocationTargetException DOCUMENT ME!
-     * @throws RuntimeException DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
+     * @throws JDOMException                      DOCUMENT ME!
+     * @throws FileNotFoundException              DOCUMENT ME!
+     * @throws IOException                        DOCUMENT ME!
+     * @throws RuntimeException                   DOCUMENT ME!
      */
     private void loadPlugins(String pluginsLocation,
                              String pluginFilename,
-                             String workingModeFilename) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, JDOMException, FileNotFoundException, IOException, IllegalAccessException, ClassNotFoundException, InstantiationException, InvocationTargetException {
-        File   pluginsDirectory = FileHandling.getFile(pluginsLocation);
+                             String workingModeFilename) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, JDOMException, IOException {
+        File pluginsDirectory = FileHandling.getFile(pluginsLocation);
         File[] pluginDirectories = pluginsDirectory.listFiles();
 
         if (pluginDirectories.length > 0) {
-            for (int i = 0; i < pluginDirectories.length; i++) {
-                File pluginDir = pluginDirectories[i];
-
+            for (File pluginDir : pluginDirectories) {
                 // read files of plugin ... ignore file(s) if not within a directory
                 if (pluginDir.isDirectory() && (pluginDir.getName().compareToIgnoreCase("CVS") != 0)) {
                     // load working mode
                     File workingModeFile = FileHandling.getFileInDirectory(pluginDir, workingModeFilename);
 
                     // load plugin file
-                    File     pluginFile = FileHandling.getFileInDirectory(pluginDir, pluginFilename);
+                    File pluginFile = FileHandling.getFileInDirectory(pluginDir, pluginFilename);
 
                     Document pluginDoc = ImportFromXML.importFile(pluginFile);
 
                     // clone plugin root here so that it does overwrite default plugin settings
-                    Element pluginRoot = (Element) pluginDoc.getRootElement().clone();
+                    Element pluginRoot = pluginDoc.getRootElement().clone();
 
                     if (pluginRoot.getAttributeValue(XMLTags.IDENTIFIER) == null) {
                         throw new MissingAttributeException(pluginRoot, XMLTags.IDENTIFIER);
                     }
 
-                    File   pluginLibDir = FileHandling.getFileInDirectory(pluginDir, "lib");
+                    File pluginLibDir = FileHandling.getFileInDirectory(pluginDir, "lib");
                     File[] pluginJars = FileHandling.getFilesInDirectory(pluginLibDir, "jar", "opendbcopy.jar");
                     File[] pluginZips = FileHandling.getFilesInDirectory(pluginLibDir, "zip", null);
                     File[] pluginResources = FileHandling.getFilesInDirectory(pluginLibDir, "properties", null);
@@ -510,16 +459,16 @@ public class PluginManager extends Observable {
                         throw new RuntimeException("Missing libraries (jar or zip) for plugin class " + pluginRoot.getAttributeValue(XMLTags.IDENTIFIER));
                     }
 
-                    for (int j = 0; j < pluginJars.length; j++) {
-                        ClasspathLoader.addResourceToClasspath(pluginJars[j]);
+                    for (File pluginJar : pluginJars) {
+                        ClasspathLoader.addResourceToClasspath(pluginJar);
                     }
 
-                    for (int j = 0; j < pluginZips.length; j++) {
-                        ClasspathLoader.addResourceToClasspath(pluginZips[j]);
+                    for (File pluginZip : pluginZips) {
+                        ClasspathLoader.addResourceToClasspath(pluginZip);
                     }
 
-                    for (int j = 0; j < pluginResources.length; j++) {
-                        ClasspathLoader.addResourceToClasspath(pluginResources[j]);
+                    for (File pluginResource : pluginResources) {
+                        ClasspathLoader.addResourceToClasspath(pluginResource);
                     }
 
                     // add working mode
@@ -539,13 +488,13 @@ public class PluginManager extends Observable {
 
             Iterator itPlugins = modelsToExecute.iterator();
 
-            int      processOrder = 0;
+            int processOrder = 0;
 
             while (itPlugins.hasNext()) {
                 Model model = (Model) itPlugins.next();
                 model.setProcessOrder(processOrder);
 
-                Element pluginClone = (Element) model.getPlugin().clone();
+                Element pluginClone = model.getPlugin().clone();
                 plugins.addContent(pluginClone.detach());
                 processOrder++;
             }
@@ -556,14 +505,13 @@ public class PluginManager extends Observable {
      * DOCUMENT ME!
      *
      * @param plugins DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws ClassNotFoundException DOCUMENT ME!
-     * @throws InstantiationException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws ClassNotFoundException    DOCUMENT ME!
+     * @throws InstantiationException    DOCUMENT ME!
      * @throws InvocationTargetException DOCUMENT ME!
-     * @throws IllegalAccessException DOCUMENT ME!
-     * @throws PluginException DOCUMENT ME!
+     * @throws IllegalAccessException    DOCUMENT ME!
+     * @throws PluginException           DOCUMENT ME!
      */
     protected final void loadPluginsFromProject(Element plugins) throws MissingAttributeException, MissingElementException, ClassNotFoundException, InstantiationException, InvocationTargetException, IllegalAccessException, PluginException {
         this.plugins = plugins;
@@ -637,7 +585,7 @@ public class PluginManager extends Observable {
     protected final void setDone(boolean done) {
         this.done = done;
 
-        String[] param = { df.format(new Date(System.currentTimeMillis() - executionStarted)) };
+        String[] param = {df.format(new Date(System.currentTimeMillis() - executionStarted))};
         logger.info(rm.getString("text.execute.done") + " (" + rm.getString("text.execute.time", param) + ")");
         broadcast();
 
@@ -727,6 +675,20 @@ public class PluginManager extends Observable {
      */
     public final Model getCurrentModel() {
         return currentModel;
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param model DOCUMENT ME!
+     * @throws IllegalArgumentException DOCUMENT ME!
+     */
+    public final void setCurrentModel(Model model) {
+        if (model == null) {
+            throw new IllegalArgumentException("Missing model");
+        }
+
+        currentModel = model;
     }
 
     /**

@@ -24,20 +24,20 @@
 -->
 
 <plugin db_mode="dual">
-	<class name="opendbcopy.plugin.copy.CopyMappingPlugin" />
-	<description value="Copy Tables according to defined Mapping" />
-	<author name="Anthony Smith" />
-	<conf>
-		<!-- path may be relative or absolute -->
-		<path value="log/" />
-		
-		<file_type value="csv" />
-		
-		<!-- for a tab delimiter enter \n as value -->
-		<delimiter value=";" />
+    <class name="opendbcopy.plugin.copy.CopyMappingPlugin"/>
+    <description value="Copy Tables according to defined Mapping"/>
+    <author name="Anthony Smith"/>
+    <conf>
+        <!-- path may be relative or absolute -->
+        <path value="log/"/>
 
-		<log_error value="true" />
-	</conf>
+        <file_type value="csv"/>
+
+        <!-- for a tab delimiter enter \n as value -->
+        <delimiter value=";"/>
+
+        <log_error value="true"/>
+    </conf>
 </plugin>
 
 

@@ -25,12 +25,9 @@ package opendbcopy.action;
 import opendbcopy.config.FileType;
 import opendbcopy.config.GUI;
 import opendbcopy.config.OperationType;
-
 import opendbcopy.controller.MainController;
-
 import opendbcopy.gui.FrameMain;
 import opendbcopy.gui.PluginGuiManager;
-
 import opendbcopy.plugin.JobManager;
 
 import java.util.Observable;
@@ -44,34 +41,32 @@ import java.util.Observer;
  * @version $Revision$
  */
 public class Actions implements Observer {
-    private FrameMain        parentFrame;
-    private MainController   controller;
-    private PluginGuiManager wmm;
-    private JobManager       pm;
-
     // project actions
-    public SimpleAction   jobNewAction;
+    public SimpleAction jobNewAction;
     public SaveFileAction jobExportAction;
     public OpenFileAction jobImportAction;
-
     // plugin actions
     public SaveFileAction pluginExportAction;
     public OpenFileAction pluginImportAction;
+    private FrameMain parentFrame;
+    private MainController controller;
+    private PluginGuiManager wmm;
+    private JobManager pm;
 
     /**
      * Constructor
      *
-     * @param parentFrame DOCUMENT ME!
-     * @param controller DOCUMENT ME!
+     * @param parentFrame    DOCUMENT ME!
+     * @param controller     DOCUMENT ME!
      * @param projectManager DOCUMENT ME!
      */
-    public Actions(FrameMain      parentFrame,
+    public Actions(FrameMain parentFrame,
                    MainController controller,
-                   JobManager     projectManager) {
-        this.parentFrame     = parentFrame;
-        this.controller      = controller;
-        this.wmm             = controller.getPluginGuiManager();
-        this.pm              = projectManager;
+                   JobManager projectManager) {
+        this.parentFrame = parentFrame;
+        this.controller = controller;
+        this.wmm = controller.getPluginGuiManager();
+        this.pm = projectManager;
 
         // register itself as observer
         controller.registerObserver(this);
@@ -79,13 +74,13 @@ public class Actions implements Observer {
         wmm.registerObserver(this);
 
         // job actions
-        jobNewAction        = new SimpleAction(OperationType.NEW_JOB, controller.getResourceManager().getString("menu.job.new"), GUI.getNewIcon(), parentFrame, controller);
-        jobExportAction     = new SaveFileAction(OperationType.EXPORT_JOB, controller.getResourceManager().getString("menu.job.export"), GUI.getSaveAsIcon(), FileType.XML_FILE, controller.getPersonalJobsDir(), parentFrame, controller);
-        jobImportAction     = new OpenFileAction(OperationType.IMPORT_JOB, controller.getResourceManager().getString("menu.job.import"), GUI.getOpenIcon(), FileType.XML_FILE, controller.getPersonalJobsDir(), parentFrame, controller);
+        jobNewAction = new SimpleAction(OperationType.NEW_JOB, controller.getResourceManager().getString("menu.job.new"), GUI.getNewIcon(), parentFrame, controller);
+        jobExportAction = new SaveFileAction(OperationType.EXPORT_JOB, controller.getResourceManager().getString("menu.job.export"), GUI.getSaveAsIcon(), FileType.XML_FILE, controller.getPersonalJobsDir(), parentFrame, controller);
+        jobImportAction = new OpenFileAction(OperationType.IMPORT_JOB, controller.getResourceManager().getString("menu.job.import"), GUI.getOpenIcon(), FileType.XML_FILE, controller.getPersonalJobsDir(), parentFrame, controller);
 
         // plugin actions
-        pluginExportAction     = new SaveFileAction(OperationType.EXPORT_PLUGIN, controller.getResourceManager().getString("menu.plugin.export"), GUI.getSaveAsIcon(), FileType.XML_FILE, controller.getPersonalPluginsDir(), parentFrame, controller);
-        pluginImportAction     = new OpenFileAction(OperationType.IMPORT_PLUGIN, controller.getResourceManager().getString("menu.plugin.import"), GUI.getOpenIcon(), FileType.XML_FILE, controller.getPersonalPluginsDir(), parentFrame, controller);
+        pluginExportAction = new SaveFileAction(OperationType.EXPORT_PLUGIN, controller.getResourceManager().getString("menu.plugin.export"), GUI.getSaveAsIcon(), FileType.XML_FILE, controller.getPersonalPluginsDir(), parentFrame, controller);
+        pluginImportAction = new OpenFileAction(OperationType.IMPORT_PLUGIN, controller.getResourceManager().getString("menu.plugin.import"), GUI.getOpenIcon(), FileType.XML_FILE, controller.getPersonalPluginsDir(), parentFrame, controller);
 
         // enable / disable actions
         jobNewAction.setEnabled(true);
@@ -96,11 +91,11 @@ public class Actions implements Observer {
     /**
      * DOCUMENT ME!
      *
-     * @param o DOCUMENT ME!
+     * @param o   DOCUMENT ME!
      * @param obj DOCUMENT ME!
      */
     public void update(Observable o,
-                       Object     obj) {
+                       Object obj) {
         if (wmm.getNbrPluginGuisLoaded() > 0) {
             pluginExportAction.setEnabled(true);
         } else {

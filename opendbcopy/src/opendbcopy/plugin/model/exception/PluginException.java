@@ -25,7 +25,6 @@ package opendbcopy.plugin.model.exception;
 import opendbcopy.connection.exception.DriverNotFoundException;
 
 import java.lang.reflect.InvocationTargetException;
-
 import java.sql.SQLException;
 
 
@@ -38,9 +37,9 @@ import java.sql.SQLException;
  */
 public class PluginException extends SQLException {
     private Throwable cause;
-    private String    message;
-    private String    sqlState;
-    private int       errorCode;
+    private String message;
+    private String sqlState;
+    private int errorCode;
 
     /**
      * Creates a new PluginException object.
@@ -57,10 +56,10 @@ public class PluginException extends SQLException {
      * @param e DOCUMENT ME!
      */
     public PluginException(SQLException e) {
-        this.cause         = e.getCause();
-        this.message       = e.getMessage();
-        this.sqlState      = e.getSQLState();
-        this.errorCode     = e.getErrorCode();
+        this.cause = e.getCause();
+        this.message = e.getMessage();
+        this.sqlState = e.getSQLState();
+        this.errorCode = e.getErrorCode();
     }
 
     /**
@@ -69,8 +68,8 @@ public class PluginException extends SQLException {
      * @param e DOCUMENT ME!
      */
     public PluginException(ClassNotFoundException e) {
-        this.cause       = e.getCause();
-        this.message     = e.getMessage();
+        this.cause = e.getCause();
+        this.message = e.getMessage();
     }
 
     /**
@@ -79,8 +78,8 @@ public class PluginException extends SQLException {
      * @param e DOCUMENT ME!
      */
     public PluginException(InvocationTargetException e) {
-        this.cause       = e.getCause();
-        this.message     = e.getMessage();
+        this.cause = e.getCause();
+        this.message = e.getMessage();
     }
 
     /**
@@ -89,8 +88,8 @@ public class PluginException extends SQLException {
      * @param e DOCUMENT ME!
      */
     public PluginException(IllegalAccessException e) {
-        this.cause       = e.getCause();
-        this.message     = e.getMessage();
+        this.cause = e.getCause();
+        this.message = e.getMessage();
     }
 
     /**
@@ -99,8 +98,8 @@ public class PluginException extends SQLException {
      * @param e DOCUMENT ME!
      */
     public PluginException(InstantiationException e) {
-        this.cause       = e.getCause();
-        this.message     = e.getMessage();
+        this.cause = e.getCause();
+        this.message = e.getMessage();
     }
 
     /**
@@ -109,8 +108,8 @@ public class PluginException extends SQLException {
      * @param e DOCUMENT ME!
      */
     public PluginException(MissingAttributeException e) {
-        this.cause       = e.getCause();
-        this.message     = e.getMessage();
+        this.cause = e.getCause();
+        this.message = e.getMessage();
     }
 
     /**
@@ -119,8 +118,8 @@ public class PluginException extends SQLException {
      * @param e DOCUMENT ME!
      */
     public PluginException(MissingElementException e) {
-        this.cause       = e.getCause();
-        this.message     = e.getMessage();
+        this.cause = e.getCause();
+        this.message = e.getMessage();
     }
 
     /**
@@ -129,8 +128,8 @@ public class PluginException extends SQLException {
      * @param e DOCUMENT ME!
      */
     public PluginException(UnsupportedAttributeValueException e) {
-        this.cause       = e.getCause();
-        this.message     = e.getMessage();
+        this.cause = e.getCause();
+        this.message = e.getMessage();
     }
 
     /**
@@ -139,8 +138,8 @@ public class PluginException extends SQLException {
      * @param e DOCUMENT ME!
      */
     public PluginException(DriverNotFoundException e) {
-        this.cause       = e.getCause();
-        this.message     = e.getMessage();
+        this.cause = e.getCause();
+        this.message = e.getMessage();
     }
 
     /**
@@ -149,8 +148,8 @@ public class PluginException extends SQLException {
      * @param e DOCUMENT ME!
      */
     public PluginException(Exception e) {
-        this.cause       = e.getCause();
-        this.message     = e.getMessage();
+        this.cause = e.getCause();
+        this.message = e.getMessage();
     }
 
     /**

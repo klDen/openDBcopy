@@ -23,26 +23,19 @@
 package opendbcopy.plugin.delete;
 
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.connection.DBConnection;
-
 import opendbcopy.connection.exception.CloseConnectionException;
-
 import opendbcopy.controller.MainController;
-
 import opendbcopy.plugin.model.DynamicPluginThread;
 import opendbcopy.plugin.model.Model;
 import opendbcopy.plugin.model.database.DatabaseModel;
 import opendbcopy.plugin.model.exception.PluginException;
-
 import opendbcopy.sql.Helper;
-
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import java.util.Iterator;
 import java.util.List;
 
@@ -55,22 +48,21 @@ import java.util.List;
  */
 public class DeleteTablesPlugin extends DynamicPluginThread {
     private DatabaseModel model;
-    private List          processTables = null;
-    private Connection    connSource = null;
-    private Statement     stmSource = null;
-    private String        deleteString = null;
-    private int           counterTables = 0;
+    private List processTables = null;
+    private Connection connSource = null;
+    private Statement stmSource = null;
+    private String deleteString = null;
+    private int counterTables = 0;
 
     /**
      * Creates a new DeleteDestinationTablesPlugin object.
      *
      * @param controller DOCUMENT ME!
-     * @param baseModel DOCUMENT ME!
-     *
+     * @param baseModel  DOCUMENT ME!
      * @throws PluginException DOCUMENT ME!
      */
     public DeleteTablesPlugin(MainController controller,
-                              Model          baseModel) throws PluginException {
+                              Model baseModel) throws PluginException {
         super(controller, baseModel);
         this.model = (DatabaseModel) baseModel;
     }
@@ -83,7 +75,7 @@ public class DeleteTablesPlugin extends DynamicPluginThread {
     protected void setUp() throws PluginException {
         try {
             // get connection to destination database
-            connSource     = DBConnection.getConnection(model.getSourceConnection());
+            connSource = DBConnection.getConnection(model.getSourceConnection());
 
             // extract the tables to copy
             processTables = model.getSourceTablesToProcessOrdered();
@@ -107,15 +99,15 @@ public class DeleteTablesPlugin extends DynamicPluginThread {
             while (!isInterrupted() && itProcessTables.hasNext()) {
                 Element tableProcess = (Element) itProcessTables.next();
 
-                String  sourceTableName = tableProcess.getAttributeValue(XMLTags.NAME);
+                String sourceTableName = tableProcess.getAttributeValue(XMLTags.NAME);
 
                 // setting record counter to minimum of progress bar
                 model.setCurrentProgressRecord(0);
                 model.setLengthProgressRecord(0);
 
                 // get Delete Statement
-                stmSource     = connSource.createStatement();
-                deleteString       = Helper.getDeleteTableStatement(model.getQualifiedSourceTableName(sourceTableName));
+                stmSource = connSource.createStatement();
+                deleteString = Helper.getDeleteTableStatement(model.getQualifiedSourceTableName(sourceTableName));
 
                 model.setCurrentProgressTable(counterTables);
 

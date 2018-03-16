@@ -24,31 +24,33 @@
 -->
 
 <plugin identifier="dump" model_class="opendbcopy.plugin.model.database.DatabaseModel">
-	<conf>
-		<!-- path may be relative or absolute -->
-		<dir required="true" value="" type="dir" description="plugin.opendbcopy.dump.conf.outputDir" />	
-		<file_type required="true" value="csv" type="string" description="plugin.opendbcopy.dump.conf.fileType" />
-		<delimiter required="true" value="" type="string" description="plugin.opendbcopy.dump.conf.columnDelimiter" />
-		<show_header value="true" type="boolean" description="plugin.opendbcopy.dump.conf.showHeader" />
-		<show_null_values value="false" type="boolean" description="plugin.opendbcopy.dump.conf.showNullValues" />
-		<append_file_after_records value="500" type="int" description="plugin.opendbcopy.dump.conf.appendFileAfterRecords" />
-		<output>
-			<filelist value="dumps" type="string" description="plugin.opendbcopy.dump.conf.output.filelistIdentifier" />
-		</output>			
-	</conf>
-	<threads>
-		<thread thread_class="opendbcopy.plugin.dump.DumpDataToFileDelimitedPlugin" description="title.plugin.opendbcopy.dump" />
-	</threads>
-	<input />
-	<output />
-	<source_db>
-      <driver />
-      <metadata />
-      <connection />
-      <catalog value="" />
-      <schema value="%" />
-      <table_pattern value="%" />
-      <model />
-   </source_db>
-   <filter />
+    <conf>
+        <!-- path may be relative or absolute -->
+        <dir required="true" value="" type="dir" description="plugin.opendbcopy.dump.conf.outputDir"/>
+        <file_type required="true" value="csv" type="string" description="plugin.opendbcopy.dump.conf.fileType"/>
+        <delimiter required="true" value="" type="string" description="plugin.opendbcopy.dump.conf.columnDelimiter"/>
+        <show_header value="true" type="boolean" description="plugin.opendbcopy.dump.conf.showHeader"/>
+        <show_null_values value="false" type="boolean" description="plugin.opendbcopy.dump.conf.showNullValues"/>
+        <append_file_after_records value="500" type="int"
+                                   description="plugin.opendbcopy.dump.conf.appendFileAfterRecords"/>
+        <output>
+            <filelist value="dumps" type="string" description="plugin.opendbcopy.dump.conf.output.filelistIdentifier"/>
+        </output>
+    </conf>
+    <threads>
+        <thread thread_class="opendbcopy.plugin.dump.DumpDataToFileDelimitedPlugin"
+                description="title.plugin.opendbcopy.dump"/>
+    </threads>
+    <input/>
+    <output/>
+    <source_db>
+        <driver/>
+        <metadata/>
+        <connection/>
+        <catalog value=""/>
+        <schema value="%"/>
+        <table_pattern value="%"/>
+        <model/>
+    </source_db>
+    <filter/>
 </plugin>

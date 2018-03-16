@@ -35,9 +35,9 @@ public final class APM {
     public static final String EXECUTION_LOG_FILE_NAME = "execution_log.txt";
     public static final String FILE_SEP = System.getProperty("file.separator");
     public static final String LINE_SEP = System.getProperty("line.separator");
-    
-    
-	public static final String APPLICATION_COPYRIGHT = "application_copyright";
+
+
+    public static final String APPLICATION_COPYRIGHT = "application_copyright";
     public static final String APPLICATION_NAME = "application_name";
     public static final String APPLICATION_VERSION = "application_version";
     public static final String APPLICATION_DEVELOPER_NAME = "application_developer_name";
@@ -60,7 +60,6 @@ public final class APM {
     public static final String OPENDBCOPY_LOGO_FILE = "opendbcopy_logo_file";
     public static final String OPENDBCOPY_USER_HOME_DIR = "opendbcopy_user_home_dir";
     public static final String OPENDBCOPY_USER_HOME_DIR_IS_ABSOLUTE = "opendbcopy_user_home_dir_is_absolute";
-    public static final String OPENDBCOPY_RESOURCE_BUNDLE_DIR = "opendbcopy_resource_bundle_dir";
     public static final String OPENDBCOPY_RESOURCE_NAME = "opendbcopy_resource_name";
     public static final String OPENDBCOPY_RESOURCE_AVAILABLE = "opendbcopy_resource_available";
     public static final String PLUGIN_IN_OUT_DIR = "plugin_in_out_dir";

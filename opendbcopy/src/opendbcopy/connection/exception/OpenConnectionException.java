@@ -35,21 +35,16 @@ public class OpenConnectionException extends SQLException {
     private String message;
     private String toString;
     private String sqlState;
-    private int    errorCode;
+    private int errorCode;
 
     /**
      * Creates a new CloseConnectionException object.
-     *
-     * @param message DOCUMENT ME!
-     * @param toString DOCUMENT ME!
-     * @param sqlState DOCUMENT ME!
-     * @param errorCode DOCUMENT ME!
      */
     public OpenConnectionException(SQLException e) {
-        this.message       = e.getMessage();
-        this.toString      = e.toString();
-        this.sqlState      = e.getSQLState();
-        this.errorCode     = e.getErrorCode();
+        this.message = e.getMessage();
+        this.toString = e.toString();
+        this.sqlState = e.getSQLState();
+        this.errorCode = e.getErrorCode();
     }
 
     /**

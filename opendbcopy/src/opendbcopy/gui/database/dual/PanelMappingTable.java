@@ -23,39 +23,25 @@
 package opendbcopy.gui.database.dual;
 
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.controller.MainController;
-
 import opendbcopy.gui.DynamicPanel;
 import opendbcopy.gui.PluginGui;
-
 import opendbcopy.plugin.model.database.DatabaseModel;
 import opendbcopy.plugin.model.exception.MissingElementException;
-
 import opendbcopy.swing.JTableX;
 import opendbcopy.swing.RowEditorModel;
+import org.jdom2.Element;
 
-import org.jdom.Element;
-
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import java.awt.*;
 import java.awt.event.ActionEvent;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
 import java.util.Vector;
-
-import javax.swing.DefaultCellEditor;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 
 
 /**
@@ -65,40 +51,39 @@ import javax.swing.table.TableColumn;
  * @version $Revision$
  */
 public class PanelMappingTable extends DynamicPanel {
-	private DatabaseModel model;
-    private Object[][]        dataMapping;
-    private Object[][]        dataProcess;
-    private RowEditorModel    rowModel;
+    private DatabaseModel model;
+    private Object[][] dataMapping;
+    private Object[][] dataProcess;
+    private RowEditorModel rowModel;
     private DefaultCellEditor dce;
-    private boolean           select_all = false;
-    private BorderLayout      borderLayout = new BorderLayout();
-    private BorderLayout      borderLayoutPanelMain = new BorderLayout();
-    private JPanel            panelOptions = new JPanel();
-    private JPanel            panelControl = new JPanel();
-    private JPanel            panelMain = new JPanel();
-    private JPanel            panelTables = null;
-    private JPanel            panelMappingTable = null;
-    private JPanel            panelProcessTable = null;
-    private JButton           buttonSelect = new JButton();
-    private JScrollPane       scrollPane = null;
-    private JTableX           tableMapping = null;
-    private JTableX           tableProcess = null;
+    private boolean select_all = false;
+    private BorderLayout borderLayout = new BorderLayout();
+    private BorderLayout borderLayoutPanelMain = new BorderLayout();
+    private JPanel panelOptions = new JPanel();
+    private JPanel panelControl = new JPanel();
+    private JPanel panelMain = new JPanel();
+    private JPanel panelTables = null;
+    private JPanel panelMappingTable = null;
+    private JPanel panelProcessTable = null;
+    private JButton buttonSelect = new JButton();
+    private JScrollPane scrollPane = null;
+    private JTableX tableMapping = null;
+    private JTableX tableProcess = null;
     private MappingTableModel mappingTableModel = null;
     private ProcessTableModel processTableModel = null;
-    private Vector            destinationTablesComboBoxValues = new Vector();
+    private Vector destinationTablesComboBoxValues = new Vector();
 
     /**
      * Creates a new PanelMappingTable object.
      *
      * @param controller DOCUMENT ME!
-     *
      * @throws Exception DOCUMENT ME!
      */
     public PanelMappingTable(MainController controller, PluginGui workingMode, Boolean registerAsObserver) throws MissingElementException {
         super(controller, workingMode, registerAsObserver);
-        
+
         model = (DatabaseModel) super.model;
-        
+
         rowModel = new RowEditorModel();
         guiInit();
     }
@@ -106,11 +91,11 @@ public class PanelMappingTable extends DynamicPanel {
     /**
      * DOCUMENT ME!
      *
-     * @param o DOCUMENT ME!
+     * @param o   DOCUMENT ME!
      * @param obj DOCUMENT ME!
      */
     public final void update(Observable o,
-                             Object     obj) {
+                             Object obj) {
     }
 
     /**
@@ -131,20 +116,20 @@ public class PanelMappingTable extends DynamicPanel {
      */
     public final void initTable() throws MissingElementException {
         if (model.isMappingSetup()) {
-        	
-        	// means tables have already been loaded once
-        	if (panelTables != null) {
-        		scrollPane.removeAll();
-        		panelMain.remove(scrollPane);
-        	}
-        	
-            mappingTableModel     = new MappingTableModel();
-            processTableModel     = new ProcessTableModel();
+
+            // means tables have already been loaded once
+            if (panelTables != null) {
+                scrollPane.removeAll();
+                panelMain.remove(scrollPane);
+            }
+
+            mappingTableModel = new MappingTableModel();
+            processTableModel = new ProcessTableModel();
 
             initMappingTableData();
 
-            tableMapping     = new JTableX(mappingTableModel);
-            tableProcess     = new JTableX(processTableModel);
+            tableMapping = new JTableX(mappingTableModel);
+            tableProcess = new JTableX(processTableModel);
 
             // Set up column sizes for two columns
             initColumnSizesMappingTable(tableMapping);
@@ -167,14 +152,14 @@ public class PanelMappingTable extends DynamicPanel {
             panelTables.add(panelProcessTable, BorderLayout.EAST);
 
             scrollPane = new JScrollPane(panelTables);
-            
+
             panelMain.add(scrollPane, BorderLayout.CENTER);
-            
+
             buttonSelect.setEnabled(true);
-            
+
             panelMain.updateUI();
         } else {
-        	buttonSelect.setEnabled(false);
+            buttonSelect.setEnabled(false);
         }
     }
 
@@ -186,12 +171,12 @@ public class PanelMappingTable extends DynamicPanel {
     private void initMappingTableData() throws MissingElementException {
         int nbrSourceTables = model.getNbrSourceTables();
 
-        dataMapping     = new Object[nbrSourceTables][2];
-        dataProcess     = new Object[nbrSourceTables][1];
+        dataMapping = new Object[nbrSourceTables][2];
+        dataProcess = new Object[nbrSourceTables][1];
 
         for (int row = 0; row < mappingTableModel.getRowCount(); row++) {
-            dataMapping[row][0]     = new String("");
-            dataMapping[row][1]     = new String("");
+            dataMapping[row][0] = new String("");
+            dataMapping[row][1] = new String("");
         }
 
         for (int row = 0; row < processTableModel.getRowCount(); row++) {
@@ -200,7 +185,7 @@ public class PanelMappingTable extends DynamicPanel {
 
         Iterator itMappingTables = model.getMappingTables().iterator();
 
-        int      row = 0;
+        int row = 0;
 
         while (itMappingTables.hasNext()) {
             Element tableMapping = (Element) itMappingTables.next();
@@ -212,7 +197,7 @@ public class PanelMappingTable extends DynamicPanel {
             rowModel.addEditorForRow(row, dce);
 
             // set default selected item
-            dataMapping[row][1]     = combo.getSelectedItem();
+            dataMapping[row][1] = combo.getSelectedItem();
 
             dataProcess[row][0] = new Boolean(tableMapping.getAttributeValue(XMLTags.PROCESS));
             row++;
@@ -223,9 +208,7 @@ public class PanelMappingTable extends DynamicPanel {
      * DOCUMENT ME!
      *
      * @param destinationTableName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws MissingElementException DOCUMENT ME!
      */
     private JComboBox getDestinationTableComboBox(String destinationTableName) throws MissingElementException {
@@ -305,54 +288,54 @@ public class PanelMappingTable extends DynamicPanel {
     }
 
     /*
-             * This method picks good column sizes.
-             * If all column heads are wider than the column's cells'
-             * contents, then you can just use column.sizeWidthToFit().
-             */
+     * This method picks good column sizes.
+     * If all column heads are wider than the column's cells'
+     * contents, then you can just use column.sizeWidthToFit().
+     */
     private void initColumnSizesMappingTable(JTable table) {
         MappingTableModel model = (MappingTableModel) table.getModel();
-        TableColumn       column = null;
-        Component         comp = null;
-        int               headerWidth = 0;
-        int               cellWidth = 0;
-        Object[]          longValues = model.longValues;
+        TableColumn column = null;
+        Component comp = null;
+        int headerWidth = 0;
+        int cellWidth = 0;
+        Object[] longValues = model.longValues;
         TableCellRenderer headerRenderer = table.getTableHeader().getDefaultRenderer();
 
         for (int i = 0; i < 2; i++) {
-            column     = table.getColumnModel().getColumn(i);
+            column = table.getColumnModel().getColumn(i);
 
-            comp            = headerRenderer.getTableCellRendererComponent(null, column.getHeaderValue(), false, false, 0, 0);
-            headerWidth     = comp.getPreferredSize().width;
+            comp = headerRenderer.getTableCellRendererComponent(null, column.getHeaderValue(), false, false, 0, 0);
+            headerWidth = comp.getPreferredSize().width;
 
-            comp          = table.getDefaultRenderer(model.getColumnClass(i)).getTableCellRendererComponent(table, longValues[i], false, false, 0, i);
-            cellWidth     = comp.getPreferredSize().width;
+            comp = table.getDefaultRenderer(model.getColumnClass(i)).getTableCellRendererComponent(table, longValues[i], false, false, 0, i);
+            cellWidth = comp.getPreferredSize().width;
 
             column.setPreferredWidth(Math.max(headerWidth, cellWidth));
         }
     }
 
     /*
-                     * This method picks good column sizes.
-                     * If all column heads are wider than the column's cells'
-                     * contents, then you can just use column.sizeWidthToFit().
-                     */
+     * This method picks good column sizes.
+     * If all column heads are wider than the column's cells'
+     * contents, then you can just use column.sizeWidthToFit().
+     */
     private void initColumnSizesProcessTable(JTable table) {
         ProcessTableModel model = (ProcessTableModel) table.getModel();
-        TableColumn       column = null;
-        Component         comp = null;
-        int               headerWidth = 0;
-        int               cellWidth = 0;
-        Object[]          longValues = model.longValues;
+        TableColumn column = null;
+        Component comp = null;
+        int headerWidth = 0;
+        int cellWidth = 0;
+        Object[] longValues = model.longValues;
         TableCellRenderer headerRenderer = table.getTableHeader().getDefaultRenderer();
 
         for (int i = 0; i < 2; i++) {
-            column     = table.getColumnModel().getColumn(i);
+            column = table.getColumnModel().getColumn(i);
 
-            comp            = headerRenderer.getTableCellRendererComponent(null, column.getHeaderValue(), false, false, 0, 0);
-            headerWidth     = comp.getPreferredSize().width;
+            comp = headerRenderer.getTableCellRendererComponent(null, column.getHeaderValue(), false, false, 0, 0);
+            headerWidth = comp.getPreferredSize().width;
 
-            comp          = table.getDefaultRenderer(model.getColumnClass(i)).getTableCellRendererComponent(table, longValues[i], false, false, 0, i);
-            cellWidth     = comp.getPreferredSize().width;
+            comp = table.getDefaultRenderer(model.getColumnClass(i)).getTableCellRendererComponent(table, longValues[i], false, false, 0, i);
+            cellWidth = comp.getPreferredSize().width;
 
             column.setPreferredWidth(Math.max(headerWidth, cellWidth));
         }
@@ -392,8 +375,8 @@ public class PanelMappingTable extends DynamicPanel {
      * @version $Revision$
      */
     class MappingTableModel extends AbstractTableModel {
-        private String[]      columnNames = { rm.getString("text.table.sourceTableView"), rm.getString("text.table.destinationTableView") };
-        public final Object[] longValues = { "abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyz" };
+        public final Object[] longValues = {"abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyz"};
+        private String[] columnNames = {rm.getString("text.table.sourceTableView"), rm.getString("text.table.destinationTableView")};
 
         /**
          * DOCUMENT ME!
@@ -417,7 +400,6 @@ public class PanelMappingTable extends DynamicPanel {
          * DOCUMENT ME!
          *
          * @param col DOCUMENT ME!
-         *
          * @return DOCUMENT ME!
          */
         public final String getColumnName(int col) {
@@ -429,7 +411,6 @@ public class PanelMappingTable extends DynamicPanel {
          *
          * @param row DOCUMENT ME!
          * @param col DOCUMENT ME!
-         *
          * @return DOCUMENT ME!
          */
         public final Object getValueAt(int row,
@@ -467,8 +448,8 @@ public class PanelMappingTable extends DynamicPanel {
          * data can change.
          */
         public final void setValueAt(Object value,
-                                     int    row,
-                                     int    col) {
+                                     int row,
+                                     int col) {
             dataMapping[row][col] = value;
 
             Element mapping_table = null;
@@ -514,8 +495,8 @@ public class PanelMappingTable extends DynamicPanel {
      * @version $Revision$
      */
     class ProcessTableModel extends AbstractTableModel {
-        private String[]      columnNames = { rm.getString("text.table.process") };
-        public final Object[] longValues = { new Boolean(false) };
+        public final Object[] longValues = {new Boolean(false)};
+        private String[] columnNames = {rm.getString("text.table.process")};
 
         /**
          * DOCUMENT ME!
@@ -539,7 +520,6 @@ public class PanelMappingTable extends DynamicPanel {
          * DOCUMENT ME!
          *
          * @param col DOCUMENT ME!
-         *
          * @return DOCUMENT ME!
          */
         public final String getColumnName(int col) {
@@ -551,7 +531,6 @@ public class PanelMappingTable extends DynamicPanel {
          *
          * @param row DOCUMENT ME!
          * @param col DOCUMENT ME!
-         *
          * @return DOCUMENT ME!
          */
         public final Object getValueAt(int row,
@@ -574,8 +553,8 @@ public class PanelMappingTable extends DynamicPanel {
          * data can change.
          */
         public final void setValueAt(Object value,
-                                     int    row,
-                                     int    col) {
+                                     int row,
+                                     int col) {
             dataProcess[row][col] = value;
 
             try {
@@ -600,7 +579,6 @@ public class PanelMappingTable extends DynamicPanel {
          *
          * @param row DOCUMENT ME!
          * @param col DOCUMENT ME!
-         *
          * @return DOCUMENT ME!
          */
         public final boolean isCellEditable(int row,

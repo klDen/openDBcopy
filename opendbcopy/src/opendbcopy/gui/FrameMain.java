@@ -23,27 +23,6 @@
 package opendbcopy.gui;
 
 import info.clearthought.layout.TableLayout;
-
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.SystemColor;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Properties;
-
-import javax.swing.BorderFactory;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.border.TitledBorder;
-
 import opendbcopy.config.APM;
 import opendbcopy.config.GUI;
 import opendbcopy.connection.exception.CloseConnectionException;
@@ -55,11 +34,22 @@ import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.UnsupportedAttributeValueException;
 import opendbcopy.resource.ResourceManager;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.jdom.Element;
-import org.jdom.JDOMException;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Properties;
 
 
 /**
@@ -69,47 +59,46 @@ import org.jdom.JDOMException;
  * @version $Revision$
  */
 public class FrameMain extends JFrame implements Observer {
-    private static Logger          logger = Logger.getLogger(FrameMain.class.getName());
     private static final int MIN_FRAME_WIDTH = 1024;
     private static final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
-    private Menu                   menu;
-    private MainController         controller;
-    private ResourceManager        rm;
-    private JobManager             jm;
-    private String                 frameTitle;
-    private String                 newLine;
-    private JPanel                 contentPane;
-    private JPanel                 panelCurrentPluginGui;
-    private TitledBorder           titledBorderPluginGui;
-    private DialogFile             dialogFile;
-    private DialogConfig           dialogConfig;
-    private PanelPluginChain       panelPluginChain;
-    private FrameShowFile          frameExecutionLog;
-    private FrameShowURL           frameShowUserManual;
-    private int                    frameWidth;
-    private int                    frameHeight;
+    private static Logger logger = Logger.getLogger(FrameMain.class.getName());
+    private Menu menu;
+    private MainController controller;
+    private ResourceManager rm;
+    private JobManager jm;
+    private String frameTitle;
+    private String newLine;
+    private JPanel contentPane;
+    private JPanel panelCurrentPluginGui;
+    private TitledBorder titledBorderPluginGui;
+    private DialogFile dialogFile;
+    private DialogConfig dialogConfig;
+    private PanelPluginChain panelPluginChain;
+    private FrameShowFile frameExecutionLog;
+    private FrameShowURL frameShowUserManual;
+    private int frameWidth;
+    private int frameHeight;
 
     /**
      * Creates a new FrameMain object.
      *
-     * @param controller DOCUMENT ME!
-     * @param frameWidth DOCUMENT ME!
+     * @param controller  DOCUMENT ME!
+     * @param frameWidth  DOCUMENT ME!
      * @param frameHeight DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
      */
     public FrameMain(MainController controller,
-                     int            frameWidth,
-                     int            frameHeight) throws MissingAttributeException {
-        this.controller      = controller;
-        this.rm              = controller.getResourceManager();
-        this.jm              = controller.getJobManager();
-        this.frameWidth      = frameWidth;
-        this.frameHeight     = frameHeight;
+                     int frameWidth,
+                     int frameHeight) throws MissingAttributeException {
+        this.controller = controller;
+        this.rm = controller.getResourceManager();
+        this.jm = controller.getJobManager();
+        this.frameWidth = frameWidth;
+        this.frameHeight = frameHeight;
 
         // dialogFile must be setup before menu so that actions using dialogFile have a valid reference
-        this.dialogFile     = new DialogFile(this);
-        this.menu           = new Menu(this, controller, jm);
+        this.dialogFile = new DialogFile(this);
+        this.menu = new Menu(this, controller, jm);
 
         try {
             guiInit();
@@ -128,11 +117,11 @@ public class FrameMain extends JFrame implements Observer {
     /**
      * DOCUMENT ME!
      *
-     * @param o DOCUMENT ME!
+     * @param o   DOCUMENT ME!
      * @param obj DOCUMENT ME!
      */
     public final void update(Observable o,
-                             Object     obj) {
+                             Object obj) {
         // update plugin gui shown
         if ((controller.getJobManager().getPluginManager().getCurrentModel() != null) && (controller.getPluginGuiManager().getCurrentPluginGui() != null)) {
             panelCurrentPluginGui.removeAll();
@@ -149,22 +138,21 @@ public class FrameMain extends JFrame implements Observer {
     /**
      * DOCUMENT ME!
      *
-     * @param operation DOCUMENT ME!
+     * @param operation         DOCUMENT ME!
      * @param messageSuccessful DOCUMENT ME!
-     *
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws DriverNotFoundException DOCUMENT ME!
-     * @throws OpenConnectionException DOCUMENT ME!
-     * @throws CloseConnectionException DOCUMENT ME!
-     * @throws JDOMException DOCUMENT ME!
-     * @throws SQLException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
-     * @throws Exception DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
+     * @throws DriverNotFoundException            DOCUMENT ME!
+     * @throws OpenConnectionException            DOCUMENT ME!
+     * @throws CloseConnectionException           DOCUMENT ME!
+     * @throws JDOMException                      DOCUMENT ME!
+     * @throws SQLException                       DOCUMENT ME!
+     * @throws IOException                        DOCUMENT ME!
+     * @throws Exception                          DOCUMENT ME!
      */
     public final void execute(Element operation,
-                              String  messageSuccessful) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, DriverNotFoundException, OpenConnectionException, CloseConnectionException, JDOMException, SQLException, IOException, Exception {
+                              String messageSuccessful) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, DriverNotFoundException, OpenConnectionException, CloseConnectionException, JDOMException, SQLException, IOException, Exception {
         try {
             controller.execute(operation);
             logger.info(messageSuccessful);
@@ -188,11 +176,11 @@ public class FrameMain extends JFrame implements Observer {
     /**
      * DOCUMENT ME!
      *
-     * @param e DOCUMENT ME!
+     * @param e     DOCUMENT ME!
      * @param level DOCUMENT ME!
      */
     public final void postException(Exception e,
-                                    Level     level) {
+                                    Level level) {
         e.printStackTrace();
 
         if (level.isGreaterOrEqual(Level.ERROR)) {
@@ -211,8 +199,8 @@ public class FrameMain extends JFrame implements Observer {
      */
     private void guiInit() throws Exception {
         double[][] size = {
-                              { GUI.B, GUI.F, GUI.B }, // Columns
-        { GUI.B, GUI.P, GUI.VS, GUI.F, GUI.B }
+                {GUI.B, GUI.F, GUI.B}, // Columns
+                {GUI.B, GUI.P, GUI.VS, GUI.F, GUI.B}
         }; // Rows
 
         TableLayout layout = new TableLayout(size);
@@ -220,7 +208,7 @@ public class FrameMain extends JFrame implements Observer {
         contentPane = (JPanel) this.getContentPane();
         contentPane.setLayout(layout);
 
-        panelPluginChain     = new PanelPluginChain(this, controller);
+        panelPluginChain = new PanelPluginChain(this, controller);
 
         panelCurrentPluginGui = new JPanel(new GridLayout(1, 1));
 
@@ -238,12 +226,12 @@ public class FrameMain extends JFrame implements Observer {
 
         this.setJMenuBar(this.menu);
         this.menu.setVisible(true);
-        
+
         this.setSize(new Dimension(frameWidth, frameHeight));
         locateDialogCentreScreen(this);
 
         if (SCREEN_SIZE.width <= MIN_FRAME_WIDTH) {
-        	this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         }
 
         // first line

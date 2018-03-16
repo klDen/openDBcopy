@@ -24,7 +24,6 @@ package opendbcopy.controller;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.util.StringTokenizer;
 
 
@@ -38,27 +37,7 @@ public final class ClasspathLoader {
     /**
      * DOCUMENT ME!
      *
-     * @throws IOException DOCUMENT ME!
-     */
-    public static void addLibDirectoryToClasspath() throws IOException {
-        String classpath = System.getProperty("java.class.path");
-
-        File   libDir = new File("lib");
-
-        File[] libFiles = libDir.listFiles();
-
-        for (int i = 0; i < libFiles.length; i++) {
-            if ((libFiles[i].getName().compareToIgnoreCase("CVS") != 0) && (libFiles[i].getName().compareToIgnoreCase("opendbcopy.jar") != 0)) {
-                addResourceToClasspath(libFiles[i]);
-            }
-        }
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
      * @param file DOCUMENT ME!
-     *
      * @throws IOException DOCUMENT ME!
      */
     public static void addResourceToClasspath(File file) throws IOException {
@@ -73,7 +52,6 @@ public final class ClasspathLoader {
      * DOCUMENT ME!
      *
      * @param file DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     private static boolean checkIfAlreadyLoaded(File file) {

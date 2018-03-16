@@ -23,40 +23,26 @@
 package opendbcopy.plugin.schemageneration.gui;
 
 import info.clearthought.layout.TableLayout;
-
 import opendbcopy.config.GUI;
 import opendbcopy.config.OperationType;
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.controller.MainController;
-
 import opendbcopy.gui.DynamicPanel;
 import opendbcopy.gui.PluginGui;
-
 import opendbcopy.plugin.model.database.DatabaseModel;
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
+import org.jdom2.Element;
 
-import org.jdom.Element;
-
-import java.awt.GridLayout;
-import java.awt.SystemColor;
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.TitledBorder;
 
 
 /**
@@ -67,45 +53,44 @@ import javax.swing.border.TitledBorder;
  */
 public class PanelModel extends DynamicPanel implements ItemListener {
     private DatabaseModel model;
-    private boolean       databaseMetadataRead;
-    private GridLayout    gridLayout = new GridLayout();
-    private JPanel        panelSource = new JPanel();
-    private JPanel        panelDestination = new JPanel();
-    private JLabel        labelSchemaS = new JLabel();
-    private JLabel        labelCatalogS = new JLabel();
-    private JLabel        labelTablePatternS = new JLabel();
-    private JLabel        labelSchemaD = new JLabel();
-    private JLabel        labelTablePatternD = new JLabel();
-    private JLabel        labelCatalogD = new JLabel();
-    private JComboBox     comboSchemaS = new JComboBox();
-    private JComboBox     comboCatalogS = new JComboBox();
-    private JComboBox     comboSchemaD = new JComboBox();
-    private JComboBox     comboCatalogD = new JComboBox();
-    private JTextField    tfTablePatternS = new JTextField();
-    private JTextField    tfTablePatternD = new JTextField();
-    private JButton       buttonReadModelD = new JButton();
-    private JButton       buttonReadModelS = new JButton();
-    private JCheckBox     checkBoxReadSourcePrimaryKeys = new JCheckBox();
-    private JCheckBox     checkBoxReadSourceForeignKeys = new JCheckBox();
-    private JCheckBox     checkBoxReadSourceIndexes = new JCheckBox();
-    private JCheckBox     checkBoxUseQualifiedSourceTableName = new JCheckBox();
-    private JCheckBox     checkBoxReadDestinationPrimaryKeys = new JCheckBox();
-    private JCheckBox     checkBoxReadDestinationForeignKeys = new JCheckBox();
-    private JCheckBox     checkBoxReadDestinationIndexes = new JCheckBox();
-    private JCheckBox     checkBoxUseQualifiedDestinationTableName = new JCheckBox();
+    private boolean databaseMetadataRead;
+    private GridLayout gridLayout = new GridLayout();
+    private JPanel panelSource = new JPanel();
+    private JPanel panelDestination = new JPanel();
+    private JLabel labelSchemaS = new JLabel();
+    private JLabel labelCatalogS = new JLabel();
+    private JLabel labelTablePatternS = new JLabel();
+    private JLabel labelSchemaD = new JLabel();
+    private JLabel labelTablePatternD = new JLabel();
+    private JLabel labelCatalogD = new JLabel();
+    private JComboBox comboSchemaS = new JComboBox();
+    private JComboBox comboCatalogS = new JComboBox();
+    private JComboBox comboSchemaD = new JComboBox();
+    private JComboBox comboCatalogD = new JComboBox();
+    private JTextField tfTablePatternS = new JTextField();
+    private JTextField tfTablePatternD = new JTextField();
+    private JButton buttonReadModelD = new JButton();
+    private JButton buttonReadModelS = new JButton();
+    private JCheckBox checkBoxReadSourcePrimaryKeys = new JCheckBox();
+    private JCheckBox checkBoxReadSourceForeignKeys = new JCheckBox();
+    private JCheckBox checkBoxReadSourceIndexes = new JCheckBox();
+    private JCheckBox checkBoxUseQualifiedSourceTableName = new JCheckBox();
+    private JCheckBox checkBoxReadDestinationPrimaryKeys = new JCheckBox();
+    private JCheckBox checkBoxReadDestinationForeignKeys = new JCheckBox();
+    private JCheckBox checkBoxReadDestinationIndexes = new JCheckBox();
+    private JCheckBox checkBoxUseQualifiedDestinationTableName = new JCheckBox();
 
     /**
      * Creates a new PanelModel object.
      *
-     * @param controller DOCUMENT ME!
-     * @param workingMode DOCUMENT ME!
+     * @param controller         DOCUMENT ME!
+     * @param workingMode        DOCUMENT ME!
      * @param registerAsObserver DOCUMENT ME!
-     *
      * @throws Exception DOCUMENT ME!
      */
     public PanelModel(MainController controller,
-                      PluginGui      workingMode,
-                      Boolean        registerAsObserver) throws Exception {
+                      PluginGui workingMode,
+                      Boolean registerAsObserver) throws Exception {
         super(controller, workingMode, registerAsObserver);
 
         model = (DatabaseModel) super.model;
@@ -117,11 +102,11 @@ public class PanelModel extends DynamicPanel implements ItemListener {
     /**
      * DOCUMENT ME!
      *
-     * @param o DOCUMENT ME!
+     * @param o   DOCUMENT ME!
      * @param obj DOCUMENT ME!
      */
     public final void update(Observable o,
-                             Object     obj) {
+                             Object obj) {
         onSelect();
     }
 
@@ -131,7 +116,7 @@ public class PanelModel extends DynamicPanel implements ItemListener {
     public void onSelect() {
         try {
             if (model.getDbMode() == model.DUAL_MODE) {
- 
+
                 // setup comboBox values
                 if ((model.getSourceConnection().getAttributes().size() > 0) && (model.getDestinationConnection().getAttributes().size() > 0)) {
                     if ((model.getSourceMetadata().getChildren().size() > 0) && (model.getDestinationMetadata().getChildren().size() > 0)) {
@@ -172,7 +157,7 @@ public class PanelModel extends DynamicPanel implements ItemListener {
      * @param e DOCUMENT ME!
      */
     public void itemStateChanged(ItemEvent e) {
-        Object  source = e.getItemSelectable();
+        Object source = e.getItemSelectable();
         boolean enable = false;
 
         if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -206,7 +191,7 @@ public class PanelModel extends DynamicPanel implements ItemListener {
      * DOCUMENT ME!
      *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
      */
     private void setValuesSource() throws MissingAttributeException, MissingElementException {
         // source catalogs
@@ -259,11 +244,11 @@ public class PanelModel extends DynamicPanel implements ItemListener {
     /**
      * DOCUMENT ME!
      *
-     * @param box DOCUMENT ME!
+     * @param box  DOCUMENT ME!
      * @param list DOCUMENT ME!
      */
     private void fillComboBoxes(JComboBox box,
-                                List      list) {
+                                List list) {
         if ((box != null) && (list != null) && (list.size() > 0)) {
             box.removeAllItems();
 
@@ -299,8 +284,8 @@ public class PanelModel extends DynamicPanel implements ItemListener {
      */
     private void guiInit() {
         double[][] size = {
-                              { GUI.B, GUI.P, GUI.HG, GUI.F, 40, GUI.P, GUI.HG, GUI.P, GUI.B }, // Columns
-        { GUI.B, GUI.P, GUI.VS, GUI.P, GUI.VS, GUI.P, GUI.VS, GUI.P, GUI.B }
+                {GUI.B, GUI.P, GUI.HG, GUI.F, 40, GUI.P, GUI.HG, GUI.P, GUI.B}, // Columns
+                {GUI.B, GUI.P, GUI.VS, GUI.P, GUI.VS, GUI.P, GUI.VS, GUI.P, GUI.B}
         }; // Rows
 
         TableLayout layout = new TableLayout(size);
@@ -309,7 +294,7 @@ public class PanelModel extends DynamicPanel implements ItemListener {
         panelDestination.setLayout(layout);
 
         panelSource.setBorder(BorderFactory.createCompoundBorder(new TitledBorder(BorderFactory.createLineBorder(SystemColor.controlText, 1), " " + rm.getString("text.model.sourceModel") + " "), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-        panelDestination.setBorder(BorderFactory.createCompoundBorder(new TitledBorder(BorderFactory.createLineBorder(SystemColor.controlText, 1),  " " + rm.getString("text.model.destinationModel") + " "), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        panelDestination.setBorder(BorderFactory.createCompoundBorder(new TitledBorder(BorderFactory.createLineBorder(SystemColor.controlText, 1), " " + rm.getString("text.model.destinationModel") + " "), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
         // source
         labelCatalogS.setText(rm.getString("text.model.catalog"));
@@ -421,12 +406,12 @@ public class PanelModel extends DynamicPanel implements ItemListener {
         try {
             model.setSourceCatalog((String) comboCatalogS.getSelectedItem());
             model.setSourceSchema((String) comboSchemaS.getSelectedItem());
-            model.setSourceTablePattern(tfTablePatternS.getText());            
+            model.setSourceTablePattern(tfTablePatternS.getText());
 
             Element operation = new Element(XMLTags.OPERATION);
             operation.setAttribute(XMLTags.NAME, OperationType.CAPTURE_SOURCE_MODEL);
 
-            String[] param = { rm.getString("text.model.sourceModel") };
+            String[] param = {rm.getString("text.model.sourceModel")};
 
             execute(operation, rm.getString("message.model.successful", param));
         } catch (Exception ex) {

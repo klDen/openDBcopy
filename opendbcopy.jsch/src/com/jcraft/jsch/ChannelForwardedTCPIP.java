@@ -29,94 +29,182 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-import java.net.*;
-import java.io.*;
+import java.net.Socket;
 
-class ChannelForwardedTCPIP extends Channel{
+class ChannelForwardedTCPIP extends Channel {
 
-  static java.util.Vector pool=new java.util.Vector();
+    static private final int LOCAL_WINDOW_SIZE_MAX = 0x20000;
+    static private final int LOCAL_MAXIMUM_PACKET_SIZE = 0x4000;
+    static java.util.Vector pool = new java.util.Vector();
+    String host;
+    int lport;
+    int rport;
 
-  static private final int LOCAL_WINDOW_SIZE_MAX=0x20000;
-  static private final int LOCAL_MAXIMUM_PACKET_SIZE=0x4000;
-
-  String host;
-  int lport;
-  int rport;
-
-  ChannelForwardedTCPIP(){
-    super();
-    setLocalWindowSizeMax(LOCAL_WINDOW_SIZE_MAX);
-    setLocalWindowSize(LOCAL_WINDOW_SIZE_MAX);
-    setLocalPacketSize(LOCAL_MAXIMUM_PACKET_SIZE);
-  }
-
-  void init (){
-    try{ 
-      Socket socket = new Socket(host, lport);
-      socket.setTcpNoDelay(true);
-      io=new IO();
-      io.setInputStream(socket.getInputStream());
-      io.setOutputStream(socket.getOutputStream());
+    ChannelForwardedTCPIP() {
+        super();
+        setLocalWindowSizeMax(LOCAL_WINDOW_SIZE_MAX);
+        setLocalWindowSize(LOCAL_WINDOW_SIZE_MAX);
+        setLocalPacketSize(LOCAL_MAXIMUM_PACKET_SIZE);
     }
-    catch(Exception e){
-      System.out.println(e);
-    }
-  }
 
-  public void run(){
-    thread=this;
-    Buffer buf=new Buffer(rmpsize);
-    Packet packet=new Packet(buf);
-    int i=0;
-    try{
-      while(thread!=null && io!=null && io.in!=null){
-        i=io.in.read(buf.buffer, 
-		     14, 
-		     buf.buffer.length-14
-		     -16 -20 // padding and mac
-		     );
-	if(i<=0){
-          break;
-	}
-        packet.reset();
-	if(close)break;
-        buf.putByte((byte)Session.SSH_MSG_CHANNEL_DATA);
-        buf.putInt(recipient);
-        buf.putInt(i);
-        buf.skip(i);
-	session.write(packet, this, i);
-      }
+    static Object[] getPort(Session session, int rport) {
+        synchronized (pool) {
+            Object[] foo = null;
+            for (int i = 0; i < pool.size(); i++) {
+                Object[] bar = (Object[]) (pool.elementAt(i));
+                if (bar[0] != session) continue;
+                if (((Integer) bar[1]).intValue() != rport) continue;
+                return bar;
+            }
+            return null;
+        }
     }
-    catch(Exception e){
-      //System.out.println(e);
+
+    static String[] getPortForwarding(Session session) {
+        java.util.Vector foo = new java.util.Vector();
+        synchronized (pool) {
+            for (int i = 0; i < pool.size(); i++) {
+                Object[] bar = (Object[]) (pool.elementAt(i));
+                if (bar[0] != session) continue;
+                foo.addElement(bar[1] + ":" + bar[2] + ":" + bar[3]);
+            }
+        }
+        String[] bar = new String[foo.size()];
+        for (int i = 0; i < foo.size(); i++) {
+            bar[i] = (String) (foo.elementAt(i));
+        }
+        return bar;
     }
-    //thread=null;
-    //eof();
-    disconnect();
-  }
-  public void disconnect(){
-    close();
-    thread=null;
-    try{
-      if(io!=null){
-      if(io.in!=null)io.in.close();
-      if(io.out!=null)io.out.close();
-      }
+
+    static void addPort(Session session, int port, String host, int lport) throws JSchException {
+        synchronized (pool) {
+            if (getPort(session, port) != null) {
+                throw new JSchException("PortForwardingR: remote port " + port + " is already registered.");
+            }
+            Object[] foo = new Object[4];
+            foo[0] = session;
+            foo[1] = new Integer(port);
+            foo[2] = host;
+            foo[3] = new Integer(lport);
+            pool.addElement(foo);
+        }
     }
-    catch(Exception e){
-      //e.printStackTrace();
+
+    static void delPort(ChannelForwardedTCPIP c) {
+        delPort(c.session, c.rport);
     }
-    io=null;
-    Channel.del(this);
-  }
-  void getData(Buffer buf){
-    setRecipient(buf.getInt());
-    setRemoteWindowSize(buf.getInt());
-    setRemotePacketSize(buf.getInt());
-    byte[] addr=buf.getString();
-    int port=buf.getInt();
-    byte[] orgaddr=buf.getString();
-    int orgport=buf.getInt();
+
+    static void delPort(Session session, int rport) {
+        synchronized (pool) {
+            Object[] foo = null;
+            for (int i = 0; i < pool.size(); i++) {
+                Object[] bar = (Object[]) (pool.elementAt(i));
+                if (bar[0] != session) continue;
+                if (((Integer) bar[1]).intValue() != rport) continue;
+                foo = bar;
+                break;
+            }
+            if (foo == null) return;
+            pool.removeElement(foo);
+        }
+
+        Buffer buf = new Buffer(100); // ??
+        Packet packet = new Packet(buf);
+
+        try {
+            // byte SSH_MSG_GLOBAL_REQUEST 80
+            // string "cancel-tcpip-forward"
+            // boolean want_reply
+            // string  address_to_bind (e.g. "127.0.0.1")
+            // uint32  port number to bind
+            packet.reset();
+            buf.putByte((byte) 80/*SSH_MSG_GLOBAL_REQUEST*/);
+            buf.putString("cancel-tcpip-forward".getBytes());
+            buf.putByte((byte) 0);
+            buf.putString("0.0.0.0".getBytes());
+            buf.putInt(rport);
+            session.write(packet);
+        } catch (Exception e) {
+//    throw new JSchException(e.toString());
+        }
+    }
+
+    static void delPort(Session session) {
+        for (int i = 0; i < pool.size(); i++) {
+            Object[] bar = (Object[]) (pool.elementAt(i));
+            if (bar[0] == session) {
+                pool.removeElement(bar);
+                i--;
+            }
+        }
+    }
+
+    void init() {
+        try {
+            Socket socket = new Socket(host, lport);
+            socket.setTcpNoDelay(true);
+            io = new IO();
+            io.setInputStream(socket.getInputStream());
+            io.setOutputStream(socket.getOutputStream());
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public void run() {
+        thread = this;
+        Buffer buf = new Buffer(rmpsize);
+        Packet packet = new Packet(buf);
+        int i = 0;
+        try {
+            while (thread != null && io != null && io.in != null) {
+                i = io.in.read(buf.buffer,
+                        14,
+                        buf.buffer.length - 14
+                                - 16 - 20 // padding and mac
+                );
+                if (i <= 0) {
+                    break;
+                }
+                packet.reset();
+                if (close) break;
+                buf.putByte((byte) Session.SSH_MSG_CHANNEL_DATA);
+                buf.putInt(recipient);
+                buf.putInt(i);
+                buf.skip(i);
+                session.write(packet, this, i);
+            }
+        } catch (Exception e) {
+            //System.out.println(e);
+        }
+        //thread=null;
+        //eof();
+        disconnect();
+    }
+
+    public void disconnect() {
+        close();
+        thread = null;
+        try {
+            if (io != null) {
+                if (io.in != null) io.in.close();
+                if (io.out != null) io.out.close();
+            }
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
+        io = null;
+        Channel.del(this);
+    }
+
+    void getData(Buffer buf) {
+        setRecipient(buf.getInt());
+        setRemoteWindowSize(buf.getInt());
+        setRemotePacketSize(buf.getInt());
+        byte[] addr = buf.getString();
+        int port = buf.getInt();
+        byte[] orgaddr = buf.getString();
+        int orgport = buf.getInt();
 
     /*
     System.out.println("addr: "+new String(addr));
@@ -125,108 +213,20 @@ class ChannelForwardedTCPIP extends Channel{
     System.out.println("orgport: "+orgport);
     */
 
-    synchronized(pool){
-      for(int i=0; i<pool.size(); i++){
-        Object[] foo=(Object[])(pool.elementAt(i));
-        if(foo[0]!=session) continue;
-        if(((Integer)foo[1]).intValue()!=port) continue;
-        this.rport=port;
-        this.host=(String)foo[2];
-        this.lport=((Integer)foo[3]).intValue();
-        break;
-      }
-      if(host==null){
-	System.out.println("??");
-      }
+        synchronized (pool) {
+            for (int i = 0; i < pool.size(); i++) {
+                Object[] foo = (Object[]) (pool.elementAt(i));
+                if (foo[0] != session) continue;
+                if (((Integer) foo[1]).intValue() != port) continue;
+                this.rport = port;
+                this.host = (String) foo[2];
+                this.lport = ((Integer) foo[3]).intValue();
+                break;
+            }
+            if (host == null) {
+                System.out.println("??");
+            }
+        }
     }
-  }
-
-  static Object[] getPort(Session session, int rport){
-    synchronized(pool){
-      Object[] foo=null;
-      for(int i=0; i<pool.size(); i++){
-        Object[] bar=(Object[])(pool.elementAt(i));
-        if(bar[0]!=session) continue;
-        if(((Integer)bar[1]).intValue()!=rport) continue;
-	return bar;
-      }
-      return null;
-    }
-  }
-
-  static String[] getPortForwarding(Session session){
-    java.util.Vector foo=new java.util.Vector();
-    synchronized(pool){
-      for(int i=0; i<pool.size(); i++){
-        Object[] bar=(Object[])(pool.elementAt(i));
-        if(bar[0]!=session) continue;
-	foo.addElement(bar[1]+":"+bar[2]+":"+bar[3]);
-      }
-    }
-    String[] bar=new String[foo.size()];
-    for(int i=0; i<foo.size(); i++){
-      bar[i]=(String)(foo.elementAt(i));
-    }
-    return bar;
-  }
-
-  static void addPort(Session session, int port, String host, int lport) throws JSchException{
-    synchronized(pool){
-      if(getPort(session, port)!=null){
-        throw new JSchException("PortForwardingR: remote port "+port+" is already registered.");
-      }
-      Object[] foo=new Object[4];
-      foo[0]=session; foo[1]=new Integer(port);
-      foo[2]=host; foo[3]=new Integer(lport);
-      pool.addElement(foo);
-    }
-  }
-  static void delPort(ChannelForwardedTCPIP c){
-    delPort(c.session, c.rport);
-  }
-  static void delPort(Session session, int rport){
-    synchronized(pool){
-      Object[] foo=null;
-      for(int i=0; i<pool.size(); i++){
-        Object[] bar=(Object[])(pool.elementAt(i));
-        if(bar[0]!=session) continue;
-        if(((Integer)bar[1]).intValue()!=rport) continue;
-        foo=bar;
-        break;
-      }
-      if(foo==null)return;
-      pool.removeElement(foo);	
-    }
-
-    Buffer buf=new Buffer(100); // ??
-    Packet packet=new Packet(buf);
-
-    try{
-      // byte SSH_MSG_GLOBAL_REQUEST 80
-      // string "cancel-tcpip-forward"
-      // boolean want_reply
-      // string  address_to_bind (e.g. "127.0.0.1")
-      // uint32  port number to bind
-      packet.reset();
-      buf.putByte((byte) 80/*SSH_MSG_GLOBAL_REQUEST*/);
-      buf.putString("cancel-tcpip-forward".getBytes());
-      buf.putByte((byte)0);
-      buf.putString("0.0.0.0".getBytes());
-      buf.putInt(rport);
-      session.write(packet);
-    }
-    catch(Exception e){
-//    throw new JSchException(e.toString());
-    }
-  }
-  static void delPort(Session session){
-    for(int i=0; i<pool.size(); i++){
-      Object[] bar=(Object[])(pool.elementAt(i));
-      if(bar[0]==session) {
-        pool.removeElement(bar);
-	i--;
-      }
-    }
-  }
 
 }

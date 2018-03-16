@@ -23,51 +23,34 @@
 package opendbcopy.gui;
 
 import info.clearthought.layout.TableLayout;
-
 import opendbcopy.config.GUI;
 import opendbcopy.config.XMLTags;
-
 import opendbcopy.connection.exception.CloseConnectionException;
 import opendbcopy.connection.exception.DriverNotFoundException;
 import opendbcopy.connection.exception.OpenConnectionException;
-
 import opendbcopy.controller.MainController;
-
 import opendbcopy.plugin.PluginManager;
-
 import opendbcopy.plugin.model.Model;
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.PluginException;
 import opendbcopy.plugin.model.exception.UnsupportedAttributeValueException;
-
 import opendbcopy.resource.ResourceManager;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
 
-import org.jdom.Element;
-import org.jdom.JDOMException;
-
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
-
 import java.io.IOException;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-
 import java.sql.SQLException;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
-
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 
 
 /**
@@ -77,39 +60,38 @@ import javax.swing.JTextArea;
  * @version $Revision$
  */
 public class PluginGui {
-    private static Logger   logger = Logger.getLogger(PluginGui.class.getName());
-    private MainController  controller;
+    private static Logger logger = Logger.getLogger(PluginGui.class.getName());
+    private MainController controller;
     private ResourceManager rm;
-    private PluginManager   pluginManager;
-    private Model           model;
-    private Element         pluginElement;
-    private String          identifier;
-    private String          displayOrder;
-    private String          title;
-    private String          modelClassName;
-    private HashMap         availablePluginThreads;
-    private Vector          panelsMetadata;
-    private Vector          panels;
-    private JTabbedPane     tab;
-    private JPanel          panelPluginGui;
-    private JPanel          panelControl;
-    private JTextArea       statusBar;
-    private JButton         buttonNext;
+    private PluginManager pluginManager;
+    private Model model;
+    private Element pluginElement;
+    private String identifier;
+    private String displayOrder;
+    private String title;
+    private String modelClassName;
+    private HashMap availablePluginThreads;
+    private Vector panelsMetadata;
+    private Vector panels;
+    private JTabbedPane tab;
+    private JPanel panelPluginGui;
+    private JPanel panelControl;
+    private JTextArea statusBar;
+    private JButton buttonNext;
 
     /**
      * Creates a new Mode object.
      *
-     * @param controller DOCUMENT ME!
+     * @param controller       DOCUMENT ME!
      * @param pluginGuiElement DOCUMENT ME!
-     * @param pluginElement DOCUMENT ME!
-     *
+     * @param pluginElement    DOCUMENT ME!
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
      */
     PluginGui(MainController controller,
-              Element        pluginGuiElement,
-              Element        pluginElement) throws MissingAttributeException, MissingElementException {
+              Element pluginGuiElement,
+              Element pluginElement) throws MissingAttributeException, MissingElementException {
         if (controller == null) {
             throw new IllegalArgumentException("Missing controller");
         }
@@ -126,11 +108,11 @@ public class PluginGui {
             throw new MissingAttributeException(pluginGuiElement, XMLTags.IDENTIFIER);
         }
 
-        this.controller        = controller;
-        this.pluginElement     = pluginElement;
-        rm                     = controller.getResourceManager();
+        this.controller = controller;
+        this.pluginElement = pluginElement;
+        rm = controller.getResourceManager();
 
-        availablePluginThreads     = new HashMap();
+        availablePluginThreads = new HashMap();
 
         identifier = pluginGuiElement.getAttributeValue(XMLTags.IDENTIFIER);
 
@@ -154,31 +136,29 @@ public class PluginGui {
      * DOCUMENT ME!
      *
      * @param model DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws ClassNotFoundException DOCUMENT ME!
-     * @throws InstantiationException DOCUMENT ME!
+     * @throws ClassNotFoundException    DOCUMENT ME!
+     * @throws InstantiationException    DOCUMENT ME!
      * @throws InvocationTargetException DOCUMENT ME!
-     * @throws IllegalAccessException DOCUMENT ME!
-     * @throws PluginException DOCUMENT ME!
+     * @throws IllegalAccessException    DOCUMENT ME!
+     * @throws PluginException           DOCUMENT ME!
      */
     public final JPanel load(Model model) throws MissingAttributeException, ClassNotFoundException, InstantiationException, InvocationTargetException, IllegalAccessException, PluginException {
         this.model = model;
 
         double[][] sizeMain = {
-                                  { GUI.B, GUI.F, GUI.B }, // Columns
-        { GUI.B, GUI.F, GUI.VS, GUI.P, GUI.B }
+                {GUI.B, GUI.F, GUI.B}, // Columns
+                {GUI.B, GUI.F, GUI.VS, GUI.P, GUI.B}
         }; // Rows
 
         double[][] sizeControl = {
-                                     { GUI.B, GUI.F, GUI.HG, GUI.P, GUI.B }, // Columns
-        { GUI.VS, GUI.P, GUI.VS }
+                {GUI.B, GUI.F, GUI.HG, GUI.P, GUI.B}, // Columns
+                {GUI.VS, GUI.P, GUI.VS}
         }; // Rows
 
-        panelPluginGui     = new JPanel(new TableLayout(sizeMain));
-        panelControl       = new JPanel(new TableLayout(sizeControl));
+        panelPluginGui = new JPanel(new TableLayout(sizeMain));
+        panelControl = new JPanel(new TableLayout(sizeControl));
 
         statusBar = new JTextArea();
         statusBar.setEditable(false);
@@ -203,11 +183,10 @@ public class PluginGui {
      * DOCUMENT ME!
      *
      * @return DOCUMENT ME!
-     *
-     * @throws ClassNotFoundException DOCUMENT ME!
-     * @throws InstantiationException DOCUMENT ME!
+     * @throws ClassNotFoundException    DOCUMENT ME!
+     * @throws InstantiationException    DOCUMENT ME!
      * @throws InvocationTargetException DOCUMENT ME!
-     * @throws IllegalAccessException DOCUMENT ME!
+     * @throws IllegalAccessException    DOCUMENT ME!
      */
     private JTabbedPane loadDynamically() throws ClassNotFoundException, InstantiationException, InvocationTargetException, IllegalAccessException {
         tab = new JTabbedPane();
@@ -215,7 +194,7 @@ public class PluginGui {
         for (int i = 0; i < getNbrDynamicPanelsMetadata(); i++) {
             DynamicPanelMetadata dynPanelMetadata = getDynamicPanelMetadata(i);
 
-            DynamicPanel         dynPanel = (DynamicPanel) dynamicallyLoadPanel(dynPanelMetadata);
+            DynamicPanel dynPanel = (DynamicPanel) dynamicallyLoadPanel(dynPanelMetadata);
 
             tab.add(dynPanel, controller.getResourceManager().getString(dynPanelMetadata.getTitle()));
         }
@@ -226,22 +205,21 @@ public class PluginGui {
     /**
      * DOCUMENT ME!
      *
-     * @param operation DOCUMENT ME!
+     * @param operation         DOCUMENT ME!
      * @param messageSuccessful DOCUMENT ME!
-     *
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
-     * @throws DriverNotFoundException DOCUMENT ME!
-     * @throws OpenConnectionException DOCUMENT ME!
-     * @throws CloseConnectionException DOCUMENT ME!
-     * @throws JDOMException DOCUMENT ME!
-     * @throws SQLException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
-     * @throws Exception DOCUMENT ME!
+     * @throws MissingAttributeException          DOCUMENT ME!
+     * @throws MissingElementException            DOCUMENT ME!
+     * @throws DriverNotFoundException            DOCUMENT ME!
+     * @throws OpenConnectionException            DOCUMENT ME!
+     * @throws CloseConnectionException           DOCUMENT ME!
+     * @throws JDOMException                      DOCUMENT ME!
+     * @throws SQLException                       DOCUMENT ME!
+     * @throws IOException                        DOCUMENT ME!
+     * @throws Exception                          DOCUMENT ME!
      */
     public final void execute(Element operation,
-                              String  messageSuccessful) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, DriverNotFoundException, OpenConnectionException, CloseConnectionException, JDOMException, SQLException, IOException, Exception {
+                              String messageSuccessful) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, DriverNotFoundException, OpenConnectionException, CloseConnectionException, JDOMException, SQLException, IOException, Exception {
         try {
             model.execute(operation);
             logger.info(messageSuccessful);
@@ -266,11 +244,11 @@ public class PluginGui {
     /**
      * DOCUMENT ME!
      *
-     * @param e DOCUMENT ME!
+     * @param e     DOCUMENT ME!
      * @param level DOCUMENT ME!
      */
     public final void postException(Exception e,
-                                    Level     level) {
+                                    Level level) {
         e.printStackTrace();
 
         if (level.isGreaterOrEqual(Level.ERROR)) {
@@ -454,7 +432,6 @@ public class PluginGui {
      * DOCUMENT ME!
      *
      * @param index DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     private DynamicPanelMetadata getDynamicPanelMetadata(int index) {
@@ -469,7 +446,6 @@ public class PluginGui {
      * DOCUMENT ME!
      *
      * @param index DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     private DynamicPanel getDynamicPanel(int index) {
@@ -484,22 +460,20 @@ public class PluginGui {
      * DOCUMENT ME!
      *
      * @param dynamicPanelMetadata DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws ClassNotFoundException DOCUMENT ME!
-     * @throws InstantiationException DOCUMENT ME!
+     * @throws ClassNotFoundException    DOCUMENT ME!
+     * @throws InstantiationException    DOCUMENT ME!
      * @throws InvocationTargetException DOCUMENT ME!
-     * @throws IllegalAccessException DOCUMENT ME!
+     * @throws IllegalAccessException    DOCUMENT ME!
      */
     private Object dynamicallyLoadPanel(DynamicPanelMetadata dynamicPanelMetadata) throws ClassNotFoundException, InstantiationException, InvocationTargetException, IllegalAccessException {
-        Class         dynClass = Class.forName(dynamicPanelMetadata.getClassName());
+        Class dynClass = Class.forName(dynamicPanelMetadata.getClassName());
 
         Constructor[] constructors = dynClass.getConstructors();
 
-        Object[]      params = new Object[3];
-        params[0]     = controller;
-        params[1]     = this;
+        Object[] params = new Object[3];
+        params[0] = controller;
+        params[1] = this;
 
         if (dynamicPanelMetadata.isRegisterObserver()) {
             params[2] = new Boolean(true);
@@ -515,9 +489,8 @@ public class PluginGui {
      * DOCUMENT ME!
      *
      * @param pluginElement DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws IllegalArgumentException  DOCUMENT ME!
      */
     private void loadPlugins(Element pluginElement) throws MissingAttributeException {
         if (pluginElement == null) {
@@ -551,9 +524,8 @@ public class PluginGui {
      * DOCUMENT ME!
      *
      * @param workingModeElement DOCUMENT ME!
-     *
      * @throws MissingAttributeException DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
+     * @throws MissingElementException   DOCUMENT ME!
      */
     private void loadPanels(Element workingModeElement) throws MissingAttributeException, MissingElementException {
         // now retrieve requested panels
@@ -569,7 +541,7 @@ public class PluginGui {
 
         while (itPanels.hasNext()) {
             Element dynamicPanelElement = (Element) itPanels.next();
-            String  titlePanel = dynamicPanelElement.getAttributeValue(XMLTags.TITLE);
+            String titlePanel = dynamicPanelElement.getAttributeValue(XMLTags.TITLE);
 
             if (titlePanel == null) {
                 throw new MissingAttributeException(dynamicPanelElement, XMLTags.TITLE);
@@ -583,7 +555,7 @@ public class PluginGui {
                 throw new MissingAttributeException(dynamicPanelElement, XMLTags.NAME);
             }
 
-            String  className = dynamicPanelElement.getChild(XMLTags.CLASS).getAttributeValue(XMLTags.NAME);
+            String className = dynamicPanelElement.getChild(XMLTags.CLASS).getAttributeValue(XMLTags.NAME);
 
             boolean registerObserver = false;
 

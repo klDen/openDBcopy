@@ -24,11 +24,7 @@ package opendbcopy.io;
 
 import opendbcopy.config.FileCharacter;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 
 /**
@@ -42,11 +38,9 @@ public final class Reader {
      * DOCUMENT ME!
      *
      * @param fileName DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws FileNotFoundException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
+     * @throws FileNotFoundException    DOCUMENT ME!
+     * @throws IOException              DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public static final StringBuffer read(String fileName) throws FileNotFoundException, IOException {
@@ -55,9 +49,9 @@ public final class Reader {
         }
 
         StringBuffer stringBuffer = new StringBuffer();
-        FileReader   fileReader = new FileReader(fileName);
+        FileReader fileReader = new FileReader(fileName);
 
-        int          c = fileReader.read();
+        int c = fileReader.read();
 
         while (c != FileCharacter.EOF) {
             stringBuffer.append((char) c);
@@ -73,11 +67,9 @@ public final class Reader {
      * DOCUMENT ME!
      *
      * @param file DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws FileNotFoundException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
+     * @throws FileNotFoundException    DOCUMENT ME!
+     * @throws IOException              DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public static final StringBuffer readSingle(File file) throws FileNotFoundException, IOException {
@@ -86,9 +78,9 @@ public final class Reader {
         }
 
         StringBuffer stringBuffer = new StringBuffer();
-        FileReader   fileReader = new FileReader(file);
+        FileReader fileReader = new FileReader(file);
 
-        int          c = fileReader.read();
+        int c = fileReader.read();
 
         while (c != FileCharacter.EOF) {
             stringBuffer.append((char) c);
@@ -104,11 +96,9 @@ public final class Reader {
      * DOCUMENT ME!
      *
      * @param file DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
-     *
-     * @throws FileNotFoundException DOCUMENT ME!
-     * @throws IOException DOCUMENT ME!
+     * @throws FileNotFoundException    DOCUMENT ME!
+     * @throws IOException              DOCUMENT ME!
      * @throws IllegalArgumentException DOCUMENT ME!
      */
     public static final StringBuffer read(File file) throws FileNotFoundException, IOException {
@@ -116,13 +106,13 @@ public final class Reader {
             throw new IllegalArgumentException("Missing fileName");
         }
 
-        StringBuffer   stringBuffer = new StringBuffer();
-        String         lineSep = System.getProperty("line.separator");
+        StringBuffer stringBuffer = new StringBuffer();
+        String lineSep = System.getProperty("line.separator");
 
         BufferedReader in = new BufferedReader(new FileReader(file));
-        String         line = null;
+        String line = null;
 
-        for (;;) {
+        for (; ; ) {
             line = in.readLine();
 
             // EOF

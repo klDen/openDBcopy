@@ -29,66 +29,73 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-public class Packet{
+public class Packet {
 
-  private static Random random;
-  static void setRandom(Random foo){ random=foo;}
+    private static Random random;
+    Buffer buffer;
+    byte[] tmp = new byte[4];
 
-  Buffer buffer;
-  byte[] tmp=new byte[4]; 
-  public Packet(Buffer buffer){
-    this.buffer=buffer;
-  }
-  public void reset(){
-    buffer.index=5;
-  }
-  void padding(){
-    int len=buffer.index;
-    int pad=(-len)&7;
-    if(pad<8){
-      pad+=8;
+    public Packet(Buffer buffer) {
+        this.buffer = buffer;
     }
-    len=len+pad-4;
-    tmp[0]=(byte)(len>>>24);
-    tmp[1]=(byte)(len>>>16);
-    tmp[2]=(byte)(len>>>8);
-    tmp[3]=(byte)(len);
-    System.arraycopy(tmp, 0, buffer.buffer, 0, 4);
-    buffer.buffer[4]=(byte)pad;
-    random.fill(buffer.buffer, buffer.index, pad); buffer.skip(pad);
-    //buffer.putPad(pad);
+
+    static void setRandom(Random foo) {
+        random = foo;
+    }
+
+    public void reset() {
+        buffer.index = 5;
+    }
+
+    void padding() {
+        int len = buffer.index;
+        int pad = (-len) & 7;
+        if (pad < 8) {
+            pad += 8;
+        }
+        len = len + pad - 4;
+        tmp[0] = (byte) (len >>> 24);
+        tmp[1] = (byte) (len >>> 16);
+        tmp[2] = (byte) (len >>> 8);
+        tmp[3] = (byte) (len);
+        System.arraycopy(tmp, 0, buffer.buffer, 0, 4);
+        buffer.buffer[4] = (byte) pad;
+        random.fill(buffer.buffer, buffer.index, pad);
+        buffer.skip(pad);
+        //buffer.putPad(pad);
 /*
 for(int i=0; i<buffer.index; i++){
   System.out.print(Integer.toHexString(buffer.buffer[i]&0xff)+":");
 }
 System.out.println("");
 */
-  }
+    }
 
-  int shift(int len, int mac){
-    int s=len+5+9;
-    int pad=(-s)&7;
-    if(pad<8)pad+=8;
-    s+=pad;
-    s+=mac;
+    int shift(int len, int mac) {
+        int s = len + 5 + 9;
+        int pad = (-s) & 7;
+        if (pad < 8) pad += 8;
+        s += pad;
+        s += mac;
 
-    System.arraycopy(buffer.buffer, 
-		     len+5+9, 
-		     buffer.buffer, s, buffer.index-5-9-len);
-    buffer.index=10;
-    buffer.putInt(len);
-    buffer.index=len+5+9;
-    return s;
-  }
-  void unshift(byte command, int recipient, int s, int len){
-    System.arraycopy(buffer.buffer, 
-		     s, 
-		     buffer.buffer, 5+9, len);
-    buffer.buffer[5]=command;
-    buffer.index=6;
-    buffer.putInt(recipient);
-    buffer.putInt(len);
-    buffer.index=len+5+9;
-  }
+        System.arraycopy(buffer.buffer,
+                len + 5 + 9,
+                buffer.buffer, s, buffer.index - 5 - 9 - len);
+        buffer.index = 10;
+        buffer.putInt(len);
+        buffer.index = len + 5 + 9;
+        return s;
+    }
+
+    void unshift(byte command, int recipient, int s, int len) {
+        System.arraycopy(buffer.buffer,
+                s,
+                buffer.buffer, 5 + 9, len);
+        buffer.buffer[5] = command;
+        buffer.index = 6;
+        buffer.putInt(recipient);
+        buffer.putInt(len);
+        buffer.index = len + 5 + 9;
+    }
 
 }
