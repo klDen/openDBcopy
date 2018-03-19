@@ -1,9 +1,9 @@
 ext {
     def applicationName='opendbcopy'
     def opendbcopyLib="${applicationName}.jar"
-    def pluginName="$applicationName schemageneration"
-    def pluginAuthor='Anthony Smith'
-    def pluginCopyright="2004 by $pluginAuthor"
+    pluginName="$applicationName schemageneration"
+    pluginAuthor='Anthony Smith'
+    pluginCopyright="2004 by $pluginAuthor"
     def pluginVersion=0.2
     def packageName="$applicationName-$pluginName-$pluginVersion"
     def pluginJar="${packageName}.jar"
@@ -15,8 +15,8 @@ ext {
     def baseDir=projectDir
     def PLUGIN_HOME="$baseDir"
     def OPENDBCOPY_HOME="../../$applicationName"
-    def hbmDir="$baseDir/hbm"
-    def distDir="$baseDir/$distsDirName"
-    def javadocDir="$baseDir/apidocs"
-    def sqlDir="$baseDir/sql"
+    hbmDir="$baseDir/hbm"
+    distDir="$baseDir/$distsDirName"
+    javadocDir="$baseDir/apidocs"
+    sqlDir="$baseDir/sql"
 }

@@ -8,7 +8,6 @@ dependencies {
 apply from: 'properties.gradle'
 
 task prepare {
-    mkdir(libsDirName)
     mkdir(buildDir.name)
     mkdir("$distDir/$pluginName")
     mkdir(javadocDir)
@@ -54,12 +53,12 @@ task compile(dependsOn: 'prepare', type: JavaCompile) {
 ////<!-- ============================================================= -->
 ////<!-- Create the jar file containing binaries and sources           -->
 ////<!-- ============================================================= -->
-task jar(dependsOn: 'compile') {
-    archiveName "${packageName}.jar"
-    destinationDir file("${libDir}")
-    from "$buildDir"
-    from "${sourcesDir}"
-}
+//task jar(dependsOn: 'compile') {
+//    archiveName "${packageName}.jar"
+//    destinationDir file("${libDir}")
+//    from "$buildDir"
+//    from "${sourcesDir}"
+//}
 //
 ////<!-- ============================================================= -->
 ////<!-- Copies plugin configuration and binaries into destination lib -->
