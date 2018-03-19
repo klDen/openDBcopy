@@ -4,3 +4,86 @@ dependencies {
 
     testImplementation group: 'com.h2database', name: 'h2', version: '1.4.196'
 }
+
+apply from: 'properties.gradle'
+
+task prepare {
+    mkdir(libsDirName)
+    mkdir(buildDir.name)
+    mkdir("$distDir/$pluginName")
+    mkdir(javadocDir)
+}
+
+task preparehbm {
+    mkdir(hbmDir)
+    mkdir(hbmDir + "/src")
+    mkdir(hbmDir + "/classes")
+}
+
+task compile(dependsOn: 'prepare', type: JavaCompile) {
+    copy {
+        from sourceSets.main.resources
+        into buildDir.name
+    }
+    source = sourceSets.main.java.srcDirs
+    destinationDir = buildDir
+    classpath = sourceSets.main.compileClasspath
+}
+
+////<!-- ============================================================= -->
+////<!-- Clean up all files that are generated.                        -->
+////<!-- ============================================================= -->
+//clean {
+//    delete buildDir
+//    delete filetree(dir: "${libDir}", include: "**/*${pluginName}*.jar")
+//}
+//
+//task cleanhbm {
+//    delete filetree("${hbmDir}").matching {
+//        include '**/*.java'
+//        include '**/*.class'
+//    }
+//}
+//
+////<!-- ============================================================= -->
+////<!-- Clean and then compile the project                            -->
+////<!-- ============================================================= -->
+//task rebuild(dependsOn: ['clean', 'compile'])
+//
+//
+////<!-- ============================================================= -->
+////<!-- Create the jar file containing binaries and sources           -->
+////<!-- ============================================================= -->
+task jar(dependsOn: 'compile') {
+    archiveName "${packageName}.jar"
+    destinationDir file("${libDir}")
+    from "$buildDir"
+    from "${sourcesDir}"
+}
+//
+////<!-- ============================================================= -->
+////<!-- Copies plugin configuration and binaries into destination lib -->
+////<!-- NOTE: contains path to opendbcopy! Change in gradle.properties -->
+////<!-- ============================================================= -->
+//task deploy(dependsOn: ['clean', 'jar']) {
+//    delete "${OPENDBCOPY_HOME}/plugins/${pluginName}"
+//
+//    copy {
+//        from "${pluginFile}"
+//        from "${codegenConfig}"
+//        from "gradle.properties"
+//        from "README"
+//        into "${OPENDBCOPY_HOME}/plugins/${pluginName}"
+//    }
+//
+//    copy {
+//        from "${OPENDBCOPY_HOME}/plugins/${pluginName}/lib"
+//        into "${libDir}"
+//    }
+//
+//    copy {
+//        from "${OPENDBCOPY_HOME}/plugins/${pluginName}/hbm"
+//        into "${hbmDir}"
+//    }
+//}
+

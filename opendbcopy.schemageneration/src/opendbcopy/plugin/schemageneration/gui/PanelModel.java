@@ -164,26 +164,22 @@ public class PanelModel extends DynamicPanel implements ItemListener {
             enable = true;
         }
 
-        try {
-            if (source == checkBoxReadSourcePrimaryKeys) {
-                model.getSourceModel().setAttribute(XMLTags.READ_PRIMARY_KEYS, Boolean.toString(enable));
-            } else if (source == checkBoxReadDestinationPrimaryKeys) {
-                model.getDestinationModel().setAttribute(XMLTags.READ_PRIMARY_KEYS, Boolean.toString(enable));
-            } else if (source == checkBoxReadSourceForeignKeys) {
-                model.getSourceModel().setAttribute(XMLTags.READ_FOREIGN_KEYS, Boolean.toString(enable));
-            } else if (source == checkBoxReadDestinationForeignKeys) {
-                model.getDestinationModel().setAttribute(XMLTags.READ_FOREIGN_KEYS, Boolean.toString(enable));
-            } else if (source == checkBoxReadSourceIndexes) {
-                model.getSourceModel().setAttribute(XMLTags.READ_INDEXES, Boolean.toString(enable));
-            } else if (source == checkBoxReadDestinationIndexes) {
-                model.getDestinationModel().setAttribute(XMLTags.READ_INDEXES, Boolean.toString(enable));
-            } else if (source == checkBoxUseQualifiedSourceTableName) {
-                model.getSourceModel().setAttribute(XMLTags.USE_QUALIFIED_TABLE_NAME, Boolean.toString(enable));
-            } else if (source == checkBoxUseQualifiedDestinationTableName) {
-                model.getDestinationModel().setAttribute(XMLTags.USE_QUALIFIED_TABLE_NAME, Boolean.toString(enable));
-            }
-        } catch (MissingElementException ex) {
-            postException(ex);
+        if (source == checkBoxReadSourcePrimaryKeys) {
+            model.getSourceModel().setAttribute(XMLTags.READ_PRIMARY_KEYS, Boolean.toString(enable));
+        } else if (source == checkBoxReadDestinationPrimaryKeys) {
+            model.getDestinationModel().setAttribute(XMLTags.READ_PRIMARY_KEYS, Boolean.toString(enable));
+        } else if (source == checkBoxReadSourceForeignKeys) {
+            model.getSourceModel().setAttribute(XMLTags.READ_FOREIGN_KEYS, Boolean.toString(enable));
+        } else if (source == checkBoxReadDestinationForeignKeys) {
+            model.getDestinationModel().setAttribute(XMLTags.READ_FOREIGN_KEYS, Boolean.toString(enable));
+        } else if (source == checkBoxReadSourceIndexes) {
+            model.getSourceModel().setAttribute(XMLTags.READ_INDEXES, Boolean.toString(enable));
+        } else if (source == checkBoxReadDestinationIndexes) {
+            model.getDestinationModel().setAttribute(XMLTags.READ_INDEXES, Boolean.toString(enable));
+        } else if (source == checkBoxUseQualifiedSourceTableName) {
+            model.getSourceModel().setAttribute(XMLTags.USE_QUALIFIED_TABLE_NAME, Boolean.toString(enable));
+        } else if (source == checkBoxUseQualifiedDestinationTableName) {
+            model.getDestinationModel().setAttribute(XMLTags.USE_QUALIFIED_TABLE_NAME, Boolean.toString(enable));
         }
     }
 
