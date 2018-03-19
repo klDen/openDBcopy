@@ -83,9 +83,8 @@ public class SchemagenerationModel extends DatabaseModel {
      * @throws JDOMException                      DOCUMENT ME!
      * @throws SQLException                       DOCUMENT ME!
      * @throws IOException                        DOCUMENT ME!
-     * @throws Exception                          DOCUMENT ME!
      */
-    public void execute(Element operation) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, DriverNotFoundException, OpenConnectionException, CloseConnectionException, JDOMException, SQLException, IOException, Exception {
+    public void execute(Element operation) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, DriverNotFoundException, OpenConnectionException, CloseConnectionException, JDOMException, SQLException, IOException {
         String operationString = operation.getAttributeValue(XMLTags.NAME);
 
         // test source connection
@@ -120,7 +119,7 @@ public class SchemagenerationModel extends DatabaseModel {
             }
 
             // copy source model into destination model
-            setDestinationModel((Element) getSourceModel().clone());
+            setDestinationModel(getSourceModel().clone());
 
             Mapper mapper = new Mapper(this);
             mapper.createInitialMapping();

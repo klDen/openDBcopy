@@ -225,12 +225,10 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
      *
      * @param destinationTableName DOCUMENT ME!
      * @param processColumns       DOCUMENT ME!
-     * @throws MissingAttributeException          DOCUMENT ME!
-     * @throws UnsupportedAttributeValueException DOCUMENT ME!
      * @throws MissingElementException            DOCUMENT ME!
      */
     private void genHibernateMappingFile(String destinationTableName,
-                                         List processColumns) throws MissingAttributeException, UnsupportedAttributeValueException, MissingElementException {
+                                         List processColumns) throws MissingElementException {
         initXMLHeader();
 
         sb.append("<hibernate-mapping>" + APM.LINE_SEP);
@@ -337,7 +335,7 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
      */
     private void initXMLHeader() {
         sb.append("<?xml version=\"1.0\"?>" + APM.LINE_SEP);
-        sb.append("<!DOCTYPE hibernate-mapping PUBLIC \"-//Hibernate/Hibernate Mapping DTD 2.0//EN\" \"http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd\">" + APM.LINE_SEP);
+        sb.append("<!DOCTYPE hibernate-configuration PUBLIC \"-//Hibernate/Hibernate Mapping DTD 3.0//EN\" \"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd\">" + APM.LINE_SEP);
     }
 
     /**
@@ -346,13 +344,10 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
      * @param sb        DOCUMENT ME!
      * @param column    DOCUMENT ME!
      * @param tableName DOCUMENT ME!
-     * @throws MissingAttributeException          DOCUMENT ME!
-     * @throws UnsupportedAttributeValueException DOCUMENT ME!
-     * @throws MissingElementException            DOCUMENT ME!
      */
     private void processSinglePrimaryKey(StringBuffer sb,
                                          Element column,
-                                         String tableName) throws MissingAttributeException, UnsupportedAttributeValueException, MissingElementException {
+                                         String tableName) {
         sb.append("<id");
         sb.append(" name=\"" + column.getAttributeValue(XMLTags.NAME) + "\"");
         sb.append(" column=\"" + column.getAttributeValue(XMLTags.NAME) + "\"");

@@ -250,7 +250,7 @@
     <!-- ============================================================= -->
     <target name="schema-create">
         <taskdef name="schema-create"
-                 classname="net.sf.hibernate.tool.hbm2ddl.SchemaExportTask">
+                 classname="org.hibernate.tool.hbm2ddl.SchemaExport">
             <classpath>
                 <path refid="plugin.classpath"/>
             </classpath>
@@ -277,7 +277,7 @@
     <!-- ============================================================= -->
     <target name="schema-update" depends="prepare">
         <taskdef name="schema-update"
-                 classname="net.sf.hibernate.tool.hbm2ddl.SchemaUpdateTask">
+                 classname="org.hibernate.tool.hbm2ddl.SchemaUpdateTask">
             <classpath>
                 <path refid="plugin.classpath"/>
             </classpath>
@@ -297,7 +297,7 @@
     <!-- ============================================================= -->
     <target name="schema-drop">
         <taskdef name="schemaexport"
-                 classname="net.sf.hibernate.tool.hbm2ddl.SchemaExportTask">
+                 classname="org.hibernate.tool.hbm2ddl.SchemaExportTask">
             <classpath>
                 <path refid="plugin.classpath"/>
             </classpath>
