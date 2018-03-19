@@ -34,7 +34,6 @@ import opendbcopy.plugin.model.database.typeinfo.TypeMapping;
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.PluginException;
-import opendbcopy.plugin.model.exception.UnsupportedAttributeValueException;
 import org.jdom2.Element;
 
 import java.io.File;
@@ -210,8 +209,6 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
                 logger.info("Please see user manual for documentation on how to continue");
             }
         } catch (MissingAttributeException e) {
-            throw new PluginException(e);
-        } catch (UnsupportedAttributeValueException e) {
             throw new PluginException(e);
         } catch (MissingElementException e) {
             throw new PluginException(e);
@@ -640,10 +637,9 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
      *
      * @param sb      DOCUMENT ME!
      * @param impKeys DOCUMENT ME!
-     * @throws MissingElementException DOCUMENT ME!
      */
     private void processCompositeImportedKey(StringBuffer sb,
-                                             ArrayList impKeys) throws MissingElementException {
+                                             ArrayList impKeys) {
         // Retrieve basic information
         Element impElement = (Element) impKeys.get(0);
         Element columnElement = model.getDestinationColumn(impElement.getAttributeValue(XMLTags.FKTABLE_NAME), impElement.getAttributeValue(XMLTags.FKCOLUMN_NAME));
