@@ -25,7 +25,7 @@
 
 <project name="plugin" default="deploy" basedir=".">
 
-    <property file="build.properties"/>
+    <property file="gradle.properties"/>
 
     <property name="basedir" value="."/>
 
@@ -99,7 +99,7 @@
 
     <!-- ============================================================= -->
     <!-- Copies plugin configuration and binaries into destination lib -->
-    <!-- NOTE: contains path to opendbcopy! Change in build.properties -->
+    <!-- NOTE: contains path to opendbcopy! Change in gradle.properties -->
     <!-- ============================================================= -->
     <target name="deploy" depends="clean, jar">
         <!-- delete destination dir -->

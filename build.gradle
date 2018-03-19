@@ -23,6 +23,8 @@ subprojects {
     }
 
     dependencies {
+        implementation project(':opendbcopy')
+
         implementation group: 'log4j', name: 'log4j', version: '1.2.17'
         implementation group: 'org.jdom', name: 'jdom2', version: '2.0.6'
         implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'

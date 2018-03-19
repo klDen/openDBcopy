@@ -1,5 +1,4 @@
 dependencies {
-    implementation project(':opendbcopy')
     implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.3.0.CR1'
     implementation group: 'org.hibernate', name: 'hibernate-tools', version: '5.2.10.Final'
 

@@ -6,7 +6,7 @@
 
 <project name="opendbcopy" default="deployjar2plugins" basedir=".">
 
-    <property file="build.properties"/>
+    <property file="gradle.properties"/>
 
     <property name="basedir" value="."/>
 
