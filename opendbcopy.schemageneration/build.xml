@@ -25,10 +25,6 @@
 
 <project name="plugin" default="deploy" basedir=".">
 
-    <property file="gradle.properties"/>
-
-    <property name="basedir" value="."/>
-
     <!-- ============================================================= -->
     <!-- Classpath with libraries needed to compile this application   -->
     <!-- ============================================================= -->
@@ -46,9 +42,6 @@
         </fileset>
     </path>
 
-    <!-- ============================================================= -->
-    <!-- Compiles the source code                                      -->
-    <!-- ============================================================= -->
     <target name="compile" depends="prepare">
         <!-- copy resource dir into build dir -->
         <copy todir="${build.dir}">
@@ -64,65 +57,11 @@
     </target>
 
     <!-- ============================================================= -->
-    <!-- Creates a package for distribution                            -->
-    <!-- ============================================================= -->
-    <target name="dist" depends="clean, jar, javadoc">
-        <!-- clean dist and javadoc -->
-        <delete quiet="true" dir="${dist.dir}"/>
-
-        <!-- copy plugin configuration and working mode into distribution -->
-        <copy file="${plugin.file}" todir="${dist.dir}/${plugin.name}"/>
-        <copy file="${gui.file}" todir="${dist.dir}/${plugin.name}"/>
-
-        <!-- copy code generation configuration to destination dir -->
-        <copy file="${codegen.config}" todir="${dist.dir}/${plugin.name}"/>
-
-        <!-- copy README to destination dir -->
-        <copy file="README" todir="${dist.dir}/${plugin.name}"/>
-
-        <!-- copy lib dir into distribution -->
-        <copy todir="${dist.dir}/${plugin.name}/lib">
-            <fileset dir="${lib.dir}"/>
-        </copy>
-
-        <!-- copy sources dir into distribution -->
-        <copy todir="${dist.dir}/${plugin.name}/src">
-            <fileset dir="${sources.dir}"/>
-        </copy>
-
-        <!-- copy resource dir into distribution -->
-        <copy todir="${dist.dir}/${plugin.name}/resource">
-            <fileset dir="/resources"/>
-        </copy>
-
-        <!-- copy apidocs dir into distribution -->
-        <copy todir="${dist.dir}/${plugin.name}/apidocs">
-            <fileset dir="${javadoc.dir}"/>
-        </copy>
-        <zip zipfile="${dist.dir}/${package.name}.zip" basedir="${dist.dir}"/>
-    </target>
-
-    <!-- ============================================================= -->
-    <!-- Creates the API documentation                                 -->
-    <!-- ============================================================= -->
-    <target name="javadoc" depends="compile">
-        <javadoc packagenames="${packages}"
-                 sourcepath="${sources.dir}"
-                 destdir="${javadoc.dir}"
-                 author="true"
-                 version="true"
-                 windowtitle="${plugin.name} API"
-                 doctitle="${plugin.name}"
-                 bottom="Copyright &#169; ${plugin.copyright}"
-        />
-    </target>
-
-    <!-- ============================================================= -->
     <!-- Compile Hibernate Mapping Files                               -->
     <!-- ============================================================= -->
     <target name="hbm2java" depends="cleanhbm">
         <taskdef name="hbm2java"
-                 classname="org.hibernate.tool.ant.Hbm2JavaExporterTask">
+                 classname="org.hibernate.tool.ant.HibernateToolTask">
             <classpath>
                 <path refid="plugin.classpath"/>
                 <path refid="hibernate.classpath"/>

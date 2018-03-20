@@ -6,98 +6,11 @@
 
 <project name="opendbcopy" default="deployjar2plugins" basedir=".">
 
-    <property file="gradle.properties"/>
-
-    <property name="basedir" value="."/>
-
-    <property name="hbm.dir" value="${basedir}/hbm"/>
-
-    <!-- ============================================================= -->
-    <!-- Classpath with libraries needed to compile this application   -->
-    <!-- ============================================================= -->
-    <path id="build.classpath">
-        <fileset dir="${build.dir}">
-            <include name="**/*.zip"/>
-            <include name="**/*.jar"/>
-            <include name="**/*.properties"/>
-        </fileset>
-    </path>
-
-    <path id="lib.classpath">
-        <fileset dir="${lib.dir}">
-            <include name="**/*.zip"/>
-            <include name="**/*.jar"/>
-            <include name="**/*.properties"/>
-        </fileset>
-    </path>
-
-    <!-- ============================================================= -->
-    <!-- Prepares the project                                          -->
-    <!-- ============================================================= -->
-    <target name="prepare">
-        <mkdir dir="${build.dir}"/>
-        <mkdir dir="${lib.dir}"/>
-        <mkdir dir="${dist.dir}"/>
-    </target>
-
-    <!-- ============================================================= -->
-    <!-- Compiles the source code                                      -->
-    <!-- ============================================================= -->
-    <target name="compile" depends="prepare">
-        <!-- copy resource dir into build dir -->
-        <copy todir="${build.dir}/resource">
-            <fileset dir="${resource.dir}"/>
-        </copy>
-
-        <javac srcdir="${sources.dir}"
-               destdir="${build.dir}"
-               debug="on"
-               optimize="on">
-            <classpath refid="build.classpath"/>
-            <classpath refid="lib.classpath"/>
-        </javac>
-    </target>
-
-    <!-- ============================================================= -->
-    <!-- Clean up all files that are generated.                        -->
-    <!-- ============================================================= -->
-    <target name="clean">
-        <delete quiet="true" dir="${build.dir}"/>
-    </target>
-
-    <!-- ============================================================= -->
-    <!-- Clean and then compile the project                            -->
-    <!-- ============================================================= -->
-    <target name="rebuild">
-        <antcall target="clean"/>
-        <antcall target="compile"/>
-    </target>
-
-    <!-- ============================================================= -->
-    <!-- Create the jar file                                           -->
-    <!-- ============================================================= -->
-    <target name="jar" depends="rebuild">
-        <jar jarfile="${lib.dir}/${application.jar}">
-            <fileset dir="${build.dir}"/>
-        </jar>
-    </target>
-
     <!-- ============================================================= -->
     <!-- Create the zip file                                           -->
     <!-- ============================================================= -->
     <target name="zip">
         <zip zipfile="${application.zip}" basedir="."/>
-    </target>
-
-    <target name="deployjar2plugins" depends="jar">
-        <copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.copy/lib"/>
-        <copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.delete/lib"/>
-        <copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.dump/lib"/>
-        <copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.schemageneration/lib"/>
-        <copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.script/lib"/>
-        <copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.statistics/lib"/>
-        <copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.zip/lib"/>
-        <copy file="${lib.dir}/${application.jar}" todir="../opendbcopy-plugins/opendbcopy.jsch/lib"/>
     </target>
 
     <!-- ============================================================= -->
@@ -144,22 +57,6 @@
         <echo>1) Please ensure that maven site:generate has been executed before installer</echo>
         <echo>2) App Version was changed in project.xml, install.xml, build.xml</echo>
         <echo>3) CVS checked in for proper java headers</echo>
-    </target>
-
-    <!-- ============================================================= -->
-    <!-- Creates the API documentation                                 -->
-    <!-- ============================================================= -->
-    <target name="javadoc" depends="compile">
-        <mkdir dir="${javadoc.dir}"/>
-        <javadoc packagenames="${packages}"
-                 sourcepath="${sources.dir}"
-                 destdir="${javadoc.dir}"
-                 author="true"
-                 version="true"
-                 windowtitle="${application.name}-${application.version} API"
-                 doctitle="${application.name}-${application.version}"
-                 bottom="${application.copyright}"
-        />
     </target>
 
     <!-- ============================================================= -->

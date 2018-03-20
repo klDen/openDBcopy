@@ -71,7 +71,7 @@ public class JobManager extends Observable {
      * @param typeMapping         DOCUMENT ME!
      * @param pluginsLocation     DOCUMENT ME!
      * @param pluginFilename      DOCUMENT ME!
-     * @param workingModeFilename DOCUMENT ME!
+     * @param guiFilename DOCUMENT ME!
      * @throws UnsupportedAttributeValueException DOCUMENT ME!
      * @throws MissingAttributeException          DOCUMENT ME!
      * @throws MissingElementException            DOCUMENT ME!
@@ -88,7 +88,7 @@ public class JobManager extends Observable {
                       Document typeMapping,
                       String pluginsLocation,
                       String pluginFilename,
-                      String workingModeFilename) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, JDOMException, ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, IOException, PluginException {
+                      String guiFilename) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, JDOMException, ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, IOException, PluginException {
         if ((controller == null) || (typeMapping == null)) {
             throw new IllegalArgumentException("Missing arguments values: controller=" + controller + " typeMapping=" + typeMapping);
         }
@@ -98,7 +98,7 @@ public class JobManager extends Observable {
 
         initJob(controller.getApplicationProperties());
 
-        this.pluginManager = new PluginManager(controller, this, plugins, pluginsLocation, pluginFilename, workingModeFilename);
+        this.pluginManager = new PluginManager(controller, this, plugins, pluginsLocation, pluginFilename, guiFilename);
     }
 
     /**

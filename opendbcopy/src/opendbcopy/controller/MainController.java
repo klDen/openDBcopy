@@ -380,7 +380,6 @@ public class MainController {
      *
      * @param pluginGuiElement DOCUMENT ME!
      * @param pluginElement    DOCUMENT ME!
-     * @throws UnsupportedAttributeValueException DOCUMENT ME!
      * @throws MissingAttributeException          DOCUMENT ME!
      * @throws MissingElementException            DOCUMENT ME!
      */

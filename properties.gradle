@@ -1,0 +1,4 @@
+ext {
+    def pluginAuthor='Anthony Smith'
+    pluginCopyright="2004 by $pluginAuthor"
+}

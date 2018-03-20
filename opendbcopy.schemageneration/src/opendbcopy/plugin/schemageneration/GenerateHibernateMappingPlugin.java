@@ -332,7 +332,7 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
      */
     private void initXMLHeader() {
         sb.append("<?xml version=\"1.0\"?>" + APM.LINE_SEP);
-        sb.append("<!DOCTYPE hibernate-configuration PUBLIC \"-//Hibernate/Hibernate Mapping DTD 3.0//EN\" \"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd\">" + APM.LINE_SEP);
+        sb.append("<!DOCTYPE hibernate-mapping PUBLIC \"-//Hibernate/Hibernate Mapping DTD 3.0//EN\" \"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd\">" + APM.LINE_SEP);
     }
 
     /**

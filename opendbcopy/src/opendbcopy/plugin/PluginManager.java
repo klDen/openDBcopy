@@ -31,7 +31,6 @@ import opendbcopy.plugin.model.Model;
 import opendbcopy.plugin.model.exception.MissingAttributeException;
 import opendbcopy.plugin.model.exception.MissingElementException;
 import opendbcopy.plugin.model.exception.PluginException;
-import opendbcopy.plugin.model.exception.UnsupportedAttributeValueException;
 import opendbcopy.resource.ResourceManager;
 import org.apache.log4j.Logger;
 import org.jdom2.Document;
@@ -82,7 +81,7 @@ public class PluginManager extends Observable {
      * @param plugins             DOCUMENT ME!
      * @param pluginsLocation     DOCUMENT ME!
      * @param pluginFilename      DOCUMENT ME!
-     * @param workingModeFilename DOCUMENT ME!
+     * @param guiFilename DOCUMENT ME!
      * @throws FileNotFoundException     DOCUMENT ME!
      * @throws JDOMException             DOCUMENT ME!
      * @throws MissingAttributeException DOCUMENT ME!
@@ -101,9 +100,9 @@ public class PluginManager extends Observable {
                          Element plugins,
                          String pluginsLocation,
                          String pluginFilename,
-                         String workingModeFilename) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, JDOMException, IOException, ClassNotFoundException, InstantiationException, InvocationTargetException, IllegalAccessException, PluginException {
-        if ((pluginsLocation == null) || (pluginFilename == null) || (workingModeFilename == null)) {
-            throw new IllegalArgumentException("Missing arguments values: pluginsLocation=" + pluginsLocation + " pluginFilename=" + pluginFilename + " workingModeFilename=" + workingModeFilename);
+                         String guiFilename) throws MissingAttributeException, MissingElementException, JDOMException, IOException, ClassNotFoundException, InstantiationException, InvocationTargetException, IllegalAccessException, PluginException {
+        if ((pluginsLocation == null) || (pluginFilename == null) || (guiFilename == null)) {
+            throw new IllegalArgumentException("Missing arguments values: pluginsLocation=" + pluginsLocation + " pluginFilename=" + pluginFilename + " guiFilename=" + guiFilename);
         }
 
         this.controller = controller;
@@ -114,7 +113,7 @@ public class PluginManager extends Observable {
         modelsLoaded = new LinkedList();
         modelsToExecute = new LinkedList();
 
-        loadPlugins(pluginsLocation, pluginFilename, workingModeFilename);
+        loadPlugins(pluginsLocation, pluginFilename, guiFilename);
         loadPluginsFromProject(plugins);
 
         // set time formatting
@@ -416,8 +415,7 @@ public class PluginManager extends Observable {
      *
      * @param pluginsLocation     DOCUMENT ME!
      * @param pluginFilename      DOCUMENT ME!
-     * @param workingModeFilename DOCUMENT ME!
-     * @throws UnsupportedAttributeValueException DOCUMENT ME!
+     * @param guiFilename DOCUMENT ME!
      * @throws MissingAttributeException          DOCUMENT ME!
      * @throws MissingElementException            DOCUMENT ME!
      * @throws JDOMException                      DOCUMENT ME!
@@ -427,16 +425,16 @@ public class PluginManager extends Observable {
      */
     private void loadPlugins(String pluginsLocation,
                              String pluginFilename,
-                             String workingModeFilename) throws UnsupportedAttributeValueException, MissingAttributeException, MissingElementException, JDOMException, IOException {
+                             String guiFilename) throws MissingAttributeException, MissingElementException, JDOMException, IOException {
         File pluginsDirectory = FileHandling.getFile(pluginsLocation);
         File[] pluginDirectories = pluginsDirectory.listFiles();
 
         if (pluginDirectories.length > 0) {
             for (File pluginDir : pluginDirectories) {
                 // read files of plugin ... ignore file(s) if not within a directory
-                if (pluginDir.isDirectory() && (pluginDir.getName().compareToIgnoreCase("CVS") != 0)) {
+                if (pluginDir.isDirectory()) {
                     // load working mode
-                    File workingModeFile = FileHandling.getFileInDirectory(pluginDir, workingModeFilename);
+                    File guiFile = FileHandling.getFileInDirectory(pluginDir, guiFilename);
 
                     // load plugin file
                     File pluginFile = FileHandling.getFileInDirectory(pluginDir, pluginFilename);
@@ -450,7 +448,7 @@ public class PluginManager extends Observable {
                         throw new MissingAttributeException(pluginRoot, XMLTags.IDENTIFIER);
                     }
 
-                    File pluginLibDir = FileHandling.getFileInDirectory(pluginDir, "lib");
+                    File pluginLibDir = FileHandling.getFileInDirectory(pluginDir, "libs");
                     File[] pluginJars = FileHandling.getFilesInDirectory(pluginLibDir, "jar", "opendbcopy.jar");
                     File[] pluginZips = FileHandling.getFilesInDirectory(pluginLibDir, "zip", null);
                     File[] pluginResources = FileHandling.getFilesInDirectory(pluginLibDir, "properties", null);
@@ -472,7 +470,7 @@ public class PluginManager extends Observable {
                     }
 
                     // add working mode
-                    controller.addPluginGuiForPlugin(ImportFromXML.importFile(workingModeFile).getRootElement(), pluginRoot);
+                    controller.addPluginGuiForPlugin(ImportFromXML.importFile(guiFile).getRootElement(), pluginRoot);
                 }
             }
         }

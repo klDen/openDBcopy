@@ -53,18 +53,18 @@ public final class GUI {
     /**
      * Images
      */
-    private static final ImageIcon openIcon = new ImageIcon("resource/images/Open16.gif");
-    private static final ImageIcon saveAsIcon = new ImageIcon("resource/images/SaveAs16.gif");
-    private static final ImageIcon newIcon = new ImageIcon("resource/images/New16.gif");
-    private static final ImageIcon historyIcon = new ImageIcon("resource/images/History16.gif");
-    private static final ImageIcon imageIconLeft = new ImageIcon("resource/images/left.gif");
-    private static final ImageIcon imageIconRight = new ImageIcon("resource/images/right.gif");
-    private static final ImageIcon imageIconUp = new ImageIcon("resource/images/up.gif");
-    private static final ImageIcon imageIconDown = new ImageIcon("resource/images/down.gif");
-    private static final ImageIcon imageIconDelete = new ImageIcon("resource/images/delete.gif");
-    private static final ImageIcon imageIconFile = new ImageIcon("resource/images/Save24.gif");
-    private static final ImageIcon imageIconDir = new ImageIcon("resource/images/Open24.gif");
-    private static final ImageIcon imageIconConfig = new ImageIcon("resource/images/Preferences24.gif");
+    private static final ImageIcon openIcon = new ImageIcon("resources/images/Open16.gif");
+    private static final ImageIcon saveAsIcon = new ImageIcon("resources/images/SaveAs16.gif");
+    private static final ImageIcon newIcon = new ImageIcon("resources/images/New16.gif");
+    private static final ImageIcon historyIcon = new ImageIcon("resources/images/History16.gif");
+    private static final ImageIcon imageIconLeft = new ImageIcon("resources/images/left.gif");
+    private static final ImageIcon imageIconRight = new ImageIcon("resources/images/right.gif");
+    private static final ImageIcon imageIconUp = new ImageIcon("resources/images/up.gif");
+    private static final ImageIcon imageIconDown = new ImageIcon("resources/images/down.gif");
+    private static final ImageIcon imageIconDelete = new ImageIcon("resources/images/delete.gif");
+    private static final ImageIcon imageIconFile = new ImageIcon("resources/images/Save24.gif");
+    private static final ImageIcon imageIconDir = new ImageIcon("resources/images/Open24.gif");
+    private static final ImageIcon imageIconConfig = new ImageIcon("resources/images/Preferences24.gif");
 
     /**
      * DOCUMENT ME!

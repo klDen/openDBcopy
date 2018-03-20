@@ -1,143 +1,69 @@
-/**
- ===============================================================
- Ant build file
-
- Copyright (C) 2003 Anthony Smith
- ===============================================================
-
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- ===============================================================
- */
+configurations {
+    hibernatetool
+}
 
 dependencies {
     implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.3.0.CR1'
-    implementation group: 'org.hibernate', name: 'hibernate-tools', version: '5.2.10.Final'
+    hibernatetool group: 'org.hibernate', name: 'hibernate-tools', version: '5.2.10.Final'
+    hibernatetool group: 'log4j', name: 'log4j', version: '1.2.17'
+    hibernatetool group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
 
     testImplementation group: 'com.h2database', name: 'h2', version: '1.4.196'
 }
 
-apply from: 'properties.gradle'
-
-defaultTasks 'deploy'
-
-task prepare {
-    mkdir(buildDir.name)
-    mkdir("$distDir/$pluginName")
-    mkdir(javadocDir)
-}
+version = 0.2
 
 task preparehbm {
-    mkdir(hbmDir + "/src")
-    mkdir(hbmDir + "/classes")
-}
-
-/**
- =============================================================
- Compiles the source code
- =============================================================
- */
-task compile(dependsOn: 'prepare', type: JavaCompile) {
-    copy {
-        from sourceSets.main.resources
-        into buildDir.name
-    }
-    source = sourceSets.main.java.srcDirs
-    destinationDir = buildDir
-    classpath = sourceSets.main.compileClasspath
-}
-
-clean {
-    delete buildDir.name
+    mkdir("$projectDir/hbm/src")
+    mkdir("$projectDir/hbm/classes")
 }
 
 task cleanhbm(type: Delete) {
-    delete fileTree(hbmDir) {
+    delete fileTree("$projectDir/hbm") {
         include '**/*.java', '**/*.class'
     }
 }
 
-task rebuild(dependsOn: ['clean', 'compile'])
-
-task createjar(dependsOn: 'compile', type: Jar) {
-    archiveName "$pluginJar"
-    destinationDir libsDir
-    from buildDir.name
-    from sourceSets.main.java.srcDirs
-}
-
-task deploy(dependsOn: ['clean', 'compile', 'createjar']) {
-    delete "${OPENDBCOPY_HOME}/plugins/${pluginName}"
-
-    copy {
-        from pluginFile
-        from codegenConfig
-        from "gradle.properties"
-        from 'build.gradle'
-        from 'README'
-        into "$OPENDBCOPY_HOME/plugins/$pluginName"
-    }
-//
-//    copy {
-//        from "${OPENDBCOPY_HOME}/plugins/${pluginName}/lib"
-//        into "${libDir}"
-//    }
-
-    copy {
-        from "$OPENDBCOPY_HOME/plugins/$pluginName/hbm"
-        into hbmDir
-    }
-}
-
-task dist(dependsOn: ['clean', 'jar', 'javadoc'], type: Zip) {
-    delete distDir
+task deploy(dependsOn: ['clean', 'compile', 'createjar'], overwrite: true) {
+    delete "$OPENDBCOPY_HOME/plugins/$project.name"
 
     copy {
         from pluginFile
         from guiFile
-        from codegenConfig
-        from 'properties.gradle'
+        from 'codegen_config.xml'
         from 'build.gradle'
         from 'README'
-        into "$distDir/$pluginName"
-    }
-
-    /**
-     <copy todir="${dist.dir}/${plugin.name}/lib">
-     <fileset dir="${lib.dir}"/>
-     </copy>
-     */
-
-    copy {
-        from sourceSets.main.java.srcDirs
-        into "$distDir/$pluginName/src"
+        into "$OPENDBCOPY_HOME/plugins/$project.name"
     }
 
     copy {
-        from sourceSets.main.resources
-        into "$distDir/$pluginName/resources"
+        from libsDir
+        into "$OPENDBCOPY_HOME/plugins/$project.name/$libsDirName"
     }
 
-    /**
-     <copy todir="${dist.dir}/${plugin.name}/apidocs">
-     <fileset dir="${javadoc.dir}"/>
-     </copy>
-     */
+    copy {
+        from "$projectDir/hbm"
+        into "$OPENDBCOPY_HOME/plugins/$project.name/hbm"
+    }
+}
 
-    from distDir
-//    include '*/*' //to include contents of a folder
-    archiveName "${packageName}.zip"
-    destinationDir file(distDir)
+task hbm2java(dependsOn: 'cleanhbm') {//, type: JavaCompile
+    doLast {
+        ant.taskdef(name: 'hibernatetool',
+                    classname: 'org.hibernate.tool.ant.HibernateToolTask',
+                    classpath: configurations.hibernatetool.asPath)
+        ant.hibernatetool(destdir: "$projectDir/hbm/src") {
+            configuration(propertyfile: "$projectDir/hbm/hibernate.properties") {
+                ant.fileSet(dir: "$projectDir/hbm") {
+                    include(name: "**/*.hbm.xml")
+                }
+            }
+            hbm2java(jdk5: true)
+        }
+
+//        source = "$projectDir/hbm/src"
+//        setDestinationDir(file("$projectDir/hbm/classes"))
+//        classpath = sourceSets.main.compileClasspath
+    }
 }
 

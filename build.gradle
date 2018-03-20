@@ -1,12 +1,5 @@
 subprojects {
     apply plugin: 'java'
-    apply plugin: 'java-library'
-
-    if (project.name != 'opendbcopy') {
-        dependencies {
-            api project(':opendbcopy')
-        }
-    }
 
     repositories {
         mavenCentral()
@@ -22,12 +15,6 @@ subprojects {
             }
         }
     }
-
-//    jar {
-//        manifest {
-//            attributes 'Main-Class': 'opendbcopy.controller.MainController'
-//        }
-//    }
 
     dependencies {
         implementation group: 'log4j', name: 'log4j', version: '1.2.17'
@@ -45,4 +32,96 @@ subprojects {
 
         testImplementation 'junit:junit:4.11'
     }
+
+    if (project.name != 'opendbcopy') {
+        dependencies {
+            implementation project(':opendbcopy')
+        }
+
+        defaultTasks 'clean'
+
+        task createjar(dependsOn: 'compile', type: Jar) {
+            archiveName "${project.name}.jar"
+            destinationDir libsDir
+            from buildDir.name
+            from sourceSets.main.java.srcDirs
+            exclude libsDirName
+            exclude "tmp"
+        }
+
+        task deploy(dependsOn: ['clean', 'compile', 'createjar']) {
+            delete "$OPENDBCOPY_HOME/plugins/$project.name"
+
+            copy {
+                from pluginFile
+                from guiFile
+                into "$OPENDBCOPY_HOME/plugins/$project.name"
+            }
+
+            copy {
+                from libsDir
+                into "$OPENDBCOPY_HOME/plugins/$project.name/$libsDirName"
+            }
+        }
+
+        task dist(dependsOn: ['clean', 'createjar', 'javadoc'], type: Zip) {
+            doFirst {
+                def folder = new File("$distsDirName" as String)
+
+                if (!folder.exists()) {
+                    folder.mkdirs()
+                } else {
+                    delete "$distsDirName"
+                }
+            }
+
+            copy {
+                from pluginFile
+                from guiFile
+                from 'README'
+                from 'build.gradle'
+                into "$distsDirName/$project.name"
+            }
+
+            copy {
+                from sourceSets.main.java.srcDirs
+                into "$distsDirName/$project.name/src"
+            }
+
+            copy {
+                from sourceSets.main.resources
+                into "$distsDirName/$project.name/resources"
+            }
+
+            archiveName "${applicationName}-${project.name}-${version}.zip"
+            from "$distsDirName/$project.name"
+            destinationDir file(distsDirName)
+
+            doLast {
+                delete "$distsDirName/$project.name"
+            }
+        }
+    }
+
+    task compile(type: JavaCompile) {
+        println "Compiling source directory for $project.name"
+        source = sourceSets.main.java.srcDirs
+        destinationDir = buildDir
+        classpath = sourceSets.main.compileClasspath
+
+        doLast {
+            println "Copying resources directory"
+            copy {
+                from sourceSets.main.resources
+                into buildDir.name
+            }
+        }
+    }
+
+    clean {
+        println "Cleaning $buildDir.name & $distsDirName directory for $project.name"
+        delete buildDir.name, distsDirName, 'plugins'
+    }
+
+    task rebuild(dependsOn: ['clean', 'compile'])
 }
