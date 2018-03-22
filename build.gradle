@@ -62,6 +62,20 @@ subprojects {
                 from libsDir
                 into "$OPENDBCOPY_HOME/plugins/$project.name/$libsDirName"
             }
+
+            if (project.name == 'opendbcopy.schemageneration') {
+                copy {
+                    from "$projectDir/hbm"
+                    into "$OPENDBCOPY_HOME/plugins/$project.name/hbm"
+                }
+
+                copy {
+                    from 'codegen_config.xml'
+                    from 'build.gradle'
+                    from 'README'
+                    into "$OPENDBCOPY_HOME/plugins/$project.name"
+                }
+            }
         }
 
         task dist(dependsOn: ['clean', 'createjar', 'javadoc'], type: Zip) {
@@ -93,7 +107,7 @@ subprojects {
                 into "$distsDirName/$project.name/resources"
             }
 
-            archiveName "${applicationName}-${project.name}-${version}.zip"
+            archiveName "$appName-$project.name-${version}.zip"
             from "$distsDirName/$project.name"
             destinationDir file(distsDirName)
 
@@ -121,6 +135,12 @@ subprojects {
     clean {
         println "Cleaning $buildDir.name & $distsDirName directory for $project.name"
         delete buildDir.name, distsDirName, 'plugins'
+
+        if (project.name == 'opendbcopy.schemageneration') {
+            delete fileTree("$projectDir/hbm") {
+                include '**/*.java', '**/*.class'
+            }
+        }
     }
 
     task rebuild(dependsOn: ['clean', 'compile'])

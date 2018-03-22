@@ -18,52 +18,23 @@ task preparehbm {
     mkdir("$projectDir/hbm/classes")
 }
 
-task cleanhbm(type: Delete) {
-    delete fileTree("$projectDir/hbm") {
-        include '**/*.java', '**/*.class'
-    }
-}
-
-task deploy(dependsOn: ['clean', 'compile', 'createjar'], overwrite: true) {
-    delete "$OPENDBCOPY_HOME/plugins/$project.name"
-
-    copy {
-        from pluginFile
-        from guiFile
-        from 'codegen_config.xml'
-        from 'build.gradle'
-        from 'README'
-        into "$OPENDBCOPY_HOME/plugins/$project.name"
-    }
-
-    copy {
-        from libsDir
-        into "$OPENDBCOPY_HOME/plugins/$project.name/$libsDirName"
-    }
-
-    copy {
-        from "$projectDir/hbm"
-        into "$OPENDBCOPY_HOME/plugins/$project.name/hbm"
-    }
-}
-
-task hbm2java(dependsOn: 'cleanhbm') {//, type: JavaCompile
-    doLast {
-        ant.taskdef(name: 'hibernatetool',
-                    classname: 'org.hibernate.tool.ant.HibernateToolTask',
-                    classpath: configurations.hibernatetool.asPath)
-        ant.hibernatetool(destdir: "$projectDir/hbm/src") {
-            configuration(propertyfile: "$projectDir/hbm/hibernate.properties") {
-                ant.fileSet(dir: "$projectDir/hbm") {
-                    include(name: "**/*.hbm.xml")
-                }
+task hbm2java(dependsOn: 'clean') {
+    ant.taskdef(name: 'hibernatetool',
+                classname: 'org.hibernate.tool.ant.HibernateToolTask',
+                classpath: configurations.hibernatetool.asPath)
+    ant.hibernatetool(destdir: "$projectDir/hbm/src") {
+        configuration(propertyfile: "$projectDir/hbm/hibernate.properties") {
+            ant.fileSet(dir: "$projectDir/hbm") {
+                include(name: "**/*.hbm.xml")
             }
-            hbm2java(jdk5: true)
         }
-
-//        source = "$projectDir/hbm/src"
-//        setDestinationDir(file("$projectDir/hbm/classes"))
-//        classpath = sourceSets.main.compileClasspath
+        hbm2java(jdk5: true)
     }
 }
 
+compile {
+    source = "$projectDir/hbm/src/schema"
+    include "*.java"
+    destinationDir = file("$projectDir/hbm/classes")
+    classpath = sourceSets.main.runtimeClasspath
+}
