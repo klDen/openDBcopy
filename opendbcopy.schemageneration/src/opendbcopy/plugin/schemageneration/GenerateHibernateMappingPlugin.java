@@ -194,6 +194,7 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
             }
 
             p.setProperty("hibernate.dialect", hibernateDialect);
+            p.setProperty("hibernate.globally_quoted_identifiers", "true");
 
             if ((destinationDbProductName != null) && (destinationDbProductName.getAttributeValue(XMLTags.VALUE) != null)) {
                 p.setProperty(XMLTags.DB_PRODUCT_NAME, destinationDbProductName.getAttributeValue(XMLTags.VALUE));

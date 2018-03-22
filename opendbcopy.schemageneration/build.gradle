@@ -5,6 +5,7 @@ configurations {
 dependencies {
     implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.3.0.CR1'
     hibernatetool group: 'org.hibernate', name: 'hibernate-tools', version: '5.2.10.Final'
+    implementation group: 'org.hibernate', name: 'hibernate-tools', version: '5.2.10.Final'
     hibernatetool group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
 
     testImplementation group: 'com.h2database', name: 'h2', version: '1.4.196'
@@ -12,27 +13,55 @@ dependencies {
 
 version = 0.2
 
-task hbm2java(dependsOn: 'clean') {
-    doLast {
-        ant.taskdef(name: 'hibernatetool',
-                classname: 'org.hibernate.tool.ant.HibernateToolTask',
-                classpath: configurations.hibernatetool.asPath)
-        ant.hibernatetool(destdir: "$projectDir/hbm/src") {
-            configuration(propertyfile: "$projectDir/hbm/hibernate.properties") {
-                ant.fileSet(dir: "$projectDir/hbm") {
-                    include(name: "**/*.hbm.xml")
-                }
-            }
-            hbm2java(jdk5: true)
-        }
-    }
-}
-
-task compilehbm2java(dependsOn: 'hbm2java', type: JavaCompile) {
-    doLast {
-        source = "$projectDir/hbm/src/schema"
-//        include "*.java"
-        destinationDir = file("$projectDir/hbm/classes")
-        classpath = sourceSets.main.runtimeClasspath
-    }
-}
+//task hbm2java {
+//    mkdir 'hbm/classes'
+//    mkdir 'hbm/src'
+//    ant.taskdef(name: 'hibernatetool',
+//            classname: 'org.hibernate.tool.ant.HibernateToolTask',
+//            classpath: configurations.hibernatetool.asPath)
+//    ant.hibernatetool(destdir: "hbm/src") {
+//        configuration(propertyfile: "hbm/hibernate.properties") {
+//            ant.fileSet(dir: "hbm") {
+//                include(name: "**/*.hbm.xml")
+//            }
+//        }
+//        hbm2java(jdk5: true)
+//    }
+//}
+//
+//task compilehbmjava(dependsOn: 'hbm2java', type: JavaCompile) {
+//    println "Compiling java class from schema"
+//    source = "hbm/src/schema"
+//    include "*.java"
+//    destinationDir = file("hbm/classes")
+//    classpath = sourceSets.main.runtimeClasspath
+//}
+//
+//compilehbmjava.mustRunAfter hbm2java
+//
+//task schemacreate(dependsOn: 'compilehbmjava') {
+//    doLast {
+//        ant.taskdef(name: 'schemacreate',
+//                classname: 'org.hibernate.tool.hbm2ddl.SchemaExportTask',
+//                classpath: configurations.hibernatetool.asPath
+//        )
+//        println "$projectDir/hbm/hibernate.properties"
+//        Properties props = new Properties()
+//        InputStream is = new FileInputStream("$projectDir/hbm/hibernate.properties")
+//        props.load(is)
+//        is.close()
+//
+//        ant.schemacreate(properties: "hbm/hibernate.properties",
+//                quiet: 'no',
+//                text: 'no',
+//                drop: 'no',
+//                delimiter: ';',
+//                output: "hbm/sql/${props.getProperty('db_product_name')}_schema_create.sql") {
+//            ant.fileSet(dir: "hbm") {
+//                include(name: "**/*.hbm.xml")
+//            }
+//        }
+//    }
+//}
+//
+//schemacreate.mustRunAfter compilehbmjava

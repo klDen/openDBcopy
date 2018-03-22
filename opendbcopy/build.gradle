@@ -1,3 +1,4 @@
-//apply plugin: 'application'
-//
-//mainClassName = 'opendbcopy.controller.MainController'
+apply plugin: 'application'
+
+mainClassName = 'opendbcopy.controller.MainController'
+

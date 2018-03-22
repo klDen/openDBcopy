@@ -23,7 +23,6 @@ subprojects {
         implementation group: 'org.ostermiller', name: 'utils', version: '1.07.00'
         implementation group: 'xerces', name: 'xercesImpl', version: '2.11.0'
         implementation group: 'tablelayout', name: 'TableLayout', version: '20050920'
-        implementation group: 'org.codehaus.izpack', name: 'izpack-maven-plugin', version: '5.1.2'
         implementation group: 'org.codehaus.izpack', name: 'izpack-installer', version: '5.1.2'
         implementation group: 'com.puppycrawl.tools', name: 'checkstyle', version: '8.8'
         implementation group: 'cglib', name: 'cglib', version: '3.2.6'
@@ -35,7 +34,7 @@ subprojects {
 
     clean {
         println "Cleaning $project.name..."
-        delete buildDir.name, distsDirName, 'plugins'
+        delete buildDir.name, distsDirName
 
         if (project.name == 'opendbcopy.schemageneration') {
             delete 'hbm'
@@ -51,20 +50,25 @@ subprojects {
     }
 
     compile.mustRunAfter clean
-    javadoc.mustRunAfter compile
+
+//    javadoc {
+//        source = sourceSets.main.allJava
+//    }
+//
+//    javadoc.mustRunAfter compile
 
     if (project.name != 'opendbcopy') {
         dependencies {
             implementation project(':opendbcopy')
         }
 
-        defaultTasks 'deploy'
-
         task createjar(dependsOn: 'compile', type: Jar) {
             println "Archiving $project.name..."
 
+            mkdir libsDirName
+
             archiveName "${project.name}.jar"
-            destinationDir libsDir
+            destinationDir file(libsDirName)
             from buildDir.name
             from sourceSets.main.java.srcDirs
             from sourceSets.main.resources.srcDirs
@@ -92,7 +96,6 @@ subprojects {
                 }
 
                 copy {
-                    from 'codegen_config.xml'
                     from 'build.gradle'
                     from 'README'
                     into "$OPENDBCOPY_HOME/$appName/plugins/$project.name"
@@ -100,7 +103,7 @@ subprojects {
             }
 
             doLast {
-                ant.move(file: libsDir, tofile: "$OPENDBCOPY_HOME/$appName/plugins/$project.name/$libsDirName")
+                ant.move(file: libsDirName, tofile: "$OPENDBCOPY_HOME/$appName/plugins/$project.name/$libsDirName")
             }
         }
 

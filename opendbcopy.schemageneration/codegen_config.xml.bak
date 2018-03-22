@@ -1,3 +1,0 @@
-<codegen>
-    <generate renderer="org.hibernate.tool.hbm2x.pojo.EntityPOJOClass"/>
-</codegen>
