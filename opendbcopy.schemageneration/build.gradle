@@ -5,7 +5,6 @@ configurations {
 dependencies {
     implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.3.0.CR1'
     hibernatetool group: 'org.hibernate', name: 'hibernate-tools', version: '5.2.10.Final'
-    hibernatetool group: 'log4j', name: 'log4j', version: '1.2.17'
     hibernatetool group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
 
     testImplementation group: 'com.h2database', name: 'h2', version: '1.4.196'
@@ -13,28 +12,27 @@ dependencies {
 
 version = 0.2
 
-task preparehbm {
-    mkdir("$projectDir/hbm/src")
-    mkdir("$projectDir/hbm/classes")
-}
-
 task hbm2java(dependsOn: 'clean') {
-    ant.taskdef(name: 'hibernatetool',
+    doLast {
+        ant.taskdef(name: 'hibernatetool',
                 classname: 'org.hibernate.tool.ant.HibernateToolTask',
                 classpath: configurations.hibernatetool.asPath)
-    ant.hibernatetool(destdir: "$projectDir/hbm/src") {
-        configuration(propertyfile: "$projectDir/hbm/hibernate.properties") {
-            ant.fileSet(dir: "$projectDir/hbm") {
-                include(name: "**/*.hbm.xml")
+        ant.hibernatetool(destdir: "$projectDir/hbm/src") {
+            configuration(propertyfile: "$projectDir/hbm/hibernate.properties") {
+                ant.fileSet(dir: "$projectDir/hbm") {
+                    include(name: "**/*.hbm.xml")
+                }
             }
+            hbm2java(jdk5: true)
         }
-        hbm2java(jdk5: true)
     }
 }
 
-compile {
-    source = "$projectDir/hbm/src/schema"
-    include "*.java"
-    destinationDir = file("$projectDir/hbm/classes")
-    classpath = sourceSets.main.runtimeClasspath
+task compilehbm2java(dependsOn: 'hbm2java', type: JavaCompile) {
+    doLast {
+        source = "$projectDir/hbm/src/schema"
+//        include "*.java"
+        destinationDir = file("$projectDir/hbm/classes")
+        classpath = sourceSets.main.runtimeClasspath
+    }
 }

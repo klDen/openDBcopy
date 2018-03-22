@@ -33,115 +33,77 @@ subprojects {
         testImplementation 'junit:junit:4.11'
     }
 
+    clean {
+        println "Cleaning $project.name..."
+        delete buildDir.name, distsDirName, 'plugins'
+
+        if (project.name == 'opendbcopy.schemageneration') {
+            delete 'hbm'
+        }
+    }
+
+    task compile(dependsOn: 'clean', type: JavaCompile) {
+        println "Compiling $project.name..."
+
+        source = sourceSets.main.java.srcDirs
+        destinationDir = buildDir
+        classpath = sourceSets.main.compileClasspath
+    }
+
+    compile.mustRunAfter clean
+    javadoc.mustRunAfter compile
+
     if (project.name != 'opendbcopy') {
         dependencies {
             implementation project(':opendbcopy')
         }
 
-        defaultTasks 'clean'
+        defaultTasks 'deploy'
 
         task createjar(dependsOn: 'compile', type: Jar) {
+            println "Archiving $project.name..."
+
             archiveName "${project.name}.jar"
             destinationDir libsDir
             from buildDir.name
             from sourceSets.main.java.srcDirs
+            from sourceSets.main.resources.srcDirs
             exclude libsDirName
             exclude "tmp"
         }
 
+        createjar.mustRunAfter compile
+
         task deploy(dependsOn: ['clean', 'compile', 'createjar']) {
-            delete "$OPENDBCOPY_HOME/plugins/$project.name"
+            println "Deploying $project.name..."
+
+            delete "$OPENDBCOPY_HOME/$appName/plugins/$project.name"
 
             copy {
                 from pluginFile
                 from guiFile
-                into "$OPENDBCOPY_HOME/plugins/$project.name"
-            }
-
-            copy {
-                from libsDir
-                into "$OPENDBCOPY_HOME/plugins/$project.name/$libsDirName"
+                into "$OPENDBCOPY_HOME/$appName/plugins/$project.name"
             }
 
             if (project.name == 'opendbcopy.schemageneration') {
                 copy {
                     from "$projectDir/hbm"
-                    into "$OPENDBCOPY_HOME/plugins/$project.name/hbm"
+                    into "$OPENDBCOPY_HOME/$appName/plugins/$project.name/hbm"
                 }
 
                 copy {
                     from 'codegen_config.xml'
                     from 'build.gradle'
                     from 'README'
-                    into "$OPENDBCOPY_HOME/plugins/$project.name"
+                    into "$OPENDBCOPY_HOME/$appName/plugins/$project.name"
                 }
             }
-        }
-
-        task dist(dependsOn: ['clean', 'createjar', 'javadoc'], type: Zip) {
-            doFirst {
-                def folder = new File("$distsDirName" as String)
-
-                if (!folder.exists()) {
-                    folder.mkdirs()
-                } else {
-                    delete "$distsDirName"
-                }
-            }
-
-            copy {
-                from pluginFile
-                from guiFile
-                from 'README'
-                from 'build.gradle'
-                into "$distsDirName/$project.name"
-            }
-
-            copy {
-                from sourceSets.main.java.srcDirs
-                into "$distsDirName/$project.name/src"
-            }
-
-            copy {
-                from sourceSets.main.resources
-                into "$distsDirName/$project.name/resources"
-            }
-
-            archiveName "$appName-$project.name-${version}.zip"
-            from "$distsDirName/$project.name"
-            destinationDir file(distsDirName)
 
             doLast {
-                delete "$distsDirName/$project.name"
+                ant.move(file: libsDir, tofile: "$OPENDBCOPY_HOME/$appName/plugins/$project.name/$libsDirName")
             }
         }
+
+        deploy.mustRunAfter createjar
     }
-
-    task compile(type: JavaCompile) {
-        println "Compiling source directory for $project.name"
-        source = sourceSets.main.java.srcDirs
-        destinationDir = buildDir
-        classpath = sourceSets.main.compileClasspath
-
-        doLast {
-            println "Copying resources directory"
-            copy {
-                from sourceSets.main.resources
-                into buildDir.name
-            }
-        }
-    }
-
-    clean {
-        println "Cleaning $buildDir.name & $distsDirName directory for $project.name"
-        delete buildDir.name, distsDirName, 'plugins'
-
-        if (project.name == 'opendbcopy.schemageneration') {
-            delete fileTree("$projectDir/hbm") {
-                include '**/*.java', '**/*.class'
-            }
-        }
-    }
-
-    task rebuild(dependsOn: ['clean', 'compile'])
 }

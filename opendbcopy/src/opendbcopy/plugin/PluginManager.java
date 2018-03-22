@@ -433,7 +433,7 @@ public class PluginManager extends Observable {
             for (File pluginDir : pluginDirectories) {
                 // read files of plugin ... ignore file(s) if not within a directory
                 if (pluginDir.isDirectory()) {
-                    // load working mode
+                    // load gui file
                     File guiFile = FileHandling.getFileInDirectory(pluginDir, guiFilename);
 
                     // load plugin file

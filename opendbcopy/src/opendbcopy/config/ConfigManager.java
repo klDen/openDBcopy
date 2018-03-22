@@ -217,19 +217,17 @@ public class ConfigManager {
      * DOCUMENT ME!
      *
      * @throws FileNotFoundException DOCUMENT ME!
-     * @throws IOException           DOCUMENT ME!
      */
-    private void loadDefaultApplicationProperties() throws FileNotFoundException, IOException {
+    private void loadDefaultApplicationProperties() throws IOException {
         defaultApplicationProperties = PropertiesToFile.importPropertiesFromFile(fileDefaultAppProperties.getAbsolutePath());
     }
 
     /**
      * DOCUMENT ME!
      *
-     * @throws FileNotFoundException DOCUMENT ME!
      * @throws IOException           DOCUMENT ME!
      */
-    private void loadPersonalApplicationProperties() throws FileNotFoundException, IOException {
+    private void loadPersonalApplicationProperties() throws IOException {
         // check that user's home directory for opendbcopy exists
         String userDir = null;
 
