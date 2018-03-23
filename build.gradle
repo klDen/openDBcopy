@@ -32,15 +32,6 @@ subprojects {
         testImplementation 'junit:junit:4.11'
     }
 
-    clean {
-        println "Cleaning $project.name..."
-        delete buildDir.name, distsDirName
-
-        if (project.name == 'opendbcopy.schemageneration') {
-            delete 'hbm'
-        }
-    }
-
     task compile(dependsOn: 'clean', type: JavaCompile) {
         println "Compiling $project.name..."
 
@@ -49,7 +40,7 @@ subprojects {
         classpath = sourceSets.main.compileClasspath
     }
 
-    compile.mustRunAfter clean
+//    compile.mustRunAfter clean
 
 //    javadoc {
 //        source = sourceSets.main.allJava
@@ -78,11 +69,10 @@ subprojects {
 
         createjar.mustRunAfter compile
 
-        task deploy(dependsOn: ['clean', 'compile', 'createjar']) {
+        task deploy(dependsOn: ['compile', 'createjar']) {
             println "Deploying $project.name..."
 
-            delete "$OPENDBCOPY_HOME/$appName/plugins/$project.name"
-
+//            delete "$OPENDBCOPY_HOME/$appName/plugins/$project.name"
             copy {
                 from pluginFile
                 from guiFile

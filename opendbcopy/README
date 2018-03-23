@@ -38,16 +38,9 @@ See INSTALL for details.
 
 JAR FILES REQUIRED FOR OPENDBCOPY
 *********************************
-openDBcopy requires the following jar files in the lib directory to run. 
+openDBcopy requires the following jar files in the lib directory to run.
 
--- jdom.jar
--- log4j-1.2.8.jar
--- xerces.jar
--- commons-lang-2.0.jar
--- TableLayout.jar
--- ostermillerutils_1_03_00.jar
-
--- and appropriate JDBC drivers for the databases you want to interact with
+-- appropriate JDBC drivers for the databases you want to interact with
 
 
 HOW TO RUN OPENDBCOPY

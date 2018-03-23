@@ -1,3 +1,5 @@
+version = 0.2
+
 configurations {
     hibernatetool
 }
@@ -11,57 +13,54 @@ dependencies {
     testImplementation group: 'com.h2database', name: 'h2', version: '1.4.196'
 }
 
-version = 0.2
+task hbm2java {
+    mkdir "$OPENDBCOPY_HOME/$appName/plugins/$project.name/hbm/classes"
+    mkdir "$OPENDBCOPY_HOME/$appName/plugins/$project.name/hbm/src"
 
-//task hbm2java {
-//    mkdir 'hbm/classes'
-//    mkdir 'hbm/src'
-//    ant.taskdef(name: 'hibernatetool',
-//            classname: 'org.hibernate.tool.ant.HibernateToolTask',
-//            classpath: configurations.hibernatetool.asPath)
-//    ant.hibernatetool(destdir: "hbm/src") {
-//        configuration(propertyfile: "hbm/hibernate.properties") {
-//            ant.fileSet(dir: "hbm") {
-//                include(name: "**/*.hbm.xml")
-//            }
-//        }
-//        hbm2java(jdk5: true)
-//    }
-//}
-//
-//task compilehbmjava(dependsOn: 'hbm2java', type: JavaCompile) {
-//    println "Compiling java class from schema"
-//    source = "hbm/src/schema"
-//    include "*.java"
-//    destinationDir = file("hbm/classes")
-//    classpath = sourceSets.main.runtimeClasspath
-//}
-//
-//compilehbmjava.mustRunAfter hbm2java
-//
-//task schemacreate(dependsOn: 'compilehbmjava') {
-//    doLast {
-//        ant.taskdef(name: 'schemacreate',
-//                classname: 'org.hibernate.tool.hbm2ddl.SchemaExportTask',
-//                classpath: configurations.hibernatetool.asPath
-//        )
-//        println "$projectDir/hbm/hibernate.properties"
-//        Properties props = new Properties()
-//        InputStream is = new FileInputStream("$projectDir/hbm/hibernate.properties")
-//        props.load(is)
-//        is.close()
-//
-//        ant.schemacreate(properties: "hbm/hibernate.properties",
-//                quiet: 'no',
-//                text: 'no',
-//                drop: 'no',
-//                delimiter: ';',
-//                output: "hbm/sql/${props.getProperty('db_product_name')}_schema_create.sql") {
-//            ant.fileSet(dir: "hbm") {
-//                include(name: "**/*.hbm.xml")
-//            }
-//        }
-//    }
-//}
-//
-//schemacreate.mustRunAfter compilehbmjava
+    ant.taskdef(name: 'hibernatetool',
+            classname: 'org.hibernate.tool.ant.HibernateToolTask',
+            classpath: configurations.hibernatetool.asPath)
+    ant.hibernatetool(destdir: "$OPENDBCOPY_HOME/$appName/plugins/$project.name/hbm/src") {
+        configuration(propertyfile: "$OPENDBCOPY_HOME/$appName/plugins/$project.name/hbm/hibernate.properties") {
+            ant.fileSet(dir: "$OPENDBCOPY_HOME/$appName/plugins/$project.name/hbm") {
+                include(name: "**/*.hbm.xml")
+            }
+        }
+        hbm2java(jdk5: true)
+    }
+}
+
+task compilehbmjava(dependsOn: 'hbm2java', type: JavaCompile) {
+    println "Compiling java class from schema"
+    source = "$OPENDBCOPY_HOME/$appName/plugins/$project.name/hbm/src/schema"
+    include "*.java"
+    destinationDir = file("$OPENDBCOPY_HOME/$appName/plugins/$project.name/hbm/classes")
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+compilehbmjava.mustRunAfter hbm2java
+
+task schemacreate(dependsOn: 'compilehbmjava') {
+    doLast {
+        ant.taskdef(name: 'schemacreate',
+                classname: 'org.hibernate.tool.hbm2ddl.SchemaExportTask',
+                classpath: configurations.hibernatetool.asPath
+        )
+
+        Properties properties = new Properties()
+//        properties.load(getClass().getResourceAsStream("hibernate.properties"))
+
+        ant.schemacreate(properties: "$OPENDBCOPY_HOME/$appName/plugins/$project.name/hbm/hibernate.properties",
+                quiet: 'no',
+                text: 'no',
+                drop: 'no',
+                delimiter: ';',
+                output: "$OPENDBCOPY_HOME/$appName/plugins/$project.name/hbm/sql/${properties.getProperty('db_product_name')}_schema_create.sql") {
+            ant.fileSet(dir: "$OPENDBCOPY_HOME/$appName/plugins/$project.name/hbm") {
+                include(name: "**/*.hbm.xml")
+            }
+        }
+    }
+}
+
+schemacreate.mustRunAfter compilehbmjava

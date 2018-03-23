@@ -7,27 +7,6 @@
 <project name="opendbcopy" default="deployjar2plugins" basedir=".">
 
     <!-- ============================================================= -->
-    <!-- Create the zip file                                           -->
-    <!-- ============================================================= -->
-    <target name="zip">
-        <zip zipfile="${application.zip}" basedir="."/>
-    </target>
-
-    <!-- ============================================================= -->
-    <!-- Execute opendbcopy                                      	    -->
-    <!-- ============================================================= -->
-    <target name="run">
-        <java classname="opendbcopy.controller.MainController" fork="true">
-            <sysproperty key="ant_opts" value="mx512m"/>
-            <classpath>
-                <path refid="build.classpath"/>
-                <path refid="lib.classpath"/>
-                <pathelement location="./"/>
-            </classpath>
-        </java>
-    </target>
-
-    <!-- ============================================================= -->
     <!-- Create IzPack installable jar                                 -->
     <!-- ============================================================= -->
     <target name="installer" depends="jar">
