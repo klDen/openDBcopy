@@ -2,4 +2,7 @@ First of all - using this plugin requires some further explanation.
 
 Migrating a schema is done using Hibernate's Tools (Extension library) http://www.hibernate.org
 
+After the .hnm.xml files are generated, please run from the root directory of the project in the command line
+"gradle schemacreate".
+
 Please see the User Manual for detailed instructions.

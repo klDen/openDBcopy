@@ -1,10 +1,14 @@
-subprojects {
+allprojects {
     apply plugin: 'java'
 
     repositories {
         mavenCentral()
     }
+}
 
+evaluationDependsOnChildren()
+
+subprojects {
     sourceSets {
         main {
             java {
@@ -32,6 +36,12 @@ subprojects {
         testImplementation 'junit:junit:4.11'
     }
 
+    clean {
+        println "Cleaning $project.name..."
+
+        delete "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name"
+    }
+
     task compile(dependsOn: 'clean', type: JavaCompile) {
         println "Compiling $project.name..."
 
@@ -54,11 +64,13 @@ subprojects {
         }
 
         task createjar(dependsOn: 'compile', type: Jar) {
-            println "Archiving $project.name..."
+            doFirst {
+                println "Archiving $project.name..."
 
-            mkdir libsDirName
+                mkdir libsDirName
+            }
 
-            archiveName "${project.name}.jar"
+            archiveName "$appName-$project.name-${version}.jar"
             destinationDir file(libsDirName)
             from buildDir.name
             from sourceSets.main.java.srcDirs
@@ -70,30 +82,30 @@ subprojects {
         createjar.mustRunAfter compile
 
         task deploy(dependsOn: ['compile', 'createjar']) {
-            println "Deploying $project.name..."
+            doFirst {
+                println "Deploying $project.name..."
 
-//            delete "$OPENDBCOPY_HOME/$appName/plugins/$project.name"
-            copy {
-                from pluginFile
-                from guiFile
-                into "$OPENDBCOPY_HOME/$appName/plugins/$project.name"
-            }
-
-            if (project.name == 'opendbcopy.schemageneration') {
                 copy {
-                    from "$projectDir/hbm"
-                    into "$OPENDBCOPY_HOME/$appName/plugins/$project.name/hbm"
+                    from pluginFile
+                    from guiFile
+                    into "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name"
                 }
 
-                copy {
-                    from 'build.gradle'
-                    from 'README'
-                    into "$OPENDBCOPY_HOME/$appName/plugins/$project.name"
+                if (project.name == 'opendbcopy.schemageneration') {
+                    copy {
+                        from "$projectDir/hbm"
+                        into "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name/hbm"
+                    }
+
+                    copy {
+                        from 'README'
+                        into "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name"
+                    }
                 }
             }
 
             doLast {
-                ant.move(file: libsDirName, tofile: "$OPENDBCOPY_HOME/$appName/plugins/$project.name/$libsDirName")
+                ant.move(file: libsDirName, tofile: "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name/$libsDirName")
             }
         }
 
