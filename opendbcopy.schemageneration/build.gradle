@@ -12,7 +12,7 @@ dependencies {
     testImplementation group: 'com.h2database', name: 'h2', version: '1.4.196'
 }
 
-def hbmfileprops = new File("${System.getProperty("user.dir")}/$appName/$pluginsDir/$project.name/$hbmDir/$hbmPropsFile")
+def hbmfileprops = new File("$rootDir/$appName/$pluginsDir/$project.name/$hbmDir/$hbmPropsFile")
 
 if (hbmfileprops.exists()) {
     Properties properties = new Properties()
@@ -20,24 +20,16 @@ if (hbmfileprops.exists()) {
     properties.load(inputStream)
     inputStream.close()
 
-    task cleanhbm {
-        delete fileTree("$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name/hbm") {
-            include '**/*.java'
-            include '**/*.class'
-            include '**/*.sql'
-        }
-    }
-
-    task hbm2java(dependsOn: 'cleanhbm') {
-        mkdir "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name/$hbmDir/classes"
-        mkdir "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name/$hbmDir/src"
+    task hbm2java {
+        mkdir "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir/classes"
+        mkdir "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir/src"
 
         ant.taskdef(name: 'hibernatetool',
                 classname: 'org.hibernate.tool.ant.HibernateToolTask',
                 classpath: configurations.hibernatetool.asPath)
-        ant.hibernatetool(destdir: "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name/$hbmDir/src") {
-            configuration(propertyfile: "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name/$hbmDir/$hbmPropsFile") {
-                ant.fileSet(dir: "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name/$hbmDir") {
+        ant.hibernatetool(destdir: "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir/src") {
+            configuration(propertyfile: "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir/$hbmPropsFile") {
+                ant.fileSet(dir: "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir") {
                     include(name: "**/*.hbm.xml")
                 }
             }
@@ -52,9 +44,9 @@ if (hbmfileprops.exists()) {
     task compilehbmjava(dependsOn: 'hbm2java', type: JavaCompile) {
         println "Compiling generated hibernate java classes..."
 
-        source = "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name/$hbmDir/src"
+        source = "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir/src"
         include "**/*.java"
-        destinationDir = file("$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name/$hbmDir/classes")
+        destinationDir = file("$rootDir/$appName/$pluginsDir/$project.name/$hbmDir/classes")
         classpath = sourceSets.main.runtimeClasspath
     }
 
@@ -67,13 +59,13 @@ if (hbmfileprops.exists()) {
                     classpath: configurations.hibernatetool.asPath
             )
 
-            ant.schemacreate(properties: "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name/$hbmDir/$hbmPropsFile",
+            ant.schemacreate(properties: "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir/$hbmPropsFile",
                     quiet: 'no',
                     text: 'no',
                     drop: 'no',
                     delimiter: ';',
-                    output: "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name/$hbmDir/sql/${properties.getProperty('db_product_name')}_schema_create.sql") {
-                ant.fileSet(dir: "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name/$hbmDir") {
+                    output: "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir/$sqlDir/${properties.getProperty('db_product_name')}_schema_create.sql") {
+                ant.fileSet(dir: "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir") {
                     include(name: "**/*.hbm.xml")
                 }
             }
@@ -87,9 +79,9 @@ if (hbmfileprops.exists()) {
                     classpath: configurations.hibernatetool.asPath
             )
 
-            ant.schemaupdate(properties: "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name/$hbmDir/$hbmPropsFile",
+            ant.schemaupdate(properties: "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir/$hbmPropsFile",
                     quiet: 'no') {
-                ant.fileSet(dir: "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name/$hbmDir") {
+                ant.fileSet(dir: "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir") {
                     include(name: "**/*.hbm.xml")
                 }
             }
@@ -103,12 +95,12 @@ if (hbmfileprops.exists()) {
                     classpath: configurations.hibernatetool.asPath
             )
 
-            ant.schemadrop(properties: "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name/$hbmDir/$hbmPropsFile",
+            ant.schemadrop(properties: "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir/$hbmPropsFile",
                     quiet: 'no',
                     text: 'no',
                     drop: 'yes',
-                    output: "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name/$hbmDir/sql/${properties.getProperty('db_product_name')}_schema_create.sql") {
-                ant.fileSet(dir: "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name/$hbmDir") {
+                    output: "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir/$sqlDir/${properties.getProperty('db_product_name')}_schema_create.sql") {
+                ant.fileSet(dir: "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir") {
                     include(name: "**/*.hbm.xml")
                 }
             }
