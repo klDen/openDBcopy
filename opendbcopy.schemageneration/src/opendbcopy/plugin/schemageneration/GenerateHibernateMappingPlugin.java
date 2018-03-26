@@ -235,7 +235,7 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
         HashMap mapPrimaryKeyElements = new HashMap();
         HashMap mapImportedKeyElements = new HashMap();
         HashMap mapExportedKeyElements = new HashMap();
-        HashMap mapIndexElements = new HashMap();
+        HashMap<String, List<Element>> mapIndexElements = new HashMap<>();
         ArrayList listImportedKeyElementsOrdered = new ArrayList();
 
         // check for primary keys
@@ -275,7 +275,11 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
 
             while (itIndexes.hasNext()) {
                 Element indexElement = (Element) itIndexes.next();
-                mapIndexElements.put(indexElement.getAttributeValue(XMLTags.COLUMN_NAME), indexElement);
+
+                List<Element> indexElements = new ArrayList<>(); //multiple columns can be indexed (e.g. composed unique key)
+                indexElements.add(indexElement);
+
+                mapIndexElements.put(indexElement.getAttributeValue(XMLTags.COLUMN_NAME), indexElements);
             }
         }
 
@@ -513,7 +517,7 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
      * @param column  DOCUMENT ME!
      */
     private void processNormalColumn(StringBuffer sb,
-                                     HashMap indexes,
+                                     HashMap<String, List<Element>> indexes,
                                      Element column) {
         sb.append("<property");
         sb.append(" name=\"" + column.getAttributeValue(XMLTags.NAME) + "\"");
@@ -534,16 +538,22 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
 
         // check for uniqueness and indexes
         if (indexes.containsKey(column.getAttributeValue(XMLTags.NAME))) {
-            Element index = (Element) indexes.get(column.getAttributeValue(XMLTags.NAME));
+            List<Element> indexValues = indexes.get(column.getAttributeValue(XMLTags.NAME));
 
-            // check uniqueness
-            if ((index.getAttributeValue(XMLTags.NON_UNIQUE) != null) && (index.getAttributeValue(XMLTags.NON_UNIQUE).compareTo("0") == 0)) {
-                sb.append("     unique=\"true\"" + APM.LINE_SEP);
-            }
+            if (indexValues.size() == 1) {
+                Element index = indexValues.remove(0);
 
-            // add index name
-            if ((index.getAttributeValue(XMLTags.INDEX_NAME) != null) && (index.getAttributeValue(XMLTags.INDEX_NAME).length() > 0)) {
-                sb.append("     index=\"" + index.getAttributeValue(XMLTags.INDEX_NAME) + "\"" + APM.LINE_SEP);
+                // check uniqueness
+                if ((index.getAttributeValue(XMLTags.NON_UNIQUE) != null) && (index.getAttributeValue(XMLTags.NON_UNIQUE).compareTo("0") == 0)) {
+                    sb.append("     unique=\"true\"" + APM.LINE_SEP);
+                }
+
+                // add index name
+                if ((index.getAttributeValue(XMLTags.INDEX_NAME) != null) && (index.getAttributeValue(XMLTags.INDEX_NAME).length() > 0)) {
+                    sb.append("     index=\"" + index.getAttributeValue(XMLTags.INDEX_NAME) + "\"" + APM.LINE_SEP);
+                }
+            } else if (indexValues.size() > 1) {
+                // composed index.
             }
         }
 
