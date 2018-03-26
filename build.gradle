@@ -4,6 +4,12 @@ allprojects {
     repositories {
         mavenCentral()
     }
+
+    def currentDir = System.getProperty("user.dir")
+
+    if ((new File(currentDir)).getName() != rootProject.name) {
+        throw new GradleException("You must change your current directory to the root project : '$rootProject.name'")
+    }
 }
 
 evaluationDependsOnChildren()
@@ -37,26 +43,22 @@ subprojects {
     }
 
     clean {
-        println "Cleaning $project.name..."
+        delete "$rootDir/$appName/$pluginsDir/$project.name"
 
-        delete "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name"
+        if (project.name == 'opendbcopy.schemageneration') {
+            delete fileTree("$rootDir/$appName/$pluginsDir/$project.name/$hbmDir") {
+                include '**/*.java'
+                include '**/*.class'
+                include '**/*.sql'
+            }
+        }
     }
 
     task compile(dependsOn: 'clean', type: JavaCompile) {
-        println "Compiling $project.name..."
-
         source = sourceSets.main.java.srcDirs
         destinationDir = buildDir
         classpath = sourceSets.main.compileClasspath
     }
-
-//    compile.mustRunAfter clean
-
-//    javadoc {
-//        source = sourceSets.main.allJava
-//    }
-//
-//    javadoc.mustRunAfter compile
 
     if (project.name != 'opendbcopy') {
         dependencies {
@@ -64,12 +66,6 @@ subprojects {
         }
 
         task createjar(dependsOn: 'compile', type: Jar) {
-            doFirst {
-                println "Archiving $project.name..."
-
-                mkdir libsDirName
-            }
-
             archiveName "$appName-$project.name-${version}.jar"
             destinationDir file(libsDirName)
             from buildDir.name
@@ -81,31 +77,29 @@ subprojects {
 
         createjar.mustRunAfter compile
 
-        task deploy(dependsOn: ['compile', 'createjar']) {
+        task deploy(dependsOn: 'createjar') {
             doFirst {
-                println "Deploying $project.name..."
-
                 copy {
                     from pluginFile
                     from guiFile
-                    into "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name"
+                    into "$rootDir/$appName/$pluginsDir/$project.name"
                 }
 
                 if (project.name == 'opendbcopy.schemageneration') {
                     copy {
-                        from "$projectDir/hbm"
-                        into "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name/hbm"
+                        from "$projectDir/$hbmDir"
+                        into "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir"
                     }
 
                     copy {
                         from 'README'
-                        into "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name"
+                        into "$rootDir/$appName/$pluginsDir/$project.name"
                     }
                 }
             }
 
             doLast {
-                ant.move(file: libsDirName, tofile: "$OPENDBCOPY_HOME/$appName/$pluginsDir/$project.name/$libsDirName")
+                ant.move(file: libsDirName, tofile: "$rootDir/$appName/$pluginsDir/$project.name/$libsDirName")
             }
         }
 
