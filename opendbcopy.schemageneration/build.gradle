@@ -99,7 +99,7 @@ if (hbmfileprops.exists()) {
                     quiet: 'no',
                     text: 'no',
                     drop: 'yes',
-                    output: "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir/$sqlDir/${properties.getProperty('db_product_name')}_schema_create.sql") {
+                    output: "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir/$sqlDir/${properties.getProperty('db_product_name')}_schema_drop.sql") {
                 ant.fileSet(dir: "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir") {
                     include(name: "**/*.hbm.xml")
                 }
