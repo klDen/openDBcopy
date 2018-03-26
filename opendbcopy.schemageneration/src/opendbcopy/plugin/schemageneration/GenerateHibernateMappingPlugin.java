@@ -235,7 +235,8 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
         HashMap mapPrimaryKeyElements = new HashMap();
         HashMap mapImportedKeyElements = new HashMap();
         HashMap mapExportedKeyElements = new HashMap();
-        HashMap<String, List<Element>> mapIndexElements = new HashMap<>();
+        HashMap<String, Element> mapIndexElements = new HashMap<>();
+        HashMap<String, List<Element>> mapCompositeIndexElements = new HashMap<>();
         ArrayList listImportedKeyElementsOrdered = new ArrayList();
 
         // check for primary keys
@@ -271,15 +272,28 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
 
         // check for indexes
         if ((model.getDestinationIndexes(destinationTableName) != null) && (model.getDestinationIndexes(destinationTableName).size() > 0)) {
-            Iterator itIndexes = model.getDestinationIndexes(destinationTableName).iterator();
+            List<Element> indexElementList = model.getDestinationIndexes(destinationTableName);
+            Iterator itIndexes = indexElementList.iterator();
 
             while (itIndexes.hasNext()) {
                 Element indexElement = (Element) itIndexes.next();
+                String currentIndexName = indexElement.getAttributeValue(XMLTags.INDEX_NAME);
 
-                List<Element> indexElements = new ArrayList<>(); //multiple columns can be indexed (e.g. composed unique key)
-                indexElements.add(indexElement);
+                List<Element> compositeIndexElements = new ArrayList<>();
+                for (Element ie : indexElementList) {
+                    String indexName = ie.getAttributeValue(XMLTags.INDEX_NAME);
 
-                mapIndexElements.put(indexElement.getAttributeValue(XMLTags.COLUMN_NAME), indexElements);
+                    if (indexName.equals(currentIndexName)) {
+                        compositeIndexElements.add(ie);
+                    }
+                }
+
+                if (compositeIndexElements.size() > 1) {
+                    mapCompositeIndexElements.put(currentIndexName, compositeIndexElements);
+                    continue;
+                }
+
+                mapIndexElements.put(indexElement.getAttributeValue(XMLTags.COLUMN_NAME), indexElement);
             }
         }
 
@@ -329,6 +343,37 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
         }
 
         sb.append("</class>" + APM.LINE_SEP);
+
+        // process composite indexes
+        if (!mapCompositeIndexElements.isEmpty()) {
+            sb.append("<database-object>" + APM.LINE_SEP);
+            sb.append("<create>" + APM.LINE_SEP);
+
+            for (Map.Entry<String, List<Element>> entry : mapCompositeIndexElements.entrySet()) {
+                String indexName = entry.getKey();
+                List<Element> columnElements = entry.getValue();
+                StringBuilder columnNames = new StringBuilder("(");
+
+                for (Element columnElement : columnElements) {
+                    columnNames.append(columnElement.getAttributeValue(XMLTags.COLUMN_NAME) + ",");
+                }
+                columnNames.append(")");
+                columnNames.replace(columnNames.lastIndexOf(","), columnNames.lastIndexOf(",") + 1, "");
+
+                if ((columnElements.get(0).getAttributeValue(XMLTags.NON_UNIQUE) != null) && (columnElements.get(0).getAttributeValue(XMLTags.NON_UNIQUE).compareTo("0") == 0)) {
+                    sb.append("CREATE UNIQUE INDEX " + indexName + APM.LINE_SEP);
+                } else {
+                    sb.append("CREATE INDEX " + indexName + APM.LINE_SEP);
+                }
+
+                sb.append("ON " + destinationTableName + columnNames + ";" + APM.LINE_SEP);
+            }
+
+            sb.append("</create>" + APM.LINE_SEP);
+            sb.append("<drop></drop>" + APM.LINE_SEP);
+            sb.append("</database-object>" + APM.LINE_SEP);
+        }
+
         sb.append("</hibernate-mapping>" + APM.LINE_SEP);
     }
 
@@ -517,7 +562,7 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
      * @param column  DOCUMENT ME!
      */
     private void processNormalColumn(StringBuffer sb,
-                                     HashMap<String, List<Element>> indexes,
+                                     HashMap<String, Element> indexes,
                                      Element column) {
         sb.append("<property");
         sb.append(" name=\"" + column.getAttributeValue(XMLTags.NAME) + "\"");
@@ -538,22 +583,16 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
 
         // check for uniqueness and indexes
         if (indexes.containsKey(column.getAttributeValue(XMLTags.NAME))) {
-            List<Element> indexValues = indexes.get(column.getAttributeValue(XMLTags.NAME));
+            Element index = indexes.get(column.getAttributeValue(XMLTags.NAME));
 
-            if (indexValues.size() == 1) {
-                Element index = indexValues.remove(0);
+            // check uniqueness
+            if ((index.getAttributeValue(XMLTags.NON_UNIQUE) != null) && (index.getAttributeValue(XMLTags.NON_UNIQUE).compareTo("0") == 0)) {
+                sb.append("     unique=\"true\"" + APM.LINE_SEP);
+            }
 
-                // check uniqueness
-                if ((index.getAttributeValue(XMLTags.NON_UNIQUE) != null) && (index.getAttributeValue(XMLTags.NON_UNIQUE).compareTo("0") == 0)) {
-                    sb.append("     unique=\"true\"" + APM.LINE_SEP);
-                }
-
-                // add index name
-                if ((index.getAttributeValue(XMLTags.INDEX_NAME) != null) && (index.getAttributeValue(XMLTags.INDEX_NAME).length() > 0)) {
-                    sb.append("     index=\"" + index.getAttributeValue(XMLTags.INDEX_NAME) + "\"" + APM.LINE_SEP);
-                }
-            } else if (indexValues.size() > 1) {
-                // composed index.
+            // add index name
+            if ((index.getAttributeValue(XMLTags.INDEX_NAME) != null) && (index.getAttributeValue(XMLTags.INDEX_NAME).length() > 0)) {
+                sb.append("     index=\"" + index.getAttributeValue(XMLTags.INDEX_NAME) + "\"" + APM.LINE_SEP);
             }
         }
 

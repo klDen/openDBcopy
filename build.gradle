@@ -47,9 +47,7 @@ subprojects {
 
         if (project.name == 'opendbcopy.schemageneration') {
             delete fileTree("$rootDir/$appName/$pluginsDir/$project.name/$hbmDir") {
-                include '**/*.java'
-                include '**/*.class'
-                include '**/*.sql'
+                include '*'
             }
         }
     }
