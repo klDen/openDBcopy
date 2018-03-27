@@ -413,34 +413,42 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
             }
         }
 
-        if ((generatorElement != null) && (generatorElement.getChildren().size() > 0)) {
-            sb.append("   <generator class=\"" + uniqueKeyGenerator + "\">" + APM.LINE_SEP);
+        List<String> allowedKeyGeneratorForType = new ArrayList<>();
+        allowedKeyGeneratorForType.add("-5");
+        allowedKeyGeneratorForType.add("4");
+        allowedKeyGeneratorForType.add("5");
+        allowedKeyGeneratorForType.add("-6");
 
-            List children = conf.getChild(XMLTags.GENERATOR_CLASS).getChild(uniqueKeyGenerator).getChildren();
+        if (allowedKeyGeneratorForType.contains(column.getAttributeValue(XMLTags.DATA_TYPE))) {
+            if ((generatorElement != null) && (generatorElement.getChildren().size() > 0)) {
+                sb.append("   <generator class=\"" + uniqueKeyGenerator + "\">" + APM.LINE_SEP);
 
-            for (int i = 0; i < children.size(); i++) {
-                Element child = (Element) children.get(i);
-                sb.append("      <" + child.getName() + " name=\"" + child.getAttributeValue(XMLTags.NAME) + "\"" + ">");
+                List children = conf.getChild(XMLTags.GENERATOR_CLASS).getChild(uniqueKeyGenerator).getChildren();
 
-                String text = child.getText();
+                for (int i = 0; i < children.size(); i++) {
+                    Element child = (Element) children.get(i);
+                    sb.append("      <" + child.getName() + " name=\"" + child.getAttributeValue(XMLTags.NAME) + "\"" + ">");
 
-                if ((text != null) && (text.length() > 0)) {
-                    if ((text.indexOf("[") >= 0) && (text.indexOf("]") > 0)) {
-                        int startIndex = text.indexOf("[");
-                        int endIndex = text.indexOf("]");
+                    String text = child.getText();
 
-                        sb.append(text.substring(0, startIndex) + tableName + text.substring(endIndex + "]".length(), text.length()));
-                    } else {
-                        sb.append(text);
+                    if ((text != null) && (text.length() > 0)) {
+                        if ((text.indexOf("[") >= 0) && (text.indexOf("]") > 0)) {
+                            int startIndex = text.indexOf("[");
+                            int endIndex = text.indexOf("]");
+
+                            sb.append(text.substring(0, startIndex) + tableName + text.substring(endIndex + "]".length(), text.length()));
+                        } else {
+                            sb.append(text);
+                        }
                     }
+
+                    sb.append("</" + child.getName() + ">" + APM.LINE_SEP);
                 }
 
-                sb.append("</" + child.getName() + ">" + APM.LINE_SEP);
+                sb.append("   </generator>" + APM.LINE_SEP);
+            } else {
+                sb.append("   <generator class=\"" + uniqueKeyGenerator + "\" />" + APM.LINE_SEP);
             }
-
-            sb.append("   </generator>" + APM.LINE_SEP);
-        } else {
-            sb.append("   <generator class=\"" + uniqueKeyGenerator + "\" />" + APM.LINE_SEP);
         }
 
         sb.append("</id>" + APM.LINE_SEP);
