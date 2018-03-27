@@ -44,12 +44,6 @@ subprojects {
 
     clean {
         delete "$rootDir/$appName/$pluginsDir/$project.name"
-
-        if (project.name == 'opendbcopy.schemageneration') {
-            delete fileTree("$rootDir/$appName/$pluginsDir/$project.name/$hbmDir") {
-                include '*'
-            }
-        }
     }
 
     task compile(dependsOn: 'clean', type: JavaCompile) {

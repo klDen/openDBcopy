@@ -346,13 +346,18 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
 
         // process composite indexes
         if (!mapCompositeIndexElements.isEmpty()) {
-            sb.append("<database-object>" + APM.LINE_SEP);
-            sb.append("<create>" + APM.LINE_SEP);
-
             for (Map.Entry<String, List<Element>> entry : mapCompositeIndexElements.entrySet()) {
                 String indexName = entry.getKey();
                 List<Element> columnElements = entry.getValue();
-                StringBuilder columnNames = new StringBuilder("(");
+                StringBuilder columnNames = new StringBuilder(" (");
+
+                sb.append("<database-object>" + APM.LINE_SEP);
+                sb.append("<create>" + APM.LINE_SEP);
+                if ((columnElements.get(0).getAttributeValue(XMLTags.NON_UNIQUE) != null) && (columnElements.get(0).getAttributeValue(XMLTags.NON_UNIQUE).compareTo("0") == 0)) {
+                    sb.append("create unique index " + indexName);
+                } else {
+                    sb.append("create index " + indexName);
+                }
 
                 for (Element columnElement : columnElements) {
                     columnNames.append(columnElement.getAttributeValue(XMLTags.COLUMN_NAME) + ",");
@@ -360,18 +365,12 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
                 columnNames.append(")");
                 columnNames.replace(columnNames.lastIndexOf(","), columnNames.lastIndexOf(",") + 1, "");
 
-                if ((columnElements.get(0).getAttributeValue(XMLTags.NON_UNIQUE) != null) && (columnElements.get(0).getAttributeValue(XMLTags.NON_UNIQUE).compareTo("0") == 0)) {
-                    sb.append("CREATE UNIQUE INDEX " + indexName + APM.LINE_SEP);
-                } else {
-                    sb.append("CREATE INDEX " + indexName + APM.LINE_SEP);
-                }
-
-                sb.append("ON " + destinationTableName + columnNames + ";" + APM.LINE_SEP);
+                sb.append(" on " + destinationTableName + columnNames + ";" + APM.LINE_SEP);
+                sb.replace(sb.lastIndexOf(";"), sb.lastIndexOf(";") + 1, "");
+                sb.append("</create>" + APM.LINE_SEP);
+                sb.append("<drop></drop>" + APM.LINE_SEP);
+                sb.append("</database-object>" + APM.LINE_SEP);
             }
-
-            sb.append("</create>" + APM.LINE_SEP);
-            sb.append("<drop></drop>" + APM.LINE_SEP);
-            sb.append("</database-object>" + APM.LINE_SEP);
         }
 
         sb.append("</hibernate-mapping>" + APM.LINE_SEP);
