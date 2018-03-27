@@ -2,14 +2,35 @@
 
 Under GPLv2
 
-Same project as this:
-http://opendbcopy.sourceforge.net/
+To run the program, 
+- **git clone https://github.com/klDen/openDBcopy.git**
+- **cd openDBcopy**
+- **./gradlew deploy && ./gradlew run**
 
-I'm just trying to modernized it a bit.
+To migrate DB schema :
 
-The only change (now) is using Gradle around the Ants scripts. This is
-the first step to getting this up to this decade.
+- Select Plugin -> Select New Plugin -> Migrate Database schema (DDL)
 
-Pull requests are welcome!
+**Tab 0**
+- Select your Database Dialect from the dropdown list (ex: MySQL5)
+- Select your unique primary key generation algorithm (ex: identity for MySQL)
 
--- Mike Hostetler
+**Tab 1**
+- Enter your Source & Destination Database connections 
+- Press on Apply & Test for both connections to confirm
+
+**Tab 2**
+- Select the Catalog & Schema (ex: dbo)
+- Optionally, you can select PK, FKI and Indexes if needed
+- Press on Capture Source Model (a confirmation will be shown at the bottom left corner once completed)
+
+**Tab 3**
+- Select the Tables to migrate
+
+**Tab 4**
+- Select columns to migrate
+
+**Tab 5**
+- Execute!
+
+From there, execute in the Terminal **./gradlew schemacreate** (your tables should be created)
