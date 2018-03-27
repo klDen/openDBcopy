@@ -33,4 +33,9 @@ To migrate DB schema :
 **Tab 5**
 - Execute!
 
-From there, execute in the Terminal **./gradlew schemacreate** (your tables should be created)
+From there, execute in the Terminal **./gradlew schemacreate** (your tables should be created if no errors were shown)
+
+To copy data from a Source to Destination database :
+
+- Follow the same steps as previously done!
+
