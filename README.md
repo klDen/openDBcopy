@@ -36,6 +36,6 @@ To migrate DB schema :
 From there, execute in the Terminal **./gradlew schemacreate** (your tables should be created if no errors were shown)
 
 To copy data from a Source to Destination database :
-
+- Select Plugin -> Select New Plugin -> Copy data from source into a destination database
 - Follow the same steps as previously done!
 
