@@ -71,9 +71,9 @@
         <class name="org.gjt.mm.mysql.Driver"/>
         <url value="jdbc:mysql://&lt;hostname&gt;[&lt;:3306&gt;]/&lt;dbname&gt;"/>
     </driver>
-    <driver name="MySQL Driver">
-        <class name="com.mysql.cj.jdbc.Driver"/>
-        <url value="jdbc:mysql://&lt;hostname&gt;[,&lt;failoverhost&gt;][&lt;:3306&gt;]/&lt;dbname&gt;[?&lt;param1&gt;=&lt;value1&gt;][&amp;&lt;param2&gt;=&lt;value2&gt;]"/>
+    <driver name="MariaDB Driver">
+        <class name="org.mariadb.jdbc.Driver"/>
+        <url value="jdbc:mariadb://&lt;hostname&gt;[,&lt;failoverhost&gt;][&lt;:3306&gt;]/&lt;dbname&gt;[?&lt;param1&gt;=&lt;value1&gt;][&amp;&lt;param2&gt;=&lt;value2&gt;]"/>
     </driver>
     <driver name="Oracle OCI Driver">
         <class name="oracle.jdbc.driver.OracleDriver"/>

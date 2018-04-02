@@ -34,8 +34,8 @@
             <dialect class="org.hibernate.dialect.DB2Dialect" name="DB2"/>
             <dialect class="org.hibernate.dialect.DB2400Dialect" name="DB2 AS/400"/>
             <dialect class="org.hibernate.dialect.DB2390Dialect" name="DB2 OS390"/>
-            <dialect class="org.hibernate.dialect.PostgreSQLDialect" name="PostgreSQL"/>
-            <dialect class="org.hibernate.dialect.MySQL5InnoDBDialect" name="MySQL5"/>
+            <dialect class="org.hibernate.dialect.PostgreSQL9Dialect" name="PostgreSQL9"/>
+            <dialect class="org.hibernate.dialect.MariaDBDialect" name="MariaDB"/>
             <dialect class="org.hibernate.dialect.OracleDialect" name="Oracle (any version)"/>
             <dialect class="org.hibernate.dialect.Oracle9Dialect" name="Oracle 9"/>
             <dialect class="org.hibernate.dialect.SybaseDialect" name="Sybase"/>

@@ -7,7 +7,8 @@ configurations {
 dependencies {
     implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.3.0.CR1'
     hibernatetool group: 'org.hibernate', name: 'hibernate-tools', version: '5.2.10.Final'
-    hibernatetool group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
+    hibernatetool group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.2.3'
+    hibernatetool group: 'org.postgresql', name: 'postgresql', version: '42.2.2'
 
     testImplementation group: 'com.h2database', name: 'h2', version: '1.4.196'
 }
@@ -24,10 +25,10 @@ if (hbmfileprops.exists()) {
         mkdir "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir/classes"
         mkdir "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir/src"
 
-        ant.taskdef(name: 'hibernatetool',
+        ant.taskdef(name: 'hbm2java',
                 classname: 'org.hibernate.tool.ant.HibernateToolTask',
                 classpath: configurations.hibernatetool.asPath)
-        ant.hibernatetool(destdir: "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir/src") {
+        ant.hbm2java(destdir: "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir/src") {
             configuration(propertyfile: "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir/$hbmPropsFile") {
                 ant.fileSet(dir: "$rootDir/$appName/$pluginsDir/$project.name/$hbmDir") {
                     include(name: "**/*.hbm.xml")
