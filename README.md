@@ -12,7 +12,7 @@ To migrate DB schema :
 - Select Plugin -> Select New Plugin -> Migrate Database schema (DDL)
 
 **Tab 0**
-- Select your Database Dialect from the dropdown list (ex: MySQL5)
+- Select your Database Dialect from the dropdown list (ex: MariaDB)
 - Select your unique primary key generation algorithm (ex: identity for MySQL)
 
 **Tab 1**
