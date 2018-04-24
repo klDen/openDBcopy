@@ -571,12 +571,26 @@ public class GenerateHibernateMappingPlugin extends DynamicPluginThread {
     private void processNormalColumn(StringBuffer sb,
                                      HashMap<String, Element> indexes,
                                      Element column) {
+        // treat custom column boolean
+        String type = typeMapping.getJavaType(column.getAttributeValue(XMLTags.DATA_TYPE));
+
+        if (column.getAttributeValue(XMLTags.NAME).startsWith("b") &&
+                typeMapping.getJavaType(column.getAttributeValue(XMLTags.DATA_TYPE)).equals("byte")) {
+            type = "boolean";
+        }
+
         sb.append("<property");
         sb.append(" name=\"" + column.getAttributeValue(XMLTags.NAME) + "\"");
-        sb.append(" type=\"" + typeMapping.getJavaType(column.getAttributeValue(XMLTags.DATA_TYPE)) + "\"");
+        sb.append(" type=\"" + type + "\"");
         sb.append(">" + APM.LINE_SEP);
         sb.append("   <column" + APM.LINE_SEP);
         sb.append("     name=\"" + column.getAttributeValue(XMLTags.NAME) + "\"" + APM.LINE_SEP);
+
+        if (column.getAttributeValue(XMLTags.NAME).startsWith("b") &&
+                typeMapping.getJavaType(column.getAttributeValue(XMLTags.DATA_TYPE)).equals("byte")) {
+            sb.append("     sql-type=\"" + "tinyint(1)" + "\"" + APM.LINE_SEP);
+        }
+
         sb.append("     length=\"" + column.getAttributeValue(XMLTags.COLUMN_SIZE) + "\"" + APM.LINE_SEP);
 
         if (typeMapping.getJavaType(column.getAttributeValue(XMLTags.DATA_TYPE)).equals("java.math.BigDecimal")) {
