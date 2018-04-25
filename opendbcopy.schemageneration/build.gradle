@@ -9,6 +9,8 @@ dependencies {
     hibernatetool group: 'org.hibernate', name: 'hibernate-tools', version: '5.2.10.Final'
     hibernatetool group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.2.3'
     hibernatetool group: 'org.postgresql', name: 'postgresql', version: '42.2.2'
+    hibernatetool group: 'net.sourceforge.jtds', name: 'jtds', version: '1.3.1'
+    hibernatetool group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '6.4.0.jre8'
 
     testImplementation group: 'com.h2database', name: 'h2', version: '1.4.196'
 }

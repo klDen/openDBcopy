@@ -60,8 +60,8 @@
         <url value="jdbc:mckoi://&lt;host&gt;[:9157][/&lt;schema&gt;]/"/>
     </driver>
     <driver name="Microsoft MSSQL Server JDBC Driver">
-        <class name="com.microsoft.jdbc.sqlserver.SQLServerDriver"/>
-        <url value="jdbc:microsoft:sqlserver://&lt;server_name&gt;:&lt;1433&gt;"/>
+        <class name="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+        <url value="jdbc:sqlserver://&lt;server_name&gt;:&lt;1433&gt;[;databaseName={database}]"/>
     </driver>
     <driver name="Mimer SQL">
         <class name="com.mimer.jdbc.Driver"/>
